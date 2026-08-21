@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PresentationTimer.Core\PresentationTimer.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="QRCoder" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\**\*" />
+    <EmbeddedResource
+      Include="node_modules\@microsoft\signalr\dist\browser\signalr.min.js"
+      LogicalName="PresentationTimer.Remote.wwwroot.vendor.signalr.min.js" />
+    <EmbeddedResource
+      Include="node_modules\@microsoft\signalr\src\third-party-notices.txt"
+      LogicalName="PresentationTimer.Remote.wwwroot.vendor.signalr-third-party-notices.txt" />
+  </ItemGroup>
+
+</Project>

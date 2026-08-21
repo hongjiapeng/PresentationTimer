@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <title>Presentation Timer Remote</title>
+  <link rel="stylesheet" href="/assets/presenter.css">
+</head>
+<body>
+  <main class="presenter-shell">
+    <header>
+      <p id="connection" class="connection" role="status">Connecting…</p>
+      <p id="slide-position" class="slide-position">Slide — / —</p>
+    </header>
+    <section class="timer" aria-live="polite">
+      <span id="timer-mode">Remaining</span>
+      <strong id="timer-value">00:00</strong>
+    </section>
+    <section class="notes-panel" aria-labelledby="notes-heading">
+      <h1 id="notes-heading">Speaker notes</h1>
+      <p id="notes" class="notes">No speaker notes on this slide.</p>
+    </section>
+    <nav class="navigation" aria-label="Slide navigation">
+      <button id="previous" type="button" disabled>Previous</button>
+      <button id="next" type="button" disabled>Next</button>
+    </nav>
+  </main>
+  <script src="/vendor/signalr.min.js"></script>
+  <script src="/assets/presenter.js"></script>
+</body>
+</html>

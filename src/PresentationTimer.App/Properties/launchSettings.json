@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PresentationTimer.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PresentationTimer.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

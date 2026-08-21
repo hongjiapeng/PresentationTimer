@@ -1,0 +1,76 @@
+{"kind":"deck","id":"pr/9t90te","name":"Deck"}
+{"kind":"layout","layoutId":"d3713514-f69b-46a3-931d-c1334b50fd18","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"80bb1023-28e9-4205-8a3c-120f930bc18b","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/i9a9b8","slide":1,"title":"PRESENTATION TIMER","textShapes":6}
+{"kind":"textbox","id":"sh/0fatwba5","slide":1,"name":"CoverSupertitle","text":"PRESENTATION TIMER","textPreview":"PRESENTATION TIMER","textChars":18,"textLines":1,"bbox":[48,42,520,32]}
+{"kind":"textbox","id":"sh/zehsn69k","slide":1,"name":"CoverFixture","text":"POWERPOINT FIXTURE","textPreview":"POWERPOINT FIXTURE","textChars":18,"textLines":1,"bbox":[880,42,352,32]}
+{"kind":"textbox","id":"sh/ed8bu1sz","slide":1,"name":"CoverTitle","text":"01 — Baseline\nmanual verification deck","textPreview":"01 — Baseline | manual verification deck","textChars":38,"textLines":2,"bbox":[48,280,1080,300]}
+{"kind":"textbox","id":"sh/9kjutgrm","slide":1,"name":"CoverNumber","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1128,526,104,80]}
+{"kind":"textbox","id":"sh/ojat0ba1","slide":1,"name":"FooterLabel-1","text":"BASELINE NOTES","textPreview":"BASELINE NOTES","textChars":14,"textLines":1,"bbox":[48,665,700,22]}
+{"kind":"textbox","id":"sh/ni1crq9g","slide":1,"name":"FooterNumber-1","text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1178,660,54,28]}
+{"kind":"notes","id":"nt/i9a9b8","slide":1,"text":"Baseline notes — slide 1"}
+{"kind":"slide","id":"sl/1rnqbm","slide":2,"title":"CASE 02","textShapes":8}
+{"kind":"textbox","id":"sh/jqxgjil8","slide":2,"name":"Case-2","text":"CASE 02","textPreview":"CASE 02","textChars":7,"textLines":1,"bbox":[48,40,220,28]}
+{"kind":"textbox","id":"sh/kb6xcn2t","slide":2,"name":"Title-2","text":"Empty notes","textPreview":"Empty notes","textChars":11,"textLines":1,"bbox":[48,88,1184,72]}
+{"kind":"shape","id":"sh/5cfyls3y","slide":2,"name":"Rule-2","bbox":[48,180,1184,2]}
+{"kind":"shape","id":"sh/6dofexkj","slide":2,"name":"SpecimenCard-2","bbox":[48,222,760,380]}
+{"kind":"textbox","id":"sh/7exgnil4","slide":2,"name":"SpecimenLabel-2","text":"EXPECTED SPEAKER-NOTES TEXT","textPreview":"EXPECTED SPEAKER-NOTES TEXT","textChars":27,"textLines":1,"bbox":[82,254,520,24]}
+{"kind":"textbox","id":"sh/sfqxgn2p","slide":2,"name":"Specimen-2","text":"[intentionally empty]","textPreview":"[intentionally empty]","textChars":21,"textLines":1,"bbox":[82,316,690,224]}
+{"kind":"shape","id":"sh/tgzyps3a","slide":2,"name":"PurposeCard-2","bbox":[844,222,388,380]}
+{"kind":"textbox","id":"sh/mh4f2t4f","slide":2,"name":"PurposeLabel-2","text":"VERIFY","textPreview":"VERIFY","textChars":6,"textLines":1,"bbox":[878,254,180,24]}
+{"kind":"textbox","id":"sh/nidwbyl0","slide":2,"name":"Purpose-2","text":"Desktop and phone show no stale notes from slide 01.","textPreview":"Desktop and phone show no stale notes from slide 01.","textChars":52,"textLines":1,"bbox":[878,316,320,212]}
+{"kind":"textbox","id":"sh/zalwval8","slide":2,"name":"FooterLabel-2","text":"EMPTY NOTES","textPreview":"EMPTY NOTES","textChars":11,"textLines":1,"bbox":[48,665,700,22]}
+{"kind":"textbox","id":"sh/y9cvm54n","slide":2,"name":"FooterNumber-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1178,660,54,28]}
+{"kind":"notes","id":"nt/1rnqbm","slide":2,"text":""}
+{"kind":"slide","id":"sl/rs59mu","slide":3,"title":"CASE 03","textShapes":8}
+{"kind":"textbox","id":"sh/7mp4vy54","slide":3,"name":"Case-3","text":"CASE 03","textPreview":"CASE 03","textChars":7,"textLines":1,"bbox":[48,40,220,28]}
+{"kind":"textbox","id":"sh/8ny5436p","slide":3,"name":"Title-3","text":"Multiline notes","textPreview":"Multiline notes","textChars":15,"textLines":1,"bbox":[48,88,1184,72]}
+{"kind":"shape","id":"sh/9o7mx8na","slide":3,"name":"Rule-3","bbox":[48,180,1184,2]}
+{"kind":"shape","id":"sh/upgn6dov","slide":3,"name":"SpecimenCard-3","bbox":[48,222,760,380]}
+{"kind":"textbox","id":"sh/vq94zi5g","slide":3,"name":"SpecimenLabel-3","text":"EXPECTED SPEAKER-NOTES TEXT","textPreview":"EXPECTED SPEAKER-NOTES TEXT","textChars":27,"textLines":1,"bbox":[82,254,520,24]}
+{"kind":"textbox","id":"sh/gri58n61","slide":3,"name":"Specimen-3","text":"Line one\nLine two\nLine three","textPreview":"Line one | Line two | Line three","textChars":28,"textLines":3,"bbox":[82,316,690,224]}
+{"kind":"shape","id":"sh/hsrm1snm","slide":3,"name":"PurposeCard-3","bbox":[844,222,388,380]}
+{"kind":"textbox","id":"sh/it0naxor","slide":3,"name":"PurposeLabel-3","text":"VERIFY","textPreview":"VERIFY","textChars":6,"textLines":1,"bbox":[878,254,180,24]}
+{"kind":"textbox","id":"sh/3e9o325c","slide":3,"name":"Purpose-3","text":"Line breaks survive COM extraction, desktop projection, and phone rendering.","textPreview":"Line breaks survive COM extraction, desktop projection, and phone rendering.","textChars":76,"textLines":1,"bbox":[878,316,320,212]}
+{"kind":"textbox","id":"sh/n61g7elo","slide":3,"name":"FooterLabel-3","text":"MULTILINE NOTES","textPreview":"MULTILINE NOTES","textChars":15,"textLines":1,"bbox":[48,665,700,22]}
+{"kind":"textbox","id":"sh/m5sfy9k3","slide":3,"name":"FooterNumber-3","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1178,660,54,28]}
+{"kind":"notes","id":"nt/rs59mu","slide":3,"text":"Line one\nLine two\nLine three"}
+{"kind":"slide","id":"sl/y514ov","slide":4,"title":"CASE 04","textShapes":8}
+{"kind":"textbox","id":"sh/k36lcnq9","slide":4,"name":"Case-4","text":"CASE 04","textPreview":"CASE 04","textChars":7,"textLines":1,"bbox":[48,40,220,28]}
+{"kind":"textbox","id":"sh/j2x43i9o","slide":4,"name":"Title-4","text":"Markup-like notes","textPreview":"Markup-like notes","textChars":17,"textLines":1,"bbox":[48,88,1184,72]}
+{"kind":"shape","id":"sh/y1o3ads3","slide":4,"name":"Rule-4","bbox":[48,180,1184,2]}
+{"kind":"shape","id":"sh/x0vm18ry","slide":4,"name":"SpecimenCard-4","bbox":[48,222,760,380]}
+{"kind":"textbox","id":"sh/wzml83ad","slide":4,"name":"SpecimenLabel-4","text":"EXPECTED SPEAKER-NOTES TEXT","textPreview":"EXPECTED SPEAKER-NOTES TEXT","textChars":27,"textLines":1,"bbox":[82,254,520,24]}
+{"kind":"textbox","id":"sh/byd4zy9s","slide":4,"name":"Specimen-4","text":"<script>alert(\"fixture\")</script>\n<strong>Not HTML</strong>","textPreview":"<script>alert(\"fixture\")</script> | <strong>Not HTML</strong>","textChars":59,"textLines":2,"bbox":[82,316,690,224]}
+{"kind":"shape","id":"sh/ax436ds7","slide":4,"name":"PurposeCard-4","bbox":[844,222,388,380]}
+{"kind":"textbox","id":"sh/9wvmx8rm","slide":4,"name":"PurposeLabel-4","text":"VERIFY","textPreview":"VERIFY","textChars":6,"textLines":1,"bbox":[878,254,180,24]}
+{"kind":"textbox","id":"sh/ovml43a1","slide":4,"name":"Purpose-4","text":"Markup remains visible plain text and never executes in the browser.","textPreview":"Markup remains visible plain text and never executes in the browser.","textChars":68,"textLines":1,"bbox":[878,316,320,212]}
+{"kind":"textbox","id":"sh/a5cvu9w7","slide":4,"name":"FooterLabel-4","text":"PLAIN-TEXT SAFETY","textPreview":"PLAIN-TEXT SAFETY","textChars":17,"textLines":1,"bbox":[48,665,700,22]}
+{"kind":"textbox","id":"sh/b6lwneds","slide":4,"name":"FooterNumber-4","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1178,660,54,28]}
+{"kind":"notes","id":"nt/y514ov","slide":4,"text":"<script>alert(\"fixture\")</script>\n<strong>Not HTML</strong>"}
+{"kind":"slide","id":"sl/x86gry","slide":5,"title":"CASE 05","textShapes":8}
+{"kind":"textbox","id":"sh/kryh0fmh","slide":5,"name":"Case-5","text":"CASE 05","textPreview":"CASE 05","textChars":7,"textLines":1,"bbox":[48,40,220,28]}
+{"kind":"textbox","id":"sh/jqp07ulw","slide":5,"name":"Title-5","text":"Hidden slide","textPreview":"Hidden slide","textChars":12,"textLines":1,"bbox":[48,88,1184,72]}
+{"kind":"shape","id":"sh/ypgzyp4r","slide":5,"name":"Rule-5","bbox":[48,180,1184,2]}
+{"kind":"shape","id":"sh/xoni5k36","slide":5,"name":"SpecimenCard-5","bbox":[48,222,760,380]}
+{"kind":"textbox","id":"sh/wnehwfml","slide":5,"name":"SpecimenLabel-5","text":"EXPECTED SPEAKER-NOTES TEXT","textPreview":"EXPECTED SPEAKER-NOTES TEXT","textChars":27,"textLines":1,"bbox":[82,254,520,24]}
+{"kind":"textbox","id":"sh/bm503al0","slide":5,"name":"Specimen-5","text":"Hidden-slide notes fixture","textPreview":"Hidden-slide notes fixture","textChars":26,"textLines":1,"bbox":[82,316,690,224]}
+{"kind":"shape","id":"sh/alwzu54f","slide":5,"name":"PurposeCard-5","bbox":[844,222,388,380]}
+{"kind":"textbox","id":"sh/hkrih43a","slide":5,"name":"PurposeLabel-5","text":"VERIFY","textPreview":"VERIFY","textChars":6,"textLines":1,"bbox":[878,254,180,24]}
+{"kind":"textbox","id":"sh/gji18zmp","slide":5,"name":"Purpose-5","text":"This slide is genuinely hidden; slide counts and navigation behavior stay authoritative.","textPreview":"This slide is genuinely hidden; slide counts and navigation behavior stay authoritative.","textChars":88,"textLines":1,"bbox":[878,316,320,212]}
+{"kind":"textbox","id":"sh/25cjyp4r","slide":5,"name":"FooterLabel-5","text":"HIDDEN SLIDE","textPreview":"HIDDEN SLIDE","textChars":12,"textLines":1,"bbox":[48,665,700,22]}
+{"kind":"textbox","id":"sh/n6lkrulw","slide":5,"name":"FooterNumber-5","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1178,660,54,28]}
+{"kind":"notes","id":"nt/x86gry","slide":5,"text":"Hidden-slide notes fixture"}
+{"kind":"slide","id":"sl/bmue40","slide":6,"title":"CASE 06","textShapes":8}
+{"kind":"textbox","id":"sh/relwz25o","slide":6,"name":"Case-6","text":"CASE 06","textPreview":"CASE 06","textChars":7,"textLines":1,"bbox":[48,40,220,28]}
+{"kind":"textbox","id":"sh/szexs76t","slide":6,"name":"Title-6","text":"Final slide","textPreview":"Final slide","textChars":11,"textLines":1,"bbox":[48,88,1184,72]}
+{"kind":"shape","id":"sh/d0ne1sne","slide":6,"name":"Rule-6","bbox":[48,180,1184,2]}
+{"kind":"shape","id":"sh/e1wfuxoz","slide":6,"name":"SpecimenCard-6","bbox":[48,222,760,380]}
+{"kind":"textbox","id":"sh/f25w325k","slide":6,"name":"SpecimenLabel-6","text":"EXPECTED SPEAKER-NOTES TEXT","textPreview":"EXPECTED SPEAKER-NOTES TEXT","textChars":27,"textLines":1,"bbox":[82,254,520,24]}
+{"kind":"textbox","id":"sh/03exw765","slide":6,"name":"Specimen-6","text":"Final-slide notes fixture","textPreview":"Final-slide notes fixture","textChars":25,"textLines":1,"bbox":[82,316,690,224]}
+{"kind":"shape","id":"sh/14ne5cnq","slide":6,"name":"PurposeCard-6","bbox":[844,222,388,380]}
+{"kind":"textbox","id":"sh/u5svidov","slide":6,"name":"PurposeLabel-6","text":"VERIFY","textPreview":"VERIFY","textChars":6,"textLines":1,"bbox":[878,254,180,24]}
+{"kind":"textbox","id":"sh/v61wri5g","slide":6,"name":"Purpose-6","text":"Next at the deck boundary never publishes an invented index or stale notes.","textPreview":"Next at the deck boundary never publishes an invented index or stale notes.","textChars":75,"textLines":1,"bbox":[878,316,320,212]}
+{"kind":"textbox","id":"sh/zi9wzixs","slide":6,"name":"FooterLabel-6","text":"FINAL BOUNDARY","textPreview":"FINAL BOUNDARY","textChars":14,"textLines":1,"bbox":[48,665,700,22]}
+{"kind":"textbox","id":"sh/ex0f6dg7","slide":6,"name":"FooterNumber-6","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1178,660,54,28]}
+{"kind":"notes","id":"nt/bmue40","slide":6,"text":"Final-slide notes fixture"}

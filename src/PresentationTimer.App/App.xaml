@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application
+    x:Class="PresentationTimer.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PresentationTimer.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
+                    <Thickness x:Key="PresenterCardBorderThickness">1</Thickness>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
+                    <Thickness x:Key="PresenterCardBorderThickness">1</Thickness>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <Thickness x:Key="PresenterCardBorderThickness">2</Thickness>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="PresenterCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="{ThemeResource PresenterCardBorderThickness}" />
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                <Setter Property="Padding" Value="24" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

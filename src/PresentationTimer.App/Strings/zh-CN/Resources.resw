@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="WindowTitle" xml:space="preserve"><value>演示计时器</value></data>
+  <data name="AppTitleBar.Title" xml:space="preserve"><value>演示计时器</value></data>
+  <data name="PageTitle.Text" xml:space="preserve"><value>演讲者计时器</value></data>
+  <data name="PageSubtitle.Text" xml:space="preserve"><value>演讲时让倒计时始终清晰可见。</value></data>
+  <data name="AlwaysOnTopToggle.Header" xml:space="preserve"><value>窗口置顶</value></data>
+  <data name="AlwaysOnTopToggle.OnContent" xml:space="preserve"><value>开</value></data>
+  <data name="AlwaysOnTopToggle.OffContent" xml:space="preserve"><value>关</value></data>
+  <data name="AlwaysOnTopToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>让演示计时器窗口始终置顶</value></data>
+  <data name="DurationInput.Header" xml:space="preserve"><value>演讲时长</value></data>
+  <data name="DurationInput.PlaceholderText" xml:space="preserve"><value>15:00</value></data>
+  <data name="DurationInput.AccessKey" xml:space="preserve"><value>D</value></data>
+  <data name="DurationInput.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>演讲时长</value></data>
+  <data name="StartButton.Content" xml:space="preserve"><value>开始</value></data>
+  <data name="StartButton.AccessKey" xml:space="preserve"><value>S</value></data>
+  <data name="StartButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>开始计时</value></data>
+  <data name="PauseButton.Content" xml:space="preserve"><value>暂停</value></data>
+  <data name="PauseButton.AccessKey" xml:space="preserve"><value>P</value></data>
+  <data name="PauseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>暂停计时</value></data>
+  <data name="ResumeButton.Content" xml:space="preserve"><value>继续</value></data>
+  <data name="ResumeButton.AccessKey" xml:space="preserve"><value>U</value></data>
+  <data name="ResumeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>继续计时</value></data>
+  <data name="ResetButton.Content" xml:space="preserve"><value>重置</value></data>
+  <data name="ResetButton.AccessKey" xml:space="preserve"><value>R</value></data>
+  <data name="ResetButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>重置计时器</value></data>
+  <data name="ValidationInfoBar.Title" xml:space="preserve"><value>请检查时长</value></data>
+  <data name="PowerPointCardTitle.Text" xml:space="preserve"><value>PowerPoint</value></data>
+  <data name="SpeakerNotesText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>当前幻灯片演讲者备注</value></data>
+  <data name="PreviousSlideButton.Content" xml:space="preserve"><value>上一页</value></data>
+  <data name="PreviousSlideButton.AccessKey" xml:space="preserve"><value>B</value></data>
+  <data name="PreviousSlideButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>上一张 PowerPoint 幻灯片</value></data>
+  <data name="NextSlideButton.Content" xml:space="preserve"><value>下一页</value></data>
+  <data name="NextSlideButton.AccessKey" xml:space="preserve"><value>N</value></data>
+  <data name="NextSlideButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>下一张 PowerPoint 幻灯片</value></data>
+  <data name="RemoteCardTitle.Text" xml:space="preserve"><value>手机遥控</value></data>
+  <data name="PairingQrImage.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>手机配对二维码</value></data>
+  <data name="PairingUrlText.Header" xml:space="preserve"><value>配对地址</value></data>
+  <data name="PairingCandidateSelector.Header" xml:space="preserve"><value>网络地址</value></data>
+  <data name="PairingCandidateSelector.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>选择用于手机配对的网络地址</value></data>
+  <data name="PairingUrlText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>手机配对地址</value></data>
+  <data name="StartRemoteButton.Content" xml:space="preserve"><value>启动遥控</value></data>
+  <data name="StartRemoteButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>启动手机遥控会话</value></data>
+  <data name="EndRemoteButton.Content" xml:space="preserve"><value>结束会话</value></data>
+  <data name="EndRemoteButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>结束手机遥控会话</value></data>
+  <data name="TrustedNetworkInfoBar.Title" xml:space="preserve"><value>仅限可信本地网络</value></data>
+  <data name="TrustedNetworkInfoBar.Message" xml:space="preserve"><value>MVP 遥控使用 HTTP，请仅连接可信 Wi-Fi。手机无法连接时，请确认两台设备在同一网络、关闭 VPN、检查 Wi-Fi 客户端隔离，并在 Windows 防火墙中允许本应用访问专用网络。</value></data>
+  <data name="TimerModeRemaining" xml:space="preserve"><value>剩余时间</value></data>
+  <data name="TimerModeOvertime" xml:space="preserve"><value>已超时</value></data>
+  <data name="TimerStateReady" xml:space="preserve"><value>就绪</value></data>
+  <data name="TimerStateRunning" xml:space="preserve"><value>计时中</value></data>
+  <data name="TimerStatePaused" xml:space="preserve"><value>已暂停</value></data>
+  <data name="PowerPointStateRunning" xml:space="preserve"><value>已连接幻灯片放映</value></data>
+  <data name="PowerPointStateNoPresentation" xml:space="preserve"><value>没有打开的演示文稿</value></data>
+  <data name="PowerPointStateNoSlideShow" xml:space="preserve"><value>请开始幻灯片放映</value></data>
+  <data name="PowerPointStateNotRunning" xml:space="preserve"><value>PowerPoint 未运行</value></data>
+  <data name="PowerPointStateDisconnected" xml:space="preserve"><value>PowerPoint 已断开</value></data>
+  <data name="PowerPointStateUnavailable" xml:space="preserve"><value>PowerPoint 集成尚未连接</value></data>
+  <data name="PowerPointSlidePositionFormat" xml:space="preserve"><value>幻灯片 {0} / {1}</value></data>
+  <data name="PowerPointNoNotes" xml:space="preserve"><value>当前幻灯片没有演讲者备注</value></data>
+  <data name="PowerPointCommandBusy" xml:space="preserve"><value>PowerPoint 正忙，请重试。</value></data>
+  <data name="PowerPointCommandUnavailable" xml:space="preserve"><value>请先开始幻灯片放映。</value></data>
+  <data name="RemoteStateStopped" xml:space="preserve"><value>遥控会话未启动</value></data>
+  <data name="RemoteStateStarting" xml:space="preserve"><value>正在启动遥控会话</value></data>
+  <data name="RemoteStateReady" xml:space="preserve"><value>可以使用手机配对</value></data>
+  <data name="RemoteStateFailed" xml:space="preserve"><value>遥控会话启动失败</value></data>
+  <data name="RemoteStateNoLanAddress" xml:space="preserve"><value>没有可用的局域网地址。请将电脑连接到可信 Wi-Fi 或以太网后重试。</value></data>
+  <data name="RemoteStateStopping" xml:space="preserve"><value>正在停止遥控会话</value></data>
+  <data name="RemoteNoPhones" xml:space="preserve"><value>没有手机连接</value></data>
+  <data name="RemoteOnePhone" xml:space="preserve"><value>已连接 1 部手机</value></data>
+  <data name="RemotePhoneCountFormat" xml:space="preserve"><value>已连接 {0} 部手机</value></data>
+  <data name="TimerInvalidDuration" xml:space="preserve"><value>请输入不超过 99:59:59 的正数整秒时长。</value></data>
+</root>

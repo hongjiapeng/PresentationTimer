@@ -1,0 +1,3 @@
+PresentationTimer.PowerPointFixture.pptx is an original, programmatically authored test fixture.
+It contains no external images, charts, factual claims, or third-party assets.
+The visual hierarchy follows the local Codex Grid layout library (slides 02, 03, and 05) supplied with the presentation-authoring runtime.

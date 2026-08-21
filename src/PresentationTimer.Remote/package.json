@@ -1,0 +1,9 @@
+{
+  "name": "presentation-timer-remote-assets",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/signalr": "10.0.11"
+  }
+}
