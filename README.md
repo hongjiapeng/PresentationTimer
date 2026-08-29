@@ -20,6 +20,17 @@ The repository includes a guided checker that opens Microsoft's official install
 .\scripts\Ensure-PowerPointDesktop.ps1 -OpenInstaller -WaitAfterOpening
 ```
 
+If `winget` is available, the same Microsoft desktop suite can be installed from the Windows Package Manager:
+
+```powershell
+winget install --id Microsoft.Office `
+  --source winget `
+  --accept-source-agreements `
+  --accept-package-agreements
+```
+
+This installs the complete Microsoft 365 Apps for enterprise package, not only PowerPoint. After installation, start PowerPoint once to sign in and activate it, then restart PresentationTimer.
+
 The script does not bypass Microsoft sign-in, licensing, User Account Control, or Office activation.
 
 ## Build and test
