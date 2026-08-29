@@ -132,7 +132,12 @@ public sealed partial class MainWindow : Window
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
         this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
         this.RequestBorderColor(DwmWindowBorderColorNone);
-        this.BeginResizeAnimation(startBounds, target, this.ToPhysicalPixels(WindowCornerRadius));
+
+        // Resize immediately when switching out of the presenter surface. This avoids
+        // rebuilding an x:Load visual tree while a native window-region animation is
+        // still applying DWM regions frame by frame.
+        this._resizeAnimationTimer.Stop();
+        this.AppWindow.MoveAndResize(target);
     }
 
     internal void EnterPresentationHudMode()
@@ -173,7 +178,8 @@ public sealed partial class MainWindow : Window
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
         this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
         this.RequestBorderColor(DwmWindowBorderColorNone);
-        this.BeginResizeAnimation(startBounds, target, this.ToPhysicalPixels(WindowCornerRadius));
+        this._resizeAnimationTimer.Stop();
+        this.AppWindow.MoveAndResize(target);
     }
 
     internal void EnterExpandedMode()

@@ -21,7 +21,7 @@
             x:Name="AppTitleBar"
             x:Uid="AppTitleBar">
             <TitleBar.IconSource>
-                <ImageIconSource ImageSource="Assets/AppIcon.ico" />
+                <SymbolIconSource Symbol="Clock" />
             </TitleBar.IconSource>
             <TitleBar.RightHeader>
                 <ToggleButton

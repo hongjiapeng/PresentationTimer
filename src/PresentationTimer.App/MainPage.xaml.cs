@@ -15,6 +15,8 @@ namespace PresentationTimer.App;
 /// </summary>
 public sealed partial class MainPage : Page, INotifyPropertyChanged
 {
+    private const double CompactArcDashLength = 86d;
+    private const double ExpandedArcDashLength = 106d;
     private readonly WindowController _windowController;
     private bool _isAlwaysOnTop;
     private bool _isPresentationPickerOpen;
@@ -118,6 +120,12 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         DesktopShellMode.PresentationHud => this.PresentationHudDragRegion,
         _ => null,
     };
+
+    /// <summary>Gets the dash offset used by the compact progress arc.</summary>
+    internal double CompactArcProgressDashOffset { get; private set; }
+
+    /// <summary>Gets the dash offset used by the expanded progress arc.</summary>
+    internal double ExpandedArcProgressDashOffset { get; private set; }
 
     internal MainViewModel ViewModel { get; }
 
@@ -238,6 +246,11 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
                 }
             });
         }
+
+        if (args.PropertyName == nameof(MainViewModel.TimerProgressValue))
+        {
+            this.UpdateArcProgressDashArrays();
+        }
     }
 
     private void OpenControlCenterMenuItem_Click(object sender, RoutedEventArgs args) =>
@@ -317,6 +330,15 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsCompactMode)));
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPresentationHudMode)));
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsExpandedMode)));
+    }
+
+    private void UpdateArcProgressDashArrays()
+    {
+        double ratio = this.ViewModel.TimerProgressValue / 100d;
+        this.CompactArcProgressDashOffset = (1d - Math.Clamp(ratio, 0d, 1d)) * CompactArcDashLength;
+        this.ExpandedArcProgressDashOffset = (1d - Math.Clamp(ratio, 0d, 1d)) * ExpandedArcDashLength;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CompactArcProgressDashOffset)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ExpandedArcProgressDashOffset)));
     }
 
     private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

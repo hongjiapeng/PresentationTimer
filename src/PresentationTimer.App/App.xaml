@@ -9,25 +9,27 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
-                    <SolidColorBrush x:Key="PresenterCompactSurfaceBrush" Color="#17191D" />
-                    <StaticResource x:Key="PresenterTimerNormalBrush" ResourceKey="TextFillColorPrimaryBrush" />
+                    <SolidColorBrush x:Key="PresenterCompactSurfaceBrush" Color="#FF10141D" />
+                    <StaticResource x:Key="PresenterTimerNormalBrush" ResourceKey="AccentTextFillColorPrimaryBrush" />
                     <StaticResource x:Key="PresenterTimerWarningBrush" ResourceKey="SystemFillColorCautionBrush" />
                     <StaticResource x:Key="PresenterTimerOvertimeBrush" ResourceKey="SystemFillColorCriticalBrush" />
                     <StaticResource x:Key="PresenterSuccessBrush" ResourceKey="SystemFillColorSuccessBrush" />
                     <StaticResource x:Key="PresenterDividerBrush" ResourceKey="DividerStrokeColorDefaultBrush" />
-                    <StaticResource x:Key="PresenterCapabilitySurfaceBrush" ResourceKey="LayerFillColorAltBrush" />
+                    <StaticResource x:Key="PresenterCapabilitySurfaceBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+                    <StaticResource x:Key="PresenterProgressTrackBrush" ResourceKey="ControlFillColorSecondaryBrush" />
                     <SolidColorBrush x:Key="PresenterCommandSurfaceBrush" Color="#E8E8E8" />
                     <Thickness x:Key="PresenterCardBorderThickness">1</Thickness>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
-                    <SolidColorBrush x:Key="PresenterCompactSurfaceBrush" Color="#17191D" />
-                    <StaticResource x:Key="PresenterTimerNormalBrush" ResourceKey="TextFillColorPrimaryBrush" />
+                    <SolidColorBrush x:Key="PresenterCompactSurfaceBrush" Color="#FF10141D" />
+                    <StaticResource x:Key="PresenterTimerNormalBrush" ResourceKey="AccentTextFillColorPrimaryBrush" />
                     <StaticResource x:Key="PresenterTimerWarningBrush" ResourceKey="SystemFillColorCautionBrush" />
                     <StaticResource x:Key="PresenterTimerOvertimeBrush" ResourceKey="SystemFillColorCriticalBrush" />
                     <StaticResource x:Key="PresenterSuccessBrush" ResourceKey="SystemFillColorSuccessBrush" />
                     <StaticResource x:Key="PresenterDividerBrush" ResourceKey="DividerStrokeColorDefaultBrush" />
-                    <StaticResource x:Key="PresenterCapabilitySurfaceBrush" ResourceKey="LayerFillColorAltBrush" />
+                    <StaticResource x:Key="PresenterCapabilitySurfaceBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+                    <StaticResource x:Key="PresenterProgressTrackBrush" ResourceKey="ControlFillColorSecondaryBrush" />
                     <SolidColorBrush x:Key="PresenterCommandSurfaceBrush" Color="#2B2E34" />
                     <Thickness x:Key="PresenterCardBorderThickness">1</Thickness>
                 </ResourceDictionary>
@@ -40,6 +42,7 @@
                     <StaticResource x:Key="PresenterSuccessBrush" ResourceKey="SystemColorWindowTextColorBrush" />
                     <StaticResource x:Key="PresenterDividerBrush" ResourceKey="SystemColorWindowTextColorBrush" />
                     <StaticResource x:Key="PresenterCapabilitySurfaceBrush" ResourceKey="SystemColorWindowColorBrush" />
+                    <StaticResource x:Key="PresenterProgressTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
                     <StaticResource x:Key="PresenterCommandSurfaceBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
                     <Thickness x:Key="PresenterCardBorderThickness">2</Thickness>
                 </ResourceDictionary>
@@ -56,10 +59,10 @@
             </Style>
             <Style x:Key="PresenterCapabilityStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource PresenterCapabilitySurfaceBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource PresenterDividerBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="Padding" Value="24" />
+                <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
+                <Setter Property="Padding" Value="20" />
             </Style>
             <Style x:Key="PresenterCommandButtonStyle" TargetType="Button">
                 <Setter Property="MinWidth" Value="44" />
@@ -86,6 +89,32 @@
             <Style x:Key="PresenterCompactIconButtonStyle" BasedOn="{StaticResource PresenterIconButtonStyle}" TargetType="Button">
                 <Setter Property="Width" Value="40" />
                 <Setter Property="Height" Value="40" />
+                <Setter Property="CornerRadius" Value="20" />
+            </Style>
+            <Style x:Key="PresenterCompactPrimaryIconButtonStyle" BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                <Setter Property="Width" Value="52" />
+                <Setter Property="Height" Value="52" />
+                <Setter Property="MinWidth" Value="52" />
+                <Setter Property="MinHeight" Value="52" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="CornerRadius" Value="26" />
+            </Style>
+            <Style x:Key="PresenterHeroActionButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="56" />
+                <Setter Property="Height" Value="56" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="{ThemeResource PresenterCommandSurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="28" />
+            </Style>
+            <Style x:Key="PresenterHeroPrimaryActionButtonStyle" BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                <Setter Property="Width" Value="64" />
+                <Setter Property="Height" Value="64" />
+                <Setter Property="MinWidth" Value="64" />
+                <Setter Property="MinHeight" Value="64" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="CornerRadius" Value="32" />
             </Style>
             <Style x:Key="PresenterTitleBarToggleStyle" TargetType="ToggleButton">
                 <Setter Property="Width" Value="40" />

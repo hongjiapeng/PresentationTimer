@@ -22,47 +22,71 @@
                 <RowDefinition Height="64" />
             </Grid.RowDefinitions>
 
-                <Grid
-                    x:Name="CompactDragRegion"
-                    AutomationProperties.AutomationId="CompactDragRegion"
-                    Grid.RowSpan="2"
-                    Background="Transparent"
-                    Loaded="CompactDragRegion_Loaded"
-                    Margin="0,0,48,0">
-                    <Viewbox Margin="16,24,16,0" MaxHeight="104" MaxWidth="360" Stretch="Uniform">
-                        <TextBlock
-                            AutomationProperties.AutomationId="CompactTimerDisplay"
-                            CharacterSpacing="-40"
-                            FontSize="96"
-                            FontWeight="SemiBold"
-                            Foreground="{x:Bind TimerForeground, Mode=OneWay}"
-                            Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
-                            TextAlignment="Center" />
-                    </Viewbox>
+            <Grid
+                x:Name="CompactDragRegion"
+                AutomationProperties.AutomationId="CompactDragRegion"
+                Grid.RowSpan="2"
+                Background="Transparent"
+                Loaded="CompactDragRegion_Loaded"
+                Margin="0,0,48,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="36" />
+                </Grid.RowDefinitions>
+                <Viewbox Margin="20,16,8,0" MaxHeight="96" MaxWidth="360" Stretch="Uniform">
+                    <TextBlock
+                        AutomationProperties.AutomationId="CompactTimerDisplay"
+                        CharacterSpacing="-40"
+                        FontSize="96"
+                        FontWeight="SemiBold"
+                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Viewbox>
+                <Viewbox Grid.Row="1" Margin="24,0,4,0" Stretch="Uniform">
+                    <Canvas Width="360" Height="36">
+                        <Path
+                            Data="M 12,30 C 104,4 256,4 348,30"
+                            Stroke="{ThemeResource PresenterProgressTrackBrush}"
+                            StrokeEndLineCap="Round"
+                            StrokeStartLineCap="Round"
+                            StrokeThickness="4" />
+                        <Path
+                            AutomationProperties.AccessibilityView="Raw"
+                            Data="M 12,30 C 104,4 256,4 348,30"
+                            Stroke="{x:Bind TimerForeground, Mode=OneWay}"
+                            StrokeDashArray="86 86"
+                            StrokeDashOffset="{x:Bind CompactArcProgressDashOffset, Mode=OneWay}"
+                            StrokeEndLineCap="Round"
+                            StrokeStartLineCap="Round"
+                            StrokeThickness="4" />
+                    </Canvas>
+                </Viewbox>
+            </Grid>
+            <Button
+                x:Name="CompactExpandButton"
+                x:Uid="CompactExpandButton"
+                AutomationProperties.AutomationId="CompactExpandButton"
+                HorizontalAlignment="Right"
+                Margin="8"
+                Click="ExpandButton_Click"
+                Style="{StaticResource PresenterCompactIconButtonStyle}"
+                TabIndex="0">
+                <Grid AutomationProperties.AccessibilityView="Raw" Width="16" Height="16" RowSpacing="4" ColumnSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="6" />
+                        <RowDefinition Height="6" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6" />
+                        <ColumnDefinition Width="6" />
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    <Rectangle Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    <Rectangle Grid.Row="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    <Rectangle Grid.Row="1" Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
                 </Grid>
-                <Button
-                    x:Name="CompactExpandButton"
-                    x:Uid="CompactExpandButton"
-                    AutomationProperties.AutomationId="CompactExpandButton"
-                    HorizontalAlignment="Right"
-                    Click="ExpandButton_Click"
-                    Style="{StaticResource PresenterCompactIconButtonStyle}"
-                    TabIndex="0">
-                    <Grid AutomationProperties.AccessibilityView="Raw" Width="16" Height="16" RowSpacing="4" ColumnSpacing="4">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="6" />
-                            <RowDefinition Height="6" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="6" />
-                            <ColumnDefinition Width="6" />
-                        </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                        <Rectangle Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                        <Rectangle Grid.Row="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                        <Rectangle Grid.Row="1" Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                    </Grid>
-                </Button>
+            </Button>
 
                 <Grid Grid.Row="2" Padding="12,8" ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
@@ -74,52 +98,68 @@
                 </Grid.ColumnDefinitions>
                 <Button
                     x:Name="CompactStartButton"
-                    x:Uid="StartButton"
+                    x:Uid="CompactStartIconButton"
                     x:Load="{x:Bind ViewModel.CanStart, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactStartButton"
                     Grid.Column="1"
                     Command="{x:Bind ViewModel.StartCommand, Mode=OneTime}"
-                    Style="{StaticResource PresenterPrimaryCommandButtonStyle}"
+                    Width="52"
+                    Height="52"
+                    MinWidth="52"
+                    MinHeight="52"
+                    Style="{StaticResource PresenterCompactPrimaryIconButtonStyle}"
                     TabIndex="1">
+                    <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE768;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="Enter" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
                     x:Name="CompactPauseButton"
-                    x:Uid="PauseButton"
+                    x:Uid="HudPauseButton"
                     x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactPauseButton"
                     Grid.Column="1"
                     Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
-                    Style="{StaticResource PresenterPrimaryCommandButtonStyle}"
+                    Width="52"
+                    Height="52"
+                    MinWidth="52"
+                    MinHeight="52"
+                    Style="{StaticResource PresenterCompactPrimaryIconButtonStyle}"
                     TabIndex="1">
+                    <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE769;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="P" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
                     x:Name="CompactResumeButton"
-                    x:Uid="ResumeButton"
+                    x:Uid="HudResumeButton"
                     x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactResumeButton"
                     Grid.Column="1"
                     Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
-                    Style="{StaticResource PresenterPrimaryCommandButtonStyle}"
+                    Width="52"
+                    Height="52"
+                    MinWidth="52"
+                    MinHeight="52"
+                    Style="{StaticResource PresenterCompactPrimaryIconButtonStyle}"
                     TabIndex="1">
+                    <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE768;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="U" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
                 </Button>
                 <Button
                     x:Name="CompactResetButton"
-                    x:Uid="ResetButton"
+                    x:Uid="CompactResetIconButton"
                     x:Load="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactResetButton"
                     Grid.Column="2"
                     Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
-                    Style="{StaticResource PresenterCommandButtonStyle}"
+                    Style="{StaticResource PresenterCompactIconButtonStyle}"
                     TabIndex="2">
+                    <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE777;" />
                     <Button.KeyboardAccelerators>
                         <KeyboardAccelerator Key="R" Modifiers="Control" />
                     </Button.KeyboardAccelerators>
@@ -308,7 +348,7 @@
             AutomationProperties.AutomationId="ExpandedControlCenterRoot"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
-            <Grid Padding="32,24,32,32" RowSpacing="28">
+            <Grid Padding="24,16,24,24" RowSpacing="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -320,14 +360,14 @@
                     AutomationProperties.AutomationId="TimerHero"
                     AutomationProperties.Name="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}"
                     IsTabStop="True"
-                    RowSpacing="12">
+                    RowSpacing="8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Viewbox MaxHeight="220" MaxWidth="760" Stretch="Uniform">
+                    <Viewbox MaxHeight="136" MaxWidth="720" Stretch="Uniform">
                         <TextBlock
                             AutomationProperties.AutomationId="ExpandedTimerDisplay"
                             CharacterSpacing="-44"
@@ -345,96 +385,146 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{StaticResource BodyLargeTextBlockStyle}"
                         Text="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}" />
-                    <ProgressBar
-                        AutomationProperties.AutomationId="TimerRemainingProgress"
+                    <Grid
+                        x:Name="ExpandedArcVisual"
                         Grid.Row="2"
-                        Height="4"
-                        MaxWidth="720"
-                        Maximum="100"
-                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
-                        Value="{x:Bind ViewModel.TimerProgressValue, Mode=OneWay}" />
-                    <Grid Grid.Row="3" Margin="0,4,0,0" ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Button
-                            x:Name="ExpandedCollapseButton"
-                            x:Uid="ExpandedCollapseButton"
-                            AutomationProperties.AutomationId="ExpandedCollapseButton"
-                            Click="CollapseButton_Click"
-                            Style="{StaticResource PresenterCommandButtonStyle}" />
-                        <Button
-                            x:Name="ExpandedStartButton"
-                            x:Uid="StartButton"
-                            x:Load="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                            AutomationProperties.AutomationId="ExpandedStartButton"
-                            Grid.Column="1"
-                            Command="{x:Bind ViewModel.StartCommand, Mode=OneTime}"
-                            Style="{StaticResource PresenterPrimaryCommandButtonStyle}">
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="Enter" Modifiers="Control" />
-                            </Button.KeyboardAccelerators>
-                        </Button>
-                        <Button
-                            x:Name="ExpandedPauseButton"
-                            x:Uid="PauseButton"
-                            x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
-                            AutomationProperties.AutomationId="ExpandedPauseButton"
-                            Grid.Column="1"
-                            Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
-                            Style="{StaticResource PresenterPrimaryCommandButtonStyle}">
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="P" Modifiers="Control" />
-                            </Button.KeyboardAccelerators>
-                        </Button>
-                        <Button
-                            x:Name="ExpandedResumeButton"
-                            x:Uid="ResumeButton"
-                            x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
-                            AutomationProperties.AutomationId="ExpandedResumeButton"
-                            Grid.Column="1"
-                            Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
-                            Style="{StaticResource PresenterPrimaryCommandButtonStyle}">
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="U" Modifiers="Control" />
-                            </Button.KeyboardAccelerators>
-                        </Button>
-                        <Button
-                            x:Name="ExpandedResetButton"
-                            x:Uid="ResetButton"
-                            x:Load="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}"
-                            AutomationProperties.AutomationId="ExpandedResetButton"
-                            Grid.Column="2"
-                            Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
-                            Style="{StaticResource PresenterCommandButtonStyle}">
-                            <Button.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="R" Modifiers="Control" />
-                            </Button.KeyboardAccelerators>
-                        </Button>
-                        <Button
-                            x:Uid="ExpandedMoreButton"
-                            AutomationProperties.AutomationId="ExpandedMoreButton"
-                            Grid.Column="4"
-                            Style="{StaticResource PresenterIconButtonStyle}">
-                            <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem x:Uid="PowerPointOpenMenuItem" Click="PowerPointMenuItem_Click" Icon="Slideshow" />
-                                    <MenuFlyoutItem x:Uid="RemoteOpenMenuItem" Click="RemoteMenuItem_Click" Icon="CellPhone" />
-                                    <MenuFlyoutItem x:Uid="TimerSettingsMenuItem" Click="TimerSettingsMenuItem_Click" Icon="Clock" />
-                                    <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem x:Uid="ExitMenuItem" Click="ExitMenuItem_Click" />
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
+                        MaxWidth="680">
+                        <Viewbox Stretch="Uniform">
+                            <Canvas Width="640" Height="60">
+                                <Path
+                                    Data="M 16,52 C 180,8 460,8 624,52"
+                                    Stroke="{ThemeResource PresenterProgressTrackBrush}"
+                                    StrokeEndLineCap="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="6" />
+                                <Path
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    Data="M 16,52 C 180,8 460,8 624,52"
+                                    Stroke="{x:Bind TimerForeground, Mode=OneWay}"
+                                    StrokeDashArray="106 106"
+                                    StrokeDashOffset="{x:Bind ExpandedArcProgressDashOffset, Mode=OneWay}"
+                                    StrokeEndLineCap="Round"
+                                    StrokeStartLineCap="Round"
+                                    StrokeThickness="6" />
+                            </Canvas>
+                        </Viewbox>
+                        <ProgressBar
+                            AutomationProperties.AutomationId="TimerRemainingProgress"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Width="1"
+                            Height="1"
+                            IsHitTestVisible="False"
+                            Maximum="100"
+                            Value="{x:Bind ViewModel.TimerProgressValue, Mode=OneWay}" />
                     </Grid>
+                    <StackPanel
+                        Grid.Row="3"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,4"
+                        Orientation="Horizontal"
+                        Spacing="28">
+                        <StackPanel Spacing="4">
+                            <Button
+                                x:Name="ExpandedCollapseButton"
+                                x:Uid="ExpandedCollapseActionButton"
+                                AutomationProperties.AutomationId="ExpandedCollapseButton"
+                                Click="CollapseButton_Click"
+                                Style="{StaticResource PresenterHeroActionButtonStyle}">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE73F;" />
+                            </Button>
+                            <TextBlock x:Uid="ExpandedCollapseActionLabel" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                        </StackPanel>
+                        <StackPanel x:Name="ExpandedStartActionGroup" x:Load="{x:Bind ViewModel.CanStart, Mode=OneWay}" Spacing="4">
+                            <Button
+                                x:Name="ExpandedStartButton"
+                                x:Uid="ExpandedStartActionButton"
+                                AutomationProperties.AutomationId="ExpandedStartButton"
+                                Command="{x:Bind ViewModel.StartCommand, Mode=OneTime}"
+                                Width="64"
+                                Height="64"
+                                MinWidth="64"
+                                MinHeight="64"
+                                Style="{StaticResource PresenterHeroPrimaryActionButtonStyle}">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="24" Glyph="&#xE768;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Enter" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <TextBlock x:Uid="ExpandedStartActionLabel" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                        </StackPanel>
+                        <StackPanel x:Name="ExpandedPauseActionGroup" x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}" Spacing="4">
+                            <Button
+                                x:Name="ExpandedPauseButton"
+                                x:Uid="ExpandedPauseActionButton"
+                                AutomationProperties.AutomationId="ExpandedPauseButton"
+                                Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
+                                Width="64"
+                                Height="64"
+                                MinWidth="64"
+                                MinHeight="64"
+                                Style="{StaticResource PresenterHeroPrimaryActionButtonStyle}">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="24" Glyph="&#xE769;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="P" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <TextBlock x:Uid="ExpandedPauseActionLabel" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                        </StackPanel>
+                        <StackPanel x:Name="ExpandedResumeActionGroup" x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}" Spacing="4">
+                            <Button
+                                x:Name="ExpandedResumeButton"
+                                x:Uid="ExpandedResumeActionButton"
+                                AutomationProperties.AutomationId="ExpandedResumeButton"
+                                Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
+                                Width="64"
+                                Height="64"
+                                MinWidth="64"
+                                MinHeight="64"
+                                Style="{StaticResource PresenterHeroPrimaryActionButtonStyle}">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="24" Glyph="&#xE768;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="U" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <TextBlock x:Uid="ExpandedResumeActionLabel" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                        </StackPanel>
+                        <StackPanel x:Name="ExpandedResetActionGroup" x:Load="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}" Spacing="4">
+                            <Button
+                                x:Name="ExpandedResetButton"
+                                x:Uid="ExpandedResetActionButton"
+                                AutomationProperties.AutomationId="ExpandedResetButton"
+                                Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
+                                Style="{StaticResource PresenterHeroActionButtonStyle}">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE777;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="R" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <TextBlock x:Uid="ExpandedResetActionLabel" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <Button
+                                x:Uid="ExpandedMoreButton"
+                                AutomationProperties.AutomationId="ExpandedMoreButton"
+                                Style="{StaticResource PresenterHeroActionButtonStyle}">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE712;" />
+                                <Button.Flyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem x:Uid="PowerPointOpenMenuItem" Click="PowerPointMenuItem_Click" Icon="Slideshow" />
+                                        <MenuFlyoutItem x:Uid="RemoteOpenMenuItem" Click="RemoteMenuItem_Click" Icon="CellPhone" />
+                                        <MenuFlyoutItem x:Uid="TimerSettingsMenuItem" Click="TimerSettingsMenuItem_Click" Icon="Clock" />
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem x:Uid="ExitMenuItem" Click="ExitMenuItem_Click" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                            <TextBlock x:Uid="ExpandedMoreActionLabel" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" />
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="1" ColumnSpacing="20">
+                <Grid Grid.Row="1" ColumnSpacing="16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -445,7 +535,7 @@
                         AutomationProperties.Name="{x:Bind ViewModel.PowerPointMenuText, Mode=OneWay}"
                         IsTabStop="True"
                         Style="{StaticResource PresenterCapabilityStyle}">
-                        <StackPanel Spacing="12">
+                        <StackPanel Spacing="10">
                             <Grid ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -501,7 +591,7 @@
                         Grid.Column="1"
                         IsTabStop="True"
                         Style="{StaticResource PresenterCapabilityStyle}">
-                        <StackPanel Spacing="12">
+                        <StackPanel Spacing="10">
                             <Grid ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -618,7 +708,7 @@
                     IsTabStop="True"
                     BorderBrush="{ThemeResource PresenterDividerBrush}"
                     BorderThickness="0,1,0,0"
-                    Padding="0,20,0,0">
+                    Padding="0,16,0,0">
                     <Grid ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
