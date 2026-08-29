@@ -14,6 +14,14 @@ PowerPoint control requires the Windows desktop edition of Microsoft PowerPoint 
 
 If the PowerPoint card reports “未检测到桌面版 PowerPoint（COM）” / “Desktop PowerPoint is not installed or registered”, install or repair the Microsoft Office desktop application and restart PresentationTimer. Selecting a file does not bypass this requirement.
 
+The repository includes a guided checker that opens Microsoft's official installer page and can recheck COM registration after installation:
+
+```powershell
+.\scripts\Ensure-PowerPointDesktop.ps1 -OpenInstaller -WaitAfterOpening
+```
+
+The script does not bypass Microsoft sign-in, licensing, User Account Control, or Office activation.
+
 ## Build and test
 
 ```powershell
