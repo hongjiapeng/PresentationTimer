@@ -42,6 +42,7 @@ All rows start as **Pending**. Change a row to Pass, Fail, Blocked, or Not avail
 | 11 | Exit PowerPoint during a read, restart it, reopen the fixture, and start the show: app obtains a new COM application/event set. | Pending | |
 | 12 | Exit PresentationTimer while fixture and PowerPoint remain open: app exits normally and never calls `Application.Quit`. | Pending | |
 | 13 | Repeat attach/detach and app shutdown cycles while monitoring process/reference behavior: no orphan PowerPoint process or steady COM-reference growth. | Pending | |
+| 14 | With PowerPoint closed, select each supported file type from **Open presentation**: the deck opens read-only, its slide show starts, desktop/phone state converges, cancel changes nothing, and an invalid file produces a safe message. | Pending | |
 
 ## LAN, phone, theme, and packaging addendum
 

@@ -20,6 +20,13 @@ The desktop application SHALL show the current timer, presentation, slide-show, 
 - **THEN** the desktop presentation area changes to a connected, running state without an application restart
 - **AND** it shows the current slide and total slide count
 
+#### Scenario: User selects a presentation file
+- **GIVEN** the application is open and desktop Microsoft PowerPoint is installed
+- **WHEN** the user selects a supported `.ppt`, `.pptx`, `.pptm`, `.pps`, or `.ppsx` file from the PowerPoint area
+- **THEN** the application opens that file read-only in PowerPoint and starts its slide show
+- **AND** the desktop presentation area changes to a connected, running state
+- **AND** cancelling the picker leaves the current PowerPoint state unchanged
+
 ### Requirement: Timer is the visual focus
 The desktop application SHALL display the current countdown or overtime value as its most prominent content, together with the configured target duration and controls valid for the current timer state.
 
@@ -95,4 +102,3 @@ The desktop application SHALL support a complete presentation flow in which desk
 - **THEN** both clients continue into a clearly identified overtime display
 - **WHEN** the user ends the remote session
 - **THEN** the phone loses remote access and the old QR code can no longer authorize a connection
-

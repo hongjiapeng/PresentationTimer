@@ -127,6 +127,14 @@ public sealed class PresentationSessionService : IPresentationSessionService, ID
     }
 
     /// <inheritdoc/>
+    public Task<OperationResult> OpenPresentationAsync(
+        string filePath,
+        CancellationToken cancellationToken = default) =>
+        this.IsShutdownRequested
+            ? Task.FromResult(ClosingFailure())
+            : this._presentationController.OpenPresentationAsync(filePath, cancellationToken);
+
+    /// <inheritdoc/>
     public Task<OperationResult> NextSlideAsync(CancellationToken cancellationToken = default) =>
         this.IsShutdownRequested
             ? Task.FromResult(ClosingFailure())

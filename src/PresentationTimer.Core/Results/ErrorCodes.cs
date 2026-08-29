@@ -17,6 +17,12 @@ public static class ErrorCodes
     /// <summary>The requested presentation operation is not currently available.</summary>
     public const string PresentationUnavailable = "presentation.unavailable";
 
+    /// <summary>The selected presentation path is empty, missing, or unsupported.</summary>
+    public const string PresentationInvalidFile = "presentation.invalid_file";
+
+    /// <summary>PowerPoint could not open or start the selected presentation.</summary>
+    public const string PresentationOpenFailed = "presentation.open_failed";
+
     /// <summary>PowerPoint temporarily rejected the requested operation because it is busy.</summary>
     public const string PresentationBusy = "presentation.busy";
 

@@ -472,6 +472,13 @@
                                 x:Load="{x:Bind ViewModel.HasSpeakerNotes, Mode=OneWay}"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 TextWrapping="Wrap" />
+                            <Button
+                                x:Name="OpenPowerPointFileButton"
+                                x:Uid="OpenPowerPointFileButton"
+                                AutomationProperties.AutomationId="OpenPowerPointFileButton"
+                                Click="OpenPowerPointFileButton_Click"
+                                IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}"
+                                Style="{StaticResource PresenterCommandButtonStyle}" />
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Button
                                     x:Uid="PreviousSlideButton"

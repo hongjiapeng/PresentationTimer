@@ -42,6 +42,7 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     private bool _isResetVisible;
     private bool _isWarning;
     private bool _isNavigating;
+    private bool _isOpeningPresentation;
     private bool _isRemoteOperationPending;
     private bool _isValidationOpen;
     private string _powerPointStatusText = string.Empty;
@@ -379,6 +380,8 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         private set => this.SetProperty(ref this._canNavigateSlides, value);
     }
 
+    public bool CanOpenPresentation => !this._isOpeningPresentation;
+
     public bool CanStartRemote
     {
         get => this._canStartRemote;
@@ -443,6 +446,40 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         return true;
     }
 
+    internal async Task OpenPresentationAsync(string filePath)
+    {
+        if (this._isOpeningPresentation)
+        {
+            return;
+        }
+
+        this._isOpeningPresentation = true;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanOpenPresentation)));
+        this.SetPowerPointStatus(this._strings.Get("PowerPointOpeningPresentation"));
+        try
+        {
+            OperationResult result = await this._sessionService.OpenPresentationAsync(filePath);
+            if (result.IsSuccess)
+            {
+                this.ApplyState(this._sessionService.State);
+                return;
+            }
+
+            this.SetPowerPointStatus(this._strings.Get(result.ErrorCode switch
+            {
+                ErrorCodes.PresentationBusy => "PowerPointCommandBusy",
+                ErrorCodes.PresentationInvalidFile => "PowerPointInvalidFile",
+                ErrorCodes.PresentationUnavailable => "PowerPointStateUnavailable",
+                _ => "PowerPointOpenFailed",
+            }));
+        }
+        finally
+        {
+            this._isOpeningPresentation = false;
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CanOpenPresentation)));
+        }
+    }
+
     private void ApplyState(PresentationSessionState state)
     {
         TimerPresentation timer = TimerPresentation.FromSnapshot(state.Timer);
@@ -469,7 +506,7 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             this._strings.Get("TimerTargetStatusFormat"),
             this.TargetDisplay,
             this.TimerStatusText);
-        this.PowerPointStatusText = this._strings.Get(state.Presentation.Connection switch
+        this.SetPowerPointStatus(this._strings.Get(state.Presentation.Connection switch
         {
             PresentationConnectionState.Running => "PowerPointStateRunning",
             PresentationConnectionState.NoPresentation => "PowerPointStateNoPresentation",
@@ -477,11 +514,7 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             PresentationConnectionState.NotRunning => "PowerPointStateNotRunning",
             PresentationConnectionState.Disconnected => "PowerPointStateDisconnected",
             _ => "PowerPointStateUnavailable",
-        });
-        this.PowerPointMenuText = string.Format(
-            CultureInfo.CurrentCulture,
-            this._strings.Get("PowerPointMenuStatusFormat"),
-            this.PowerPointStatusText);
+        }));
         this.SlidePositionText = state.Presentation.CurrentSlideIndex is int current &&
             state.Presentation.TotalSlides is int total
             ? string.Format(
@@ -599,6 +632,15 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     {
         this.ValidationMessage = this._strings.Get("TimerInvalidDuration");
         this.IsValidationOpen = true;
+    }
+
+    private void SetPowerPointStatus(string status)
+    {
+        this.PowerPointStatusText = status;
+        this.PowerPointMenuText = string.Format(
+            CultureInfo.CurrentCulture,
+            this._strings.Get("PowerPointMenuStatusFormat"),
+            status);
     }
 
     private void StartNavigation(bool forward)

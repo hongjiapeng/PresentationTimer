@@ -1,6 +1,6 @@
 # PresentationTimer
 
-PresentationTimer is a local-first Windows presenter workspace built with .NET 10 and WinUI 3. It combines an accurate countdown/overtime timer, control and speaker-note monitoring for an already-running Microsoft PowerPoint slide show, and an authenticated phone browser remote over the local network.
+PresentationTimer is a local-first Windows presenter workspace built with .NET 10 and WinUI 3. It combines an accurate countdown/overtime timer, PowerPoint file selection/control and speaker-note monitoring, and an authenticated phone browser remote over the local network.
 
 ## Prerequisites
 
@@ -9,6 +9,10 @@ PresentationTimer is a local-first Windows presenter workspace built with .NET 1
 - Visual Studio 2026 with the WinUI application development workload
 - Microsoft PowerPoint desktop, for PowerPoint integration checks
 - Developer Mode enabled for unpackaged Debug launch
+
+PowerPoint control requires the Windows desktop edition of Microsoft PowerPoint and its registered `PowerPoint.Application` COM class. WPS Office (including its `KWPP.Application` COM class), PowerPoint for the web, and the Microsoft 365/Office portal app are not supported by the current adapter.
+
+If the PowerPoint card reports “未检测到桌面版 PowerPoint（COM）” / “Desktop PowerPoint is not installed or registered”, install or repair the Microsoft Office desktop application and restart PresentationTimer. Selecting a file does not bypass this requirement.
 
 ## Build and test
 
@@ -26,7 +30,7 @@ Run the desktop UI smoke checks after a Debug x64 build:
 
 ## Use
 
-1. Open PowerPoint, open a deck, and start its slide show. PresentationTimer attaches automatically; it never starts or closes PowerPoint.
+1. In the PowerPoint card, select **Open presentation**, choose a `.ppt`, `.pptx`, `.pptm`, `.pps`, or `.ppsx` file, and let PresentationTimer open it read-only and start the slide show. You can also start a slide show in PowerPoint first; PresentationTimer will attach automatically. It never closes the presentation or PowerPoint.
 2. Enter a duration such as `15:00` and select **Start**. Pause, resume, and reset remain local desktop commands.
 3. Select **Start remote**. Scan the displayed QR code from a phone on the same trusted Wi-Fi/LAN.
 4. Use the browser's Previous/Next buttons and view the authoritative slide number, plain-text notes, and remaining/overtime value.
@@ -43,6 +47,13 @@ The MVP uses authenticated HTTP on the local network, not HTTPS. A 256-bit one-t
 - In Windows Security, allow PresentationTimer on **Private** networks if Windows Firewall prompts. The app never elevates or changes firewall/network settings itself.
 - If the PC changed networks or IP address, wait for replacement adapter choices, select the reachable URL, and scan its new QR code.
 - A corporate device policy may block inbound LAN listeners; ask the administrator to permit this app for the local subnet.
+
+## PowerPoint cannot open a selected file
+
+- Confirm that Microsoft PowerPoint desktop is installed, not only WPS Office or the Microsoft 365 portal.
+- Start PowerPoint once and complete any Office repair/activation prompts, then restart PresentationTimer.
+- The selected file must use `.ppt`, `.pptx`, `.pptm`, `.pps`, or `.ppsx`; unsupported, missing, or unreadable files produce a safe error without changing the current presentation state.
+- WPS support requires a separate adapter and is not enabled yet.
 
 When multiple operational adapters are available, select the labeled Ethernet, Wi-Fi, or other candidate whose subnet reaches the phone. If the PC address changes during a live session, PresentationTimer withdraws the stale QR, rebinds the host, and publishes replacement choices. Existing phones may reconnect when the endpoint remains reachable; otherwise scan the replacement QR.
 

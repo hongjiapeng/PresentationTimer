@@ -20,7 +20,7 @@ The system SHALL distinguish and report at least these states: PowerPoint unavai
 - **AND** slide-show navigation controls are unavailable
 
 ### Requirement: Running PowerPoint is detected and re-detected
-The system SHALL detect a running PowerPoint instance and its active slide show without requiring the application to launch, open, edit, or take ownership of a presentation, and SHALL continue looking after PowerPoint becomes unavailable.
+The system SHALL detect a running PowerPoint instance and its active slide show without automatic activation, file opening, editing, or shutdown ownership, and SHALL continue looking after PowerPoint becomes unavailable.
 
 #### Scenario: PowerPoint starts after the application
 - **GIVEN** the application is open and reports that PowerPoint is not running
@@ -32,6 +32,26 @@ The system SHALL detect a running PowerPoint instance and its active slide show 
 - **WHEN** the user restarts PowerPoint and starts a slide show
 - **THEN** the application establishes a fresh connection
 - **AND** stale data and controls from the old PowerPoint instance are not reused
+
+### Requirement: User can open a presentation for immediate control
+The system SHALL accept a supported local presentation path only after explicit user selection, activate desktop PowerPoint when necessary, open the selected presentation read-only, start its slide show, and publish the resulting authoritative state.
+
+#### Scenario: Selected presentation opens successfully
+- **GIVEN** desktop PowerPoint is installed and no slide show is currently running
+- **WHEN** the user selects a readable `.ppt`, `.pptx`, `.pptm`, `.pps`, or `.ppsx` file
+- **THEN** PowerPoint becomes visible, opens the selected presentation read-only, and starts its slide show
+- **AND** the resulting slide position and speaker notes are published
+
+#### Scenario: Selected path is invalid or unsupported
+- **WHEN** an empty, missing, directory, or unsupported file path reaches presentation control
+- **THEN** PowerPoint is not activated and no presentation is opened
+- **AND** the caller receives a stable invalid-file result
+
+#### Scenario: Desktop PowerPoint is unavailable
+- **GIVEN** desktop PowerPoint is not installed or its automation class is not registered
+- **WHEN** the user selects a supported presentation file
+- **THEN** the application reports that desktop PowerPoint is unavailable
+- **AND** the timer and remote session remain usable
 
 ### Requirement: Current slide state is exposed
 While a slide show is running, the system SHALL expose the current slide's presentation index, the active presentation's total slide count, and the speaker-notes plain text associated with that current slide.
@@ -97,4 +117,3 @@ The system SHALL contain failures caused by closed, busy, restarted, or invalid 
 - **WHEN** the user exits the application
 - **THEN** the application stops observing PowerPoint and releases its connection
 - **AND** the user's PowerPoint process and presentation remain open
-

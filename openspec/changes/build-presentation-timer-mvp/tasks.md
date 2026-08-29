@@ -59,6 +59,10 @@
 - [ ] 5.12 Implement PowerPoint exit/restart recovery and prove a new application RCW/event set is acquired rather than reusing the invalid instance.
 - [x] 5.13 Implement adapter shutdown that stops reconciliation, unsubscribes events, releases owned RCWs, and never calls `Application.Quit`, closes a deck, kills a process, or blocks the WinUI thread.
 - [ ] 5.14 Run build/tests and the PowerPoint manual checks through startup, detection, notes, Next/Previous, keyboard change, show end, PowerPoint exit/restart, and app exit leaving PowerPoint open.
+- [x] 5.15 Add a desktop PowerPoint file picker for `.ppt`, `.pptx`, `.pptm`, `.pps`, and `.ppsx`, with cancellation leaving presentation state unchanged.
+- [x] 5.16 Add `OpenPresentationAsync` through the Core service boundary and implement validated-path COM activation, read-only open/reuse, `SlideShowSettings.Run`, and authoritative refresh on the existing STA.
+- [x] 5.17 Map unsupported/missing paths, unavailable COM registration, busy calls, file-open failures, and disconnections to stable user-safe results; never close the selected presentation or call `Application.Quit` during app shutdown.
+- [x] 5.18 Add focused automated tests for validation, activation mapping, and service delegation; run the PowerPoint/Core/App test projects plus a solution build and OpenSpec validation.
 
 ## 6. Secured remote-session foundation
 
@@ -123,7 +127,7 @@
 
 ## 11. Verification, documentation, and dogfood packaging
 
-- [x] 11.1 Add a fixture-driven PowerPoint manual checklist covering the 13 cases in `design.md` and prepare a small numbered deck with empty, multiline, markup-like, hidden-slide, and final-slide notes cases.
+- [x] 11.1 Add a fixture-driven PowerPoint manual checklist covering the cases in `design.md` and prepare a small numbered deck with empty, multiline, markup-like, hidden-slide, and final-slide notes cases.
 - [ ] 11.2 Execute the full PowerPoint checklist with available 32-bit and 64-bit desktop PowerPoint installations and record environment/results without adding fake COM coverage infrastructure.
 - [x] 11.3 Add an unpackaged self-contained x64 WinUI publish profile including .NET, Windows App SDK, ASP.NET Core, static phone assets, QR dependency, and Office interop metadata; keep NativeAOT disabled.
 - [ ] 11.4 Publish from a clean checkout/output directory and verify the packaged files launch on a clean Windows user profile without separately installing .NET or Windows App SDK runtimes.

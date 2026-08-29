@@ -110,6 +110,11 @@
   <data name="PowerPointNoNotes" xml:space="preserve"><value>No speaker notes on this slide</value></data>
   <data name="PowerPointCommandBusy" xml:space="preserve"><value>PowerPoint is busy. Try again.</value></data>
   <data name="PowerPointCommandUnavailable" xml:space="preserve"><value>Start a slide show before navigating.</value></data>
+  <data name="OpenPowerPointFileButton.Content" xml:space="preserve"><value>Select and present PPT</value></data>
+  <data name="OpenPowerPointFileButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Select a PowerPoint file and start its slide show</value></data>
+  <data name="PowerPointOpeningPresentation" xml:space="preserve"><value>Opening the presentation and starting its slide show…</value></data>
+  <data name="PowerPointInvalidFile" xml:space="preserve"><value>Select an existing PPT, PPTX, PPTM, PPS, or PPSX file.</value></data>
+  <data name="PowerPointOpenFailed" xml:space="preserve"><value>PowerPoint could not open or present the selected file. Check that it is readable and not damaged.</value></data>
   <data name="RemoteStateStopped" xml:space="preserve"><value>Remote session stopped</value></data>
   <data name="RemoteStateStarting" xml:space="preserve"><value>Starting remote session</value></data>
   <data name="RemoteStateReady" xml:space="preserve"><value>Ready for phone pairing</value></data>

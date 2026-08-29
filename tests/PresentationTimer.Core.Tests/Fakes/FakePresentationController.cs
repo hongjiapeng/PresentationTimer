@@ -12,11 +12,24 @@ internal sealed class FakePresentationController : IPresentationController
 
     public int NextInvocationCount { get; private set; }
 
+    public int OpenInvocationCount { get; private set; }
+
+    public string? LastOpenedFilePath { get; private set; }
+
     public int PreviousInvocationCount { get; private set; }
 
     public Task StartMonitoringAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
     public Task StopMonitoringAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task<OperationResult> OpenPresentationAsync(
+        string filePath,
+        CancellationToken cancellationToken = default)
+    {
+        this.OpenInvocationCount++;
+        this.LastOpenedFilePath = filePath;
+        return Task.FromResult(OperationResult.Success());
+    }
 
     public Task<OperationResult> NextAsync(CancellationToken cancellationToken = default)
     {

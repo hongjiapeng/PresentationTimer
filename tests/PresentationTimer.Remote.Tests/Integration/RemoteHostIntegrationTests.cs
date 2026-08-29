@@ -613,6 +613,11 @@ public sealed class RemoteHostIntegrationTests
 
         public Task StopMonitoringAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
+        public Task<OperationResult> OpenPresentationAsync(
+            string filePath,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult.Success());
+
         public Task<OperationResult> NextAsync(CancellationToken cancellationToken = default)
         {
             this.NextCalls++;

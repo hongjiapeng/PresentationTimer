@@ -53,6 +53,14 @@ public interface IPresentationSessionService
     /// <returns>A task representing the operation.</returns>
     Task StartPresentationMonitoringAsync(CancellationToken cancellationToken = default);
 
+    /// <summary>Opens a user-selected presentation read-only and starts its slide show.</summary>
+    /// <param name="filePath">The local presentation path selected by the desktop user.</param>
+    /// <param name="cancellationToken">Cancels before submission.</param>
+    /// <returns>The structured open result.</returns>
+    Task<OperationResult> OpenPresentationAsync(
+        string filePath,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Navigates exactly once to the next slide.</summary>
     /// <param name="cancellationToken">Cancels before submission.</param>
     /// <returns>The structured navigation result.</returns>

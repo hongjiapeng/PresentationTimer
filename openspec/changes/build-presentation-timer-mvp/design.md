@@ -27,7 +27,7 @@ Research informed but did not supply application code. `PhoneAsPrompter` validat
 **Non-Goals:**
 
 - A general plugin/provider framework, dependency injection framework beyond the built-in .NET host, message bus, CQRS layer, database, or persistent event log.
-- Starting PowerPoint, opening files, starting slide shows, changing slide content, or calling `PowerPoint.Application.Quit`.
+- Automatically starting PowerPoint or opening a file without an explicit user selection; editing slide content; closing presentations; or calling `PowerPoint.Application.Quit`.
 - Native mobile code, service workers/PWA installation, Internet relay, NAT traversal, automatic TLS certificates, or cloud identity.
 - Supporting more than the currently active PowerPoint slide show in the MVP.
 - NativeAOT, ARM64 distribution, Microsoft Store submission, auto-update, or enterprise firewall deployment in the first dogfood package.
@@ -37,6 +37,7 @@ Research informed but did not supply application code. `PhoneAsPrompter` validat
 - The primary dogfood environment is Windows 11 x64 with desktop Microsoft PowerPoint; the project targets `net10.0-windows10.0.19041.0` unless implementation-time SDK constraints require a higher Windows target.
 - Modern iOS Safari and Android Chrome are the supported phone browsers. The phone and PC have direct IP reachability over the same trusted LAN/Wi-Fi; IPv4 is the MVP path.
 - One PowerPoint application and one active slide show are authoritative. If PowerPoint exposes multiple slide shows, the currently active slide-show window wins; slide-show selection UI is deferred.
+- The desktop picker accepts `.ppt`, `.pptx`, `.pptm`, `.pps`, and `.ppsx`. A selected path is normalized and validated before COM activation, then opened read-only so presentation content is not modified by this application.
 - Displayed current slide is `Slide.SlideIndex`, total slides is the active presentation's `Slides.Count`, and native PowerPoint navigation behavior is preserved for hidden slides, custom shows, and the final slide.
 - Speaker notes are plain text from notes body placeholders. Rich formatting, images, ink, and embedded objects are not transferred.
 - A remote session is in memory only. Multiple browsers holding the same live QR token may connect; desktop “phone connected” means one or more authenticated hub connections.
@@ -89,6 +90,7 @@ Keep contracts narrow and asynchronous at infrastructure boundaries. Names can b
 IPresentationController
   State: PresentationSnapshot
   StartMonitoringAsync / StopMonitoringAsync
+  OpenPresentationAsync
   NextAsync / PreviousAsync
   StateChanged(PresentationSnapshot)
 
@@ -113,7 +115,7 @@ IPresentationSessionService
 
 `PresentationSessionService` is the only application command gateway. WinUI view models and SignalR hub methods both call it. It subscribes to timer, presentation-controller, and remote-host state events, merges the changed slice into the immutable session snapshot under a short lock, increments a `Revision`, then publishes the new snapshot after releasing the lock. No external I/O or event callback runs while the state lock is held.
 
-Commands that require infrastructure execute outside the state lock. The resulting adapter snapshot/event is then merged. PowerPoint navigation is not optimistically applied: the UI and phone wait for PowerPoint's resulting authoritative snapshot. Browser navigation invocations are never automatically retried because Next/Previous are non-idempotent; an uncertain invocation waits for state reconciliation.
+Commands that require infrastructure execute outside the state lock. The resulting adapter snapshot/event is then merged. `OpenPresentationAsync` accepts only a validated local path selected by the desktop UI; PowerPoint navigation is not optimistically applied, and the UI and phone wait for PowerPoint's resulting authoritative snapshot. Browser navigation invocations are never automatically retried because Next/Previous are non-idempotent; an uncertain invocation waits for state reconciliation.
 
 ### 3. Authoritative presentation state
 
@@ -171,7 +173,9 @@ The browser renders received whole-second values and may use `performance.now()`
 
 Use early-bound `Microsoft.Office.Interop.PowerPoint` types with embedded interop metadata. Avoid `dynamic`, reflection chains, and source-generated/custom COM wrappers in the MVP.
 
-The adapter never creates PowerPoint. It checks whether `PowerPoint.Application` is registered and attaches to the running application through the native OLE `GetActiveObject` function. Modern .NET does not provide the old .NET Framework convenience API consistently, so the small P/Invoke wrapper is isolated and covered by result-code tests where possible. If no running object is registered, the adapter reports `NotRunning` and retries attachment on a low-frequency reconciliation schedule.
+Background monitoring never creates PowerPoint. It checks whether `PowerPoint.Application` is registered and attaches to the running application through the native OLE `GetActiveObject` function. Modern .NET does not provide the old .NET Framework convenience API consistently, so the small P/Invoke wrapper is isolated and covered by result-code tests where possible. If no running object is registered, the adapter reports `NotRunning` and retries attachment on a low-frequency reconciliation schedule.
+
+An explicit desktop file selection follows a separate activation path on the same COM STA. The adapter validates and canonicalizes the path before COM work, reuses its attached PowerPoint application when available, or activates `PowerPoint.Application` through its registered COM class when necessary. It makes PowerPoint visible, reuses the selected presentation if that exact full path is already open, otherwise opens it read-only with a visible window, and calls `SlideShowSettings.Run`. Activation/class-registration and file-open failures map to stable user-safe results. Cancellation before submission prevents activation; once the non-idempotent open/run sequence has entered COM it is not automatically replayed.
 
 On attachment it subscribes to the application events needed to invalidate state:
 
@@ -205,9 +209,9 @@ COM event callbacks perform minimal work: mark state dirty and post a snapshot r
 
 ### 7. COM object lifetime and failure recovery
 
-The adapter owns one long-lived `PowerPoint.Application` RCW only while attached because application events require it. Every nested object is acquired into a per-operation COM scope and released deterministically in reverse acquisition order in `finally`. The scope tracks RCWs by managed reference identity so the same wrapper is not released twice. Long property chains are broken into named locals; enumeration uses indexed access and releases each item before moving on.
+The adapter owns one long-lived `PowerPoint.Application` RCW only while attached because application events require it. A presentation opened after user selection remains owned by PowerPoint; the adapter does not retain a long-lived presentation RCW and does not close it during shutdown. Every nested object is acquired into a per-operation COM scope and released deterministically in reverse acquisition order in `finally`. The scope tracks RCWs by managed reference identity so the same wrapper is not released twice. Long property chains are broken into named locals; enumeration uses indexed access and releases each item before moving on.
 
-`Marshal.FinalReleaseComObject` is allowed only for objects exclusively owned by this private STA adapter and never for an event argument or a wrapper shared with another scope. The root application is released only after all delegates have been unsubscribed. The adapter never invokes `Application.Quit`, closes a presentation, runs a slide show, or kills a process.
+`Marshal.FinalReleaseComObject` is allowed only for objects exclusively owned by this private STA adapter and never for an event argument or a wrapper shared with another scope. The root application is released only after all delegates have been unsubscribed. Except for `SlideShowSettings.Run` after an explicit user selection, the adapter never starts a slide show; it never invokes `Application.Quit`, closes a presentation, or kills a process.
 
 Expected COM failures are mapped to stable states/codes:
 
@@ -368,21 +372,22 @@ Start the real remote host on loopback/dynamic ports with a fake `IPresentationC
 
 ### PowerPoint integration verification
 
-Do not build a fake COM object graph. Maintain a repeatable manual checklist with a small `.pptx` fixture containing numbered slides, empty and multiline notes, markup-like notes, a hidden slide, and a final slide. Verify on supported Office bitness where available:
+Do not build a fake COM object graph. Maintain a repeatable manual checklist with a small `.pptx` fixture containing numbered slides, empty and multiline notes, markup-like notes, a hidden slide, and a final slide. Verify these 14 cases on supported Office bitness where available:
 
 1. PowerPoint absent/not registered.
 2. PowerPoint installed but not running.
 3. PowerPoint running with no presentation.
 4. Presentation open without slide show.
 5. Application starts first, then slide show starts.
-6. Current index, total count, empty notes, multiline notes, and safe markup text.
-7. Desktop Next/Previous and phone Next/Previous.
-8. Keyboard/clicker slide changes synchronize.
-9. Start/end/restart slide show.
-10. PowerPoint busy during animation or modal UI.
-11. PowerPoint exit during read and later restart/reconnect.
-12. Application exit leaves PowerPoint and the presentation open.
-13. Repeated attach/detach cycles do not leave orphan PowerPoint processes or steadily grow COM references.
+6. User selects each supported presentation extension; PowerPoint activates if needed, opens the file read-only, and starts the show; picker cancellation changes nothing.
+7. Current index, total count, empty notes, multiline notes, and safe markup text.
+8. Desktop Next/Previous and phone Next/Previous.
+9. Keyboard/clicker slide changes synchronize.
+10. Start/end/restart slide show.
+11. PowerPoint busy during animation or modal UI.
+12. PowerPoint exit during read and later restart/reconnect.
+13. Application exit leaves PowerPoint and the presentation open.
+14. Repeated attach/detach cycles do not leave orphan PowerPoint processes or steadily grow COM references.
 
 ### End-to-end and packaging validation
 

@@ -142,6 +142,11 @@ public sealed class AppServiceProviderTests
 
         public Task StartMonitoringAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 
+        public Task<OperationResult> OpenPresentationAsync(
+            string filePath,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(OperationResult.Success());
+
         public Task StopMonitoringAsync(CancellationToken cancellationToken = default)
         {
             this.StopCalls++;

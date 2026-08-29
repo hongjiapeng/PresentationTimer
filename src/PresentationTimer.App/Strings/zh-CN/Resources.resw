@@ -110,6 +110,11 @@
   <data name="PowerPointNoNotes" xml:space="preserve"><value>当前幻灯片没有演讲者备注</value></data>
   <data name="PowerPointCommandBusy" xml:space="preserve"><value>PowerPoint 正忙，请重试。</value></data>
   <data name="PowerPointCommandUnavailable" xml:space="preserve"><value>请先开始幻灯片放映。</value></data>
+  <data name="OpenPowerPointFileButton.Content" xml:space="preserve"><value>选择并放映 PPT</value></data>
+  <data name="OpenPowerPointFileButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>选择 PowerPoint 文件并开始幻灯片放映</value></data>
+  <data name="PowerPointOpeningPresentation" xml:space="preserve"><value>正在用 PowerPoint 打开并开始放映…</value></data>
+  <data name="PowerPointInvalidFile" xml:space="preserve"><value>请选择现有的 PPT、PPTX、PPTM、PPS 或 PPSX 文件。</value></data>
+  <data name="PowerPointOpenFailed" xml:space="preserve"><value>PowerPoint 无法打开或放映所选文件，请确认文件可读且未损坏。</value></data>
   <data name="RemoteStateStopped" xml:space="preserve"><value>遥控会话未启动</value></data>
   <data name="RemoteStateStarting" xml:space="preserve"><value>正在启动遥控会话</value></data>
   <data name="RemoteStateReady" xml:space="preserve"><value>可以使用手机配对</value></data>

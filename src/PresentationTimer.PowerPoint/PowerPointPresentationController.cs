@@ -22,6 +22,7 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
     private const int ServerUnavailable = unchecked((int)0x800706BA);
     private const int NavigationAttemptLimit = 3;
     private readonly IActiveObjectResolver _activeObjectResolver;
+    private readonly IPowerPointApplicationActivator _applicationActivator;
     private readonly StaComDispatcher _dispatcher;
     private readonly object _lifecycleGate = new object();
     private readonly ILogger<PowerPointPresentationController> _logger;
@@ -42,7 +43,8 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
             new ActiveObjectResolver(),
             new StaComDispatcher(),
             TimeSpan.FromSeconds(2),
-            NullLogger<PowerPointPresentationController>.Instance)
+            NullLogger<PowerPointPresentationController>.Instance,
+            new PowerPointApplicationActivator())
     {
     }
 
@@ -52,7 +54,12 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
     /// </summary>
     /// <param name="logger">The process logger.</param>
     public PowerPointPresentationController(ILogger<PowerPointPresentationController> logger)
-        : this(new ActiveObjectResolver(), new StaComDispatcher(), TimeSpan.FromSeconds(2), logger)
+        : this(
+            new ActiveObjectResolver(),
+            new StaComDispatcher(),
+            TimeSpan.FromSeconds(2),
+            logger,
+            new PowerPointApplicationActivator())
     {
     }
 
@@ -60,7 +67,8 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
         IActiveObjectResolver activeObjectResolver,
         StaComDispatcher dispatcher,
         TimeSpan reconciliationInterval,
-        ILogger<PowerPointPresentationController>? logger = null)
+        ILogger<PowerPointPresentationController>? logger = null,
+        IPowerPointApplicationActivator? applicationActivator = null)
     {
         ArgumentNullException.ThrowIfNull(activeObjectResolver);
         ArgumentNullException.ThrowIfNull(dispatcher);
@@ -73,6 +81,7 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
         }
 
         this._activeObjectResolver = activeObjectResolver;
+        this._applicationActivator = applicationActivator ?? new PowerPointApplicationActivator();
         this._dispatcher = dispatcher;
         this._reconciliationInterval = reconciliationInterval;
         this._logger = logger ?? NullLogger<PowerPointPresentationController>.Instance;
@@ -162,6 +171,40 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
         this.NavigateAsync(forward: false, cancellationToken);
 
     /// <inheritdoc/>
+    public async Task<OperationResult> OpenPresentationAsync(
+        string filePath,
+        CancellationToken cancellationToken = default)
+    {
+        OperationResult<string> validation = PresentationFilePath.Validate(filePath);
+        if (!validation.IsSuccess || validation.Value is not string normalizedPath)
+        {
+            return OperationResult.Failure(
+                validation.ErrorCode ?? ErrorCodes.PresentationInvalidFile,
+                validation.Message ?? "Select an existing PowerPoint presentation file.");
+        }
+
+        if (this._stopped)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.PresentationUnavailable,
+                "Presentation control is stopping.");
+        }
+
+        try
+        {
+            return await this._dispatcher.InvokeAsync(
+                () => this.OpenPresentation(normalizedPath),
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            return OperationResult.Failure(
+                ErrorCodes.PresentationUnavailable,
+                "Presentation control is unavailable.");
+        }
+    }
+
+    /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
@@ -216,6 +259,38 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
     private static bool IsDisconnected(COMException exception) =>
         exception.HResult is ObjectNotConnected or RpcDisconnected or ServerUnavailable;
 
+    private static Ppt.Presentation? FindOpenPresentation(
+        Ppt.Presentations presentations,
+        string normalizedPath,
+        ComObjectScope scope)
+    {
+        for (int index = 1; index <= presentations.Count; index++)
+        {
+            Ppt.Presentation presentation = scope.Track(presentations[index]);
+            if (PathsEqual(presentation.FullName, normalizedPath))
+            {
+                return presentation;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool PathsEqual(string candidatePath, string normalizedPath)
+    {
+        try
+        {
+            return string.Equals(
+                Path.GetFullPath(candidatePath),
+                normalizedPath,
+                StringComparison.OrdinalIgnoreCase);
+        }
+        catch (Exception exception) when (exception is ArgumentException or IOException or NotSupportedException)
+        {
+            return false;
+        }
+    }
+
     [LoggerMessage(1000, LogLevel.Information, "Starting PowerPoint monitoring")]
     private static partial void LogMonitoringStarting(ILogger logger);
 
@@ -261,6 +336,15 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
 
     [LoggerMessage(1012, LogLevel.Information, "Clearing stale PowerPoint state and waiting to reattach")]
     private static partial void LogClearingStaleState(ILogger logger);
+
+    [LoggerMessage(1013, LogLevel.Information, "Opening a user-selected presentation in PowerPoint")]
+    private static partial void LogPresentationOpening(ILogger logger);
+
+    [LoggerMessage(1014, LogLevel.Warning, "PowerPoint could not open the user-selected presentation")]
+    private static partial void LogPresentationOpenFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(1015, LogLevel.Information, "PowerPoint opened the selected presentation and started its slide show")]
+    private static partial void LogPresentationOpened(ILogger logger);
 
     private void AttachApplication()
     {
@@ -321,6 +405,180 @@ public sealed partial class PowerPointPresentationController : IPresentationCont
             }
 
             this._application = null;
+        }
+    }
+
+    private OperationResult OpenPresentation(string normalizedPath)
+    {
+        LogPresentationOpening(this._logger);
+        OperationResult applicationResult = this.EnsureApplicationForOpen();
+        if (!applicationResult.IsSuccess || this._application is null)
+        {
+            return applicationResult;
+        }
+
+        try
+        {
+            using var scope = new ComObjectScope();
+            this._application.Visible = Microsoft.Office.Core.MsoTriState.msoTrue;
+            if (this.HasRunningSlideShow(normalizedPath, scope))
+            {
+                this.Publish(PresentationSnapshotReader.Read(this._application));
+                LogPresentationOpened(this._logger);
+                return OperationResult.Success();
+            }
+
+            Ppt.Presentations presentations = scope.Track(this._application.Presentations);
+            Ppt.Presentation? presentation = FindOpenPresentation(
+                presentations,
+                normalizedPath,
+                scope);
+            presentation ??= scope.Track(presentations.Open(
+                normalizedPath,
+                Microsoft.Office.Core.MsoTriState.msoTrue,
+                Microsoft.Office.Core.MsoTriState.msoFalse,
+                Microsoft.Office.Core.MsoTriState.msoTrue));
+            Ppt.SlideShowSettings settings = scope.Track(presentation.SlideShowSettings);
+            _ = scope.Track(settings.Run());
+            this.Publish(PresentationSnapshotReader.Read(this._application));
+            LogPresentationOpened(this._logger);
+            return OperationResult.Success();
+        }
+        catch (COMException exception) when (IsBusy(exception))
+        {
+            LogNavigationBusy(this._logger);
+            this.Publish(this.State with { LastErrorCode = ErrorCodes.PresentationBusy });
+            return OperationResult.Failure(
+                ErrorCodes.PresentationBusy,
+                "PowerPoint is busy. Try opening the presentation again.");
+        }
+        catch (COMException exception) when (IsDisconnected(exception))
+        {
+            LogNavigationDisconnected(this._logger, exception);
+            this.HandleDisconnection();
+            return OperationResult.Failure(
+                ErrorCodes.PresentationDisconnected,
+                "PowerPoint disconnected. Waiting to reconnect.");
+        }
+        catch (Exception exception)
+        {
+            LogPresentationOpenFailed(this._logger, exception);
+            this.PublishOpenFailure();
+            return OperationResult.Failure(
+                ErrorCodes.PresentationOpenFailed,
+                "PowerPoint could not open or start the selected presentation.");
+        }
+    }
+
+    private OperationResult EnsureApplicationForOpen()
+    {
+        if (this._application is not null)
+        {
+            return OperationResult.Success();
+        }
+
+        ApplicationActivationResult activation =
+            this._applicationActivator.Activate("PowerPoint.Application");
+        if (activation.Status == ApplicationActivationStatus.Unavailable)
+        {
+            this.Publish(new PresentationSnapshot(
+                PresentationConnectionState.Unavailable,
+                null,
+                null,
+                string.Empty,
+                ErrorCodes.PresentationUnavailable));
+            return OperationResult.Failure(
+                ErrorCodes.PresentationUnavailable,
+                "Desktop PowerPoint is not installed or registered.");
+        }
+
+        if (activation.Status != ApplicationActivationStatus.Activated ||
+            activation.Instance is not Ppt.Application application)
+        {
+            if (activation.Instance is not null && Marshal.IsComObject(activation.Instance))
+            {
+                _ = Marshal.FinalReleaseComObject(activation.Instance);
+            }
+
+            this.Publish(new PresentationSnapshot(
+                PresentationConnectionState.Disconnected,
+                null,
+                null,
+                string.Empty,
+                ErrorCodes.PresentationOpenFailed));
+            return OperationResult.Failure(
+                ErrorCodes.PresentationOpenFailed,
+                "Desktop PowerPoint could not be started.");
+        }
+
+        this._application = application;
+        try
+        {
+            this.SubscribeToApplicationEvents();
+        }
+        catch
+        {
+            this.DetachApplication();
+            throw;
+        }
+
+        LogAttached(this._logger);
+        return OperationResult.Success();
+    }
+
+    private bool HasRunningSlideShow(string normalizedPath, ComObjectScope scope)
+    {
+        if (this._application is null)
+        {
+            return false;
+        }
+
+        Ppt.SlideShowWindows windows = scope.Track(this._application.SlideShowWindows);
+        for (int index = 1; index <= windows.Count; index++)
+        {
+            Ppt.SlideShowWindow window = scope.Track(windows[index]);
+            Ppt.Presentation presentation = scope.Track(window.Presentation);
+            if (PathsEqual(presentation.FullName, normalizedPath))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void PublishOpenFailure()
+    {
+        if (this._application is null)
+        {
+            this.Publish(new PresentationSnapshot(
+                PresentationConnectionState.Disconnected,
+                null,
+                null,
+                string.Empty,
+                ErrorCodes.PresentationOpenFailed));
+            return;
+        }
+
+        try
+        {
+            this.Publish(PresentationSnapshotReader.Read(this._application) with
+            {
+                LastErrorCode = ErrorCodes.PresentationOpenFailed,
+            });
+        }
+        catch (COMException exception) when (IsDisconnected(exception))
+        {
+            this.HandleDisconnection();
+        }
+        catch (COMException)
+        {
+            this.Publish(new PresentationSnapshot(
+                PresentationConnectionState.Disconnected,
+                null,
+                null,
+                string.Empty,
+                ErrorCodes.PresentationOpenFailed));
         }
     }
 

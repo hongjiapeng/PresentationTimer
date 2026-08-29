@@ -24,6 +24,14 @@ public interface IPresentationController
     /// <returns>A task representing the operation.</returns>
     Task StopMonitoringAsync(CancellationToken cancellationToken = default);
 
+    /// <summary>Opens a user-selected presentation read-only and starts its slide show.</summary>
+    /// <param name="filePath">The local presentation path selected by the desktop user.</param>
+    /// <param name="cancellationToken">Cancels the invocation before it is submitted.</param>
+    /// <returns>The structured open result.</returns>
+    Task<OperationResult> OpenPresentationAsync(
+        string filePath,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Navigates exactly once to the next slide.</summary>
     /// <param name="cancellationToken">Cancels the invocation before it is submitted.</param>
     /// <returns>The structured invocation result.</returns>

@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.Storage.Pickers;
 using PresentationTimer.App.Localization;
 using PresentationTimer.App.ViewModels;
 using PresentationTimer.Core.Contracts;
@@ -16,6 +17,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 {
     private readonly WindowController _windowController;
     private bool _isAlwaysOnTop;
+    private bool _isPresentationPickerOpen;
     private bool _isPreparedForShutdown;
     private DesktopShellMode _shellMode = DesktopShellMode.Compact;
 
@@ -185,6 +187,37 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void OnActualThemeChanged(FrameworkElement sender, object args) =>
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.TimerForeground)));
+
+    private async void OpenPowerPointFileButton_Click(object sender, RoutedEventArgs args)
+    {
+        if (this._isPresentationPickerOpen ||
+            ((App)Application.Current).MainWindow is not MainWindow window)
+        {
+            return;
+        }
+
+        this._isPresentationPickerOpen = true;
+        this.OpenPowerPointFileButton.IsEnabled = false;
+        try
+        {
+            var picker = new FileOpenPicker(window.AppWindow.Id);
+            picker.FileTypeFilter.Add(".ppt");
+            picker.FileTypeFilter.Add(".pptx");
+            picker.FileTypeFilter.Add(".pptm");
+            picker.FileTypeFilter.Add(".pps");
+            picker.FileTypeFilter.Add(".ppsx");
+            PickFileResult? selection = await picker.PickSingleFileAsync();
+            if (selection is not null)
+            {
+                await this.ViewModel.OpenPresentationAsync(selection.Path);
+            }
+        }
+        finally
+        {
+            this._isPresentationPickerOpen = false;
+            this.OpenPowerPointFileButton.IsEnabled = this.ViewModel.CanOpenPresentation;
+        }
+    }
 
     private void OnUnloaded(object sender, RoutedEventArgs args) => this.PrepareForShutdown();
 

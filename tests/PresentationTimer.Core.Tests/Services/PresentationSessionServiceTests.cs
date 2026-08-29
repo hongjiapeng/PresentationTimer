@@ -103,6 +103,25 @@ public sealed class PresentationSessionServiceTests
         Assert.AreEqual(1, presentation.PreviousInvocationCount);
     }
 
+    /// <summary>Verifies the selected path reaches the presentation adapter exactly once.</summary>
+    /// <returns>A task representing the asynchronous unit test.</returns>
+    [TestMethod]
+    public async Task OpenPresentationAsync_SelectedPath_RoutesExactlyOnce()
+    {
+        // Arrange
+        var presentation = new FakePresentationController();
+        using var service = CreateService(presentation);
+        string selectedPath = Path.Combine(Path.GetTempPath(), "selected.pptx");
+
+        // Act
+        OperationResult result = await service.OpenPresentationAsync(selectedPath);
+
+        // Assert
+        Assert.IsTrue(result.IsSuccess);
+        Assert.AreEqual(1, presentation.OpenInvocationCount);
+        Assert.AreEqual(selectedPath, presentation.LastOpenedFilePath);
+    }
+
     /// <summary>
     /// Verifies malformed duration input cannot change the last valid target.
     /// </summary>
@@ -139,16 +158,19 @@ public sealed class PresentationSessionServiceTests
         service.BeginShutdown();
         service.BeginShutdown();
         OperationResult<TimerSnapshot> timerResult = service.StartTimer();
+        OperationResult openResult = await service.OpenPresentationAsync("selected.pptx");
         OperationResult nextResult = await service.NextSlideAsync();
         OperationResult previousResult = await service.PreviousSlideAsync();
         OperationResult<DesktopPairingDescriptor> remoteResult = await service.StartRemoteSessionAsync();
 
         // Assert
         Assert.AreEqual(ErrorCodes.ApplicationClosing, timerResult.ErrorCode);
+        Assert.AreEqual(ErrorCodes.ApplicationClosing, openResult.ErrorCode);
         Assert.AreEqual(ErrorCodes.ApplicationClosing, nextResult.ErrorCode);
         Assert.AreEqual(ErrorCodes.ApplicationClosing, previousResult.ErrorCode);
         Assert.AreEqual(ErrorCodes.ApplicationClosing, remoteResult.ErrorCode);
         Assert.AreEqual(0, presentation.NextInvocationCount);
+        Assert.AreEqual(0, presentation.OpenInvocationCount);
         Assert.AreEqual(0, presentation.PreviousInvocationCount);
         Assert.AreEqual(0, remote.StartInvocationCount);
     }
