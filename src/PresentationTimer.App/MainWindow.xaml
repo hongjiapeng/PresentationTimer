@@ -27,9 +27,9 @@
                 <ToggleButton
                     x:Name="TitleBarPinButton"
                     x:Uid="TitleBarPinButton"
-                    Width="44"
-                    Height="44"
-                    IsChecked="{x:Bind PresenterPage.IsAlwaysOnTop, Mode=TwoWay}">
+                    AutomationProperties.AutomationId="TitleBarPinButton"
+                    IsChecked="{x:Bind PresenterPage.IsAlwaysOnTop, Mode=TwoWay}"
+                    Style="{StaticResource PresenterTitleBarToggleStyle}">
                     <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE718;" />
                 </ToggleButton>
             </TitleBar.RightHeader>

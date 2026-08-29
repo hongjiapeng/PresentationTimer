@@ -2,15 +2,17 @@
 
 Record the date, Windows version, build commit/archive identifier, PowerPoint version and bitness, network, and device/browser for every run. Do not mark an unavailable environment as passed.
 
-## Compact and Expanded desktop experience
+## Compact, Presentation HUD, and Expanded desktop experience
 
 | Area | Check | Expected result | Result / evidence |
 |---|---|---|---|
 | Compact launch | Start at 100%, 150%, and 200% display scale | Borderless 440×240 effective-pixel timer; no PPT, phone, QR, notes, or duration form | Not run |
-| Compact controls | Ready → Start; Running → Pause; Paused → Resume; Reset | Exactly one primary action; Reset only outside Ready; controls remain clickable beside the drag region | Not run |
+| Compact controls | Inspect the ready surface, then activate Start | No visible Ready/Remaining-Time caption; restrained centered primary button; solid Reset/More/Control Center surfaces; Control Center is not mistaken for maximize | Not run |
+| Presentation HUD | Compact Start → Pause → Resume → More/Reset | Same window becomes approximately 288×96 effective pixels; only time, state action, Control Center, and More remain; Reset returns to Compact | Not run |
+| HUD placement | Start near each work-area quadrant, drag HUD, expand/collapse, and change display topology | First HUD placement uses the nearest inset corner; the dragged process-lifetime HUD position returns and remains visible | Not run |
 | Timer states | Cross 01:00, 00:00, +00:00:01, and multiple hours | Warning includes 01:00 through zero; overtime uses `+hh:mm:ss`; state text remains available without color | Not run |
 | More menu | Open every state-dependent entry and toggle Always on Top | Entries reflect current PPT/phone state; Timer Settings deep-links to duration; Exit performs coordinated shutdown | Not run |
-| Mode switching | Drag Compact, expand, resize, collapse, repeat 20 times | Same window and session; prior Compact rectangle returns on a visible work area; pin state stays synchronized | Not run |
+| Mode switching | Drag Compact/HUD, expand, resize, collapse, repeat 20 times | Same window and session; Ready collapses to Compact, Running/Paused collapses to HUD, retained rectangles stay visible, and pin state stays synchronized | Not run |
 | Expanded hierarchy | Inspect at 920×680 and minimum 800×600 effective pixels | Full-width card-free Timer Hero, lower PPT/Remote modules, and duration-only strip follow the v2 reference | Not run |
 | Expanded timer | Start, Pause, Resume, Reset and inspect progress | Action swaps in place; remaining progress is determinate, fixed while paused, and empty in overtime | Not run |
 | Duration | Select 10/15/20/30, accept `1:05:30`, reject malformed input | Authoritative target updates only while Ready; invalid input keeps the prior target and dialog open | Not run |
@@ -26,7 +28,7 @@ The desktop refactor must not change the monotonic Timer calculation, PowerPoint
 - Passed App/Core/Remote automated suites: 23 + 50 + 23 tests.
 - Passed Debug and Release x64 solution builds with zero warnings and zero errors.
 - Passed strict OpenSpec validation and PowerShell syntax validation for `scripts/ui-smoke.ps1`.
-- The repository WinUI workflow built successfully, but this host did not have the `winapp` CLI in `PATH`; the workflow therefore skipped launch. Compact/Expanded runtime, theme/DPI, PowerPoint, phone, and DWM checks below remain explicitly **Not run**, rather than being reported as passes.
+- The repository WinUI workflow built successfully, but this host did not have the `winapp` CLI in `PATH`; the workflow therefore skipped launch. Compact/HUD/Expanded runtime, theme/DPI, PowerPoint, phone, and DWM checks below remain explicitly **Not run**, rather than being reported as passes.
 
 ## PowerPoint fixture
 

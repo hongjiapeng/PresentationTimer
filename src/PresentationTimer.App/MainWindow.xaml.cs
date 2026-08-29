@@ -15,6 +15,9 @@ public sealed partial class MainWindow : Window
 {
     private const int CompactHeight = 240;
     private const int CompactWidth = 440;
+    private const int PresentationHudHeight = 96;
+    private const int PresentationHudWidth = 288;
+    private const int PresentationHudWorkAreaInset = 12;
     private const int ExpandedHeight = 680;
     private const int ExpandedWidth = 920;
     private const int MinimumExpandedHeight = 600;
@@ -27,7 +30,8 @@ public sealed partial class MainWindow : Window
     private readonly WindowController _windowController;
     private RectInt32? _compactBounds;
     private RectInt32? _expandedBounds;
-    private bool _isCompactMode = true;
+    private RectInt32? _presentationHudBounds;
+    private DesktopWindowMode _windowMode = DesktopWindowMode.Compact;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
 
@@ -58,6 +62,13 @@ public sealed partial class MainWindow : Window
         this.EnterCompactMode();
     }
 
+    private enum DesktopWindowMode
+    {
+        Compact,
+        PresentationHud,
+        Expanded,
+    }
+
     internal MainPage PresenterPage => this._mainPage;
 
     internal void EnterCompactMode()
@@ -67,9 +78,13 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        if (!this._isCompactMode)
+        if (this._windowMode == DesktopWindowMode.Expanded)
         {
             this._expandedBounds = this.GetCurrentBounds();
+        }
+        else if (this._windowMode == DesktopWindowMode.PresentationHud)
+        {
+            this._presentationHudBounds = this.GetCurrentBounds();
         }
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
@@ -87,7 +102,45 @@ public sealed partial class MainWindow : Window
         target = ClampToVisibleWorkArea(target);
         this.AppWindow.MoveAndResize(target);
         this._compactBounds = target;
-        this._isCompactMode = true;
+        this._windowMode = DesktopWindowMode.Compact;
+        this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
+    }
+
+    internal void EnterPresentationHudMode()
+    {
+        if (this.AppWindow.Presenter is not OverlappedPresenter presenter)
+        {
+            return;
+        }
+
+        if (this._windowMode == DesktopWindowMode.Compact)
+        {
+            this._compactBounds = this.GetCurrentBounds();
+        }
+        else if (this._windowMode == DesktopWindowMode.Expanded)
+        {
+            this._expandedBounds = this.GetCurrentBounds();
+        }
+
+        this.AppTitleBar.Visibility = Visibility.Collapsed;
+        this.SetTitleBar(this._mainPage.PresentationHudDragRegionElement);
+        presenter.SetBorderAndTitleBar(false, false);
+        presenter.IsResizable = false;
+        presenter.IsMaximizable = false;
+        presenter.IsMinimizable = false;
+        presenter.PreferredMinimumWidth = 0;
+        presenter.PreferredMinimumHeight = 0;
+
+        bool hasRetainedBounds = this._presentationHudBounds is not null;
+        RectInt32 target = this._presentationHudBounds ?? this.GetCurrentBounds();
+        target.Width = this.ToPhysicalPixels(PresentationHudWidth);
+        target.Height = this.ToPhysicalPixels(PresentationHudHeight);
+        target = hasRetainedBounds
+            ? ClampToVisibleWorkArea(target)
+            : SnapToNearestWorkAreaCorner(target, this.ToPhysicalPixels(PresentationHudWorkAreaInset));
+        this.AppWindow.MoveAndResize(target);
+        this._presentationHudBounds = target;
+        this._windowMode = DesktopWindowMode.PresentationHud;
         this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
     }
 
@@ -98,9 +151,13 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        if (this._isCompactMode)
+        if (this._windowMode == DesktopWindowMode.Compact)
         {
             this._compactBounds = this.GetCurrentBounds();
+        }
+        else if (this._windowMode == DesktopWindowMode.PresentationHud)
+        {
+            this._presentationHudBounds = this.GetCurrentBounds();
         }
 
         presenter.SetBorderAndTitleBar(true, true);
@@ -124,7 +181,7 @@ public sealed partial class MainWindow : Window
         this.AppWindow.MoveAndResize(target);
         this._expandedBounds = target;
 
-        this._isCompactMode = false;
+        this._windowMode = DesktopWindowMode.Expanded;
     }
 
     internal void SetAlwaysOnTop(bool isAlwaysOnTop)
@@ -166,6 +223,26 @@ public sealed partial class MainWindow : Window
             Math.Clamp(bounds.Y, workArea.Y, maximumY),
             width,
             height);
+    }
+
+    private static RectInt32 SnapToNearestWorkAreaCorner(RectInt32 bounds, int inset)
+    {
+        DisplayArea displayArea = DisplayArea.GetFromRect(bounds, DisplayAreaFallback.Primary);
+        RectInt32 workArea = displayArea.WorkArea;
+        int width = Math.Min(bounds.Width, Math.Max(1, workArea.Width - (inset * 2)));
+        int height = Math.Min(bounds.Height, Math.Max(1, workArea.Height - (inset * 2)));
+        int boundsCenterX = bounds.X + (bounds.Width / 2);
+        int boundsCenterY = bounds.Y + (bounds.Height / 2);
+        int workAreaCenterX = workArea.X + (workArea.Width / 2);
+        int workAreaCenterY = workArea.Y + (workArea.Height / 2);
+        int x = boundsCenterX < workAreaCenterX
+            ? workArea.X + inset
+            : workArea.X + workArea.Width - width - inset;
+        int y = boundsCenterY < workAreaCenterY
+            ? workArea.Y + inset
+            : workArea.Y + workArea.Height - height - inset;
+
+        return ClampToVisibleWorkArea(new RectInt32(x, y, width, height));
     }
 
     private RectInt32 GetCurrentBounds() => new RectInt32(

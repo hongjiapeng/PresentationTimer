@@ -43,3 +43,10 @@
 - [ ] 6.3 Smoke-launch through the repository WinUI workflow and verify repeated mode switching, drag, resize, close, and shutdown produce no crash, blank tree, stale focus, or orphan process.
 - [ ] 6.4 Execute the available PowerPoint and phone manual checks for status, slide position, Previous/Next, QR candidate match, connected count, notes on phone, session end, and old-token rejection; record environment-dependent checks that cannot be run.
 - [x] 6.5 Update desktop manual-verification documentation with the Compact/Expanded matrix, theme/DPI checks, known Windows 10 square-corner fallback, and confirmation that Timer, COM, SignalR, QR credentials, and phone UI contracts were preserved.
+
+## 7. Presentation HUD and command polish
+
+- [ ] 7.1 Remove the visible Compact status caption while retaining localized accessible timer state, replace the maximize-like glyph, and apply solid semantic primary/secondary/icon command styles with restrained sizes.
+- [ ] 7.2 Add a third `PresentationHud` page/window mode at approximately 288×96 effective pixels with a dedicated drag region, current-process bounds, corner placement, and the same always-on-top state.
+- [ ] 7.3 Enter HUD only when Start is invoked from Compact, keep Pause/Resume in HUD, return Reset to Compact, keep Expanded Start in place, and make active Control Center Collapse return to HUD without creating session state.
+- [ ] 7.4 Update localized resources, smoke/manual verification coverage, run strict OpenSpec validation, focused/full tests, and Debug/Release x64 builds; leave environment-dependent launch/theme/DPI checks open when the WinUI launch prerequisite is unavailable.

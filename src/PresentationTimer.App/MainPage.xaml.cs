@@ -16,8 +16,8 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 {
     private readonly WindowController _windowController;
     private bool _isAlwaysOnTop;
-    private bool _isCompactMode = true;
     private bool _isPreparedForShutdown;
+    private DesktopShellMode _shellMode = DesktopShellMode.Compact;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -52,6 +52,13 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         Duration,
     }
 
+    private enum DesktopShellMode
+    {
+        Compact,
+        PresentationHud,
+        Expanded,
+    }
+
     /// <summary>
     /// Gets or sets a value indicating whether the presenter window remains above other windows.
     /// </summary>
@@ -70,20 +77,13 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     }
 
     /// <summary>Gets a value indicating whether the compact timer root is active.</summary>
-    public bool IsCompactMode
-    {
-        get => this._isCompactMode;
-        private set
-        {
-            if (this.SetProperty(ref this._isCompactMode, value))
-            {
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsExpandedMode)));
-            }
-        }
-    }
+    public bool IsCompactMode => this._shellMode == DesktopShellMode.Compact;
+
+    /// <summary>Gets a value indicating whether the presentation HUD root is active.</summary>
+    public bool IsPresentationHudMode => this._shellMode == DesktopShellMode.PresentationHud;
 
     /// <summary>Gets a value indicating whether the expanded control center root is active.</summary>
-    public bool IsExpandedMode => !this.IsCompactMode;
+    public bool IsExpandedMode => this._shellMode == DesktopShellMode.Expanded;
 
     /// <summary>Gets the semantic brush for the current timer presentation state.</summary>
     public Brush TimerForeground
@@ -110,6 +110,8 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     internal FrameworkElement CompactDragRegionElement => this.CompactDragRegion;
 
+    internal FrameworkElement PresentationHudDragRegionElement => this.PresentationHudDragRegion;
+
     internal MainViewModel ViewModel { get; }
 
     internal void PrepareForShutdown()
@@ -128,10 +130,14 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void CollapseButton_Click(object sender, RoutedEventArgs args)
     {
-        this.IsCompactMode = true;
-        this._windowController.EnterCompact();
-        _ = this.DispatcherQueue.TryEnqueue(() =>
-            this.CompactExpandButton.Focus(FocusState.Programmatic));
+        if (this.ViewModel.CanStart)
+        {
+            this.EnterCompactMode();
+        }
+        else
+        {
+            this.EnterPresentationHudMode();
+        }
     }
 
     private async void CustomDurationButton_Click(object sender, RoutedEventArgs args)
@@ -167,6 +173,21 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.TimerForeground)));
         }
+
+        if (args.PropertyName == nameof(MainViewModel.CanStart))
+        {
+            _ = this.DispatcherQueue.TryEnqueue(() =>
+            {
+                if (this._shellMode == DesktopShellMode.Compact && !this.ViewModel.CanStart)
+                {
+                    this.EnterPresentationHudMode();
+                }
+                else if (this._shellMode == DesktopShellMode.PresentationHud && this.ViewModel.CanStart)
+                {
+                    this.EnterCompactMode();
+                }
+            });
+        }
     }
 
     private void OpenControlCenterMenuItem_Click(object sender, RoutedEventArgs args) =>
@@ -190,7 +211,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void OpenControlCenter(ControlCenterSection section)
     {
-        this.IsCompactMode = false;
+        this.SetShellMode(DesktopShellMode.Expanded);
         this._windowController.EnterExpanded();
         _ = this.DispatcherQueue.TryEnqueue(() =>
         {
@@ -204,6 +225,40 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
             };
             _ = target.Focus(FocusState.Programmatic);
         });
+    }
+
+    private void EnterCompactMode()
+    {
+        this.SetShellMode(DesktopShellMode.Compact);
+        this._windowController.EnterCompact();
+        _ = this.DispatcherQueue.TryEnqueue(() =>
+            this.CompactExpandButton.Focus(FocusState.Programmatic));
+    }
+
+    private void EnterPresentationHudMode()
+    {
+        this.SetShellMode(DesktopShellMode.PresentationHud);
+        this._windowController.EnterPresentationHud();
+        _ = this.DispatcherQueue.TryEnqueue(() =>
+        {
+            Button target = this.ViewModel.CanPause
+                ? this.HudPauseButton
+                : this.HudResumeButton;
+            _ = target.Focus(FocusState.Programmatic);
+        });
+    }
+
+    private void SetShellMode(DesktopShellMode value)
+    {
+        if (this._shellMode == value)
+        {
+            return;
+        }
+
+        this._shellMode = value;
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsCompactMode)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPresentationHudMode)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsExpandedMode)));
     }
 
     private bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

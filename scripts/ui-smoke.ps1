@@ -177,6 +177,28 @@ try {
         Activate-Element $toggle
     }
 
+    Test-UI 'Compact Start enters the smaller Presentation HUD' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'CompactStartButton')
+        $null = Get-Element -Root $root -AutomationId 'PresentationHudRoot'
+        $bounds = $root.Current.BoundingRectangle
+        if ([Math]::Abs($bounds.Width - (288 * $scale)) -gt 32 -or
+            [Math]::Abs($bounds.Height - (96 * $scale)) -gt 32) {
+            throw "Unexpected HUD bounds $bounds at scale $scale."
+        }
+
+        $null = Get-Element -Root $root -AutomationId 'HudTimerDisplay'
+        Activate-Element (Get-Element -Root $root -AutomationId 'HudPauseButton')
+        $null = Get-Element -Root $root -AutomationId 'HudResumeButton'
+    }
+    Save-WindowScreenshot -Root $root -Name '02-presentation-hud.png'
+
+    Test-UI 'HUD Reset returns to the ready Compact surface' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'HudMoreButton')
+        Activate-Element (Get-Element -Root $desktop -AutomationId 'HudResetMenuItem')
+        $null = Get-Element -Root $root -AutomationId 'CompactTimerRoot'
+        $null = Get-Element -Root $root -AutomationId 'CompactStartButton'
+    }
+
     Test-UI 'Expand opens the same resizable control center' {
         Activate-Element (Get-Element -Root $root -AutomationId 'CompactExpandButton')
         $null = Get-Element -Root $root -AutomationId 'ExpandedControlCenterRoot'
@@ -188,7 +210,7 @@ try {
         $null = Get-Element -Root $root -AutomationId 'TitleBarPinButton'
         $null = Get-Element -Root $root -AutomationId 'TimerRemainingProgress'
     }
-    Save-WindowScreenshot -Root $root -Name '02-expanded-ready.png'
+    Save-WindowScreenshot -Root $root -Name '03-expanded-ready.png'
 
     Test-UI 'Preset and invalid custom duration preserve authoritative target' {
         Activate-Element (Get-Element -Root $root -AutomationId 'Duration20Button')
@@ -280,7 +302,7 @@ try {
             throw "Expected shared 00:01 target after collapse, got '$($display.Current.Name)'."
         }
     }
-    Save-WindowScreenshot -Root $root -Name '03-compact-restored.png'
+    Save-WindowScreenshot -Root $root -Name '04-compact-restored.png'
 }
 finally {
     $results | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath (Join-Path $artifactDirectory 'results.json') -Encoding utf8

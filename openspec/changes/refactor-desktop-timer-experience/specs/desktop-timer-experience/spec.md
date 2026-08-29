@@ -5,12 +5,13 @@ Defines a focused desktop presentation-timer experience in which the live time i
 ## ADDED Requirements
 
 ### Requirement: Compact Timer is the default desktop mode
-The application SHALL open in a small Compact Timer mode whose dominant element is the current timer value. The compact surface SHALL omit persistent PowerPoint status, slide position, speaker notes, phone connection details, QR codes, network instructions, and duration-entry forms.
+The application SHALL open in a small Compact Timer mode whose dominant element is the current timer value. The compact surface SHALL omit persistent visual state captions, PowerPoint status, slide position, speaker notes, phone connection details, QR codes, network instructions, and duration-entry forms. Timer state SHALL remain available through localized accessible status and polite state-change announcements.
 
 #### Scenario: Application starts in compact mode
 - **WHEN** the application window is first activated
 - **THEN** it presents the configured timer value in Compact Timer mode
 - **AND** only the timer value, essential timer actions, Expand, and More are persistently visible
+- **AND** it does not spend visual space repeating Ready or Remaining Time beside the authoritative timer
 
 #### Scenario: A subsystem is unavailable during a talk
 - **WHEN** PowerPoint disconnects or the phone remote is stopped while Compact Timer mode is visible
@@ -18,6 +19,8 @@ The application SHALL open in a small Compact Timer mode whose dominant element 
 
 ### Requirement: Compact Timer exposes state-appropriate controls
 Compact Timer mode SHALL provide Expand, one state-appropriate primary timer action, Reset when applicable, and More as keyboard-focusable controls. Start SHALL be available in Ready, Pause in Running, and Resume in Paused; unavailable actions SHALL not appear as competing primary actions.
+
+The primary text action SHALL use a restrained presenter-sized target rather than stretching across the window. Reset, More, and Control Center SHALL use solid semantic surfaces with at least 40 by 40 effective-pixel targets, visible focus, and localized accessible names. The Control Center icon SHALL be visually distinct from the system maximize caption command.
 
 #### Scenario: Ready timer controls
 - **WHEN** the timer is Ready
@@ -37,6 +40,34 @@ Compact Timer mode SHALL provide Expand, one state-appropriate primary timer act
 #### Scenario: Reset from a non-ready state
 - **WHEN** Reset is activated while the timer is Running, Paused, or in overtime
 - **THEN** the timer returns to Ready at the currently configured target duration
+
+### Requirement: Presentation HUD minimizes slide obstruction
+Starting the authoritative timer from Compact mode SHALL transform the same window into a borderless Presentation HUD of approximately 288 by 96 effective pixels. The HUD SHALL remain draggable and topmost according to the current preference, and SHALL show the authoritative timer plus only Pause or Resume, Control Center, and More. It SHALL NOT create a timer, page, window, PowerPoint lifecycle, or session subscription.
+
+#### Scenario: Compact timer starts
+- **WHEN** the Ready timer is started from Compact mode
+- **THEN** the same window enters Presentation HUD mode
+- **AND** the HUD displays the Running time from the same authoritative snapshot
+- **AND** the HUD occupies substantially less slide area than Compact mode
+
+#### Scenario: HUD timer is paused and resumed
+- **WHEN** the user pauses or resumes from Presentation HUD mode
+- **THEN** the window remains in Presentation HUD mode
+- **AND** the single primary HUD command changes between Resume and Pause
+
+#### Scenario: HUD timer is reset
+- **WHEN** Reset is selected from the Presentation HUD More menu
+- **THEN** the same timer returns to Ready
+- **AND** the window returns to the ready Compact surface
+
+#### Scenario: Control Center is opened from HUD
+- **WHEN** the Control Center command is activated in Presentation HUD mode
+- **THEN** the same window expands without interrupting the timer
+- **AND** collapsing a Running or Paused Control Center returns to Presentation HUD mode
+
+#### Scenario: Timer starts in Control Center
+- **WHEN** the Ready timer is started while Expanded Control Center is visible
+- **THEN** the Control Center remains visible and changes its primary action to Pause in place
 
 ### Requirement: Timer visuals communicate normal, warning, and overtime states
 The timer display SHALL derive its value from the authoritative timer snapshot rather than a view-owned countdown. A countdown above one minute SHALL use the normal timer treatment, remaining time from `01:00` through `00:00` SHALL use a warning treatment, and negative remaining time SHALL use a critical overtime treatment with a leading `+`. Expanded mode SHALL show the configured target and a determinate remaining-ratio indicator that is full in Ready, decreases toward zero while Running, remains fixed while Paused, and is empty in overtime. State and progress meaning SHALL be conveyed through accessible text in addition to color or shape.
@@ -197,7 +228,7 @@ The Control Center SHALL offer 10, 15, 20, and 30 minute presets plus Custom whi
 - **THEN** duration presets and custom duration changes are unavailable until Reset returns the timer to Ready
 
 ### Requirement: Window behavior matches each desktop mode
-Compact Timer SHALL be borderless, low-glare, draggable from non-interactive surface areas, rounded where supported by the operating system, and approximately 440 by 240 effective pixels. Expanded Control Center SHALL provide normal caption actions, be resizable from approximately 920 by 680 effective pixels, and enforce a usable minimum size. Switching modes SHALL be DPI-aware and SHALL restore the Compact window rectangle retained for the current process when that rectangle remains visible on a display.
+Compact Timer SHALL be borderless, low-glare, draggable from non-interactive surface areas, rounded where supported by the operating system, and approximately 440 by 240 effective pixels. Presentation HUD SHALL use the same borderless treatment at approximately 288 by 96 effective pixels. Expanded Control Center SHALL provide normal caption actions, be resizable from approximately 920 by 680 effective pixels, and enforce a usable minimum size. Switching modes SHALL be DPI-aware and SHALL retain separate current-process Compact, HUD, and Expanded rectangles when those rectangles remain visible on a display.
 
 #### Scenario: Compact window is dragged
 - **WHEN** the user drags a non-interactive area of Compact Timer

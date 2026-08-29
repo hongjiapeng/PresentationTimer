@@ -33,6 +33,9 @@ internal sealed class WindowController
     /// <summary>Transforms the active process window into the compact timer.</summary>
     public void EnterCompact() => this._window?.EnterCompactMode();
 
+    /// <summary>Transforms the active process window into the presentation HUD.</summary>
+    public void EnterPresentationHud() => this._window?.EnterPresentationHudMode();
+
     /// <summary>Transforms the active process window into the expanded control center.</summary>
     public void EnterExpanded() => this._window?.EnterExpandedMode();
 

@@ -127,17 +127,26 @@
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>让窗口始终置顶</value></data>
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>始终置顶</value></data>
   <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>打开控制中心</value></data>
-  <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>展开</value></data>
+  <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>打开控制中心</value></data>
   <data name="CompactExpandButton.AccessKey" xml:space="preserve"><value>E</value></data>
   <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>更多演示操作</value></data>
   <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>更多</value></data>
   <data name="CompactMoreButton.AccessKey" xml:space="preserve"><value>M</value></data>
+  <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>暂停计时</value></data>
+  <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>暂停</value></data>
+  <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>继续计时</value></data>
+  <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>继续</value></data>
+  <data name="HudControlCenterButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>打开控制中心</value></data>
+  <data name="HudControlCenterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>控制中心</value></data>
+  <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>更多演示操作</value></data>
+  <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>更多</value></data>
+  <data name="HudResetMenuItem.Text" xml:space="preserve"><value>重置计时器</value></data>
   <data name="OpenControlCenterMenuItem.Text" xml:space="preserve"><value>打开控制中心</value></data>
   <data name="AlwaysOnTopMenuItem.Text" xml:space="preserve"><value>始终置顶</value></data>
   <data name="TimerSettingsMenuItem.Text" xml:space="preserve"><value>计时器设置</value></data>
   <data name="ExitMenuItem.Text" xml:space="preserve"><value>退出</value></data>
   <data name="ExpandedCollapseButton.Content" xml:space="preserve"><value>收起</value></data>
-  <data name="ExpandedCollapseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>收起为紧凑计时器</value></data>
+  <data name="ExpandedCollapseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>收起计时器</value></data>
   <data name="ExpandedCollapseButton.AccessKey" xml:space="preserve"><value>C</value></data>
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>更多控制中心操作</value></data>
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>更多</value></data>

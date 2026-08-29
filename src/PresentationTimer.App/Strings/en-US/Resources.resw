@@ -127,17 +127,26 @@
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Keep window always on top</value></data>
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Always on top</value></data>
   <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Open control center</value></data>
-  <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Expand</value></data>
+  <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Open control center</value></data>
   <data name="CompactExpandButton.AccessKey" xml:space="preserve"><value>E</value></data>
   <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More presenter actions</value></data>
   <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
   <data name="CompactMoreButton.AccessKey" xml:space="preserve"><value>M</value></data>
+  <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Pause timer</value></data>
+  <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Pause</value></data>
+  <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Resume timer</value></data>
+  <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Resume</value></data>
+  <data name="HudControlCenterButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Open control center</value></data>
+  <data name="HudControlCenterButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Control center</value></data>
+  <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More presenter actions</value></data>
+  <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
+  <data name="HudResetMenuItem.Text" xml:space="preserve"><value>Reset timer</value></data>
   <data name="OpenControlCenterMenuItem.Text" xml:space="preserve"><value>Open control center</value></data>
   <data name="AlwaysOnTopMenuItem.Text" xml:space="preserve"><value>Always on top</value></data>
   <data name="TimerSettingsMenuItem.Text" xml:space="preserve"><value>Timer settings</value></data>
   <data name="ExitMenuItem.Text" xml:space="preserve"><value>Exit</value></data>
   <data name="ExpandedCollapseButton.Content" xml:space="preserve"><value>Collapse</value></data>
-  <data name="ExpandedCollapseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Collapse to compact timer</value></data>
+  <data name="ExpandedCollapseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Collapse timer</value></data>
   <data name="ExpandedCollapseButton.AccessKey" xml:space="preserve"><value>C</value></data>
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More control center actions</value></data>
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>

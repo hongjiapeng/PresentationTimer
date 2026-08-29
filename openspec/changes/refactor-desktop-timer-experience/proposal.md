@@ -5,6 +5,9 @@ The desktop application exposes the right presenter capabilities but gives persi
 ## What Changes
 
 - Make a small, borderless Compact Timer the default desktop experience, with a draggable surface, optional always-on-top behavior, a dominant state-aware time display, and only the essential timer commands.
+- Remove the redundant visible state caption from Compact mode while retaining localized, polite accessible state announcements for screen readers.
+- Add a smaller Presentation HUD that Compact mode enters after Start and while paused, keeping only the authoritative time and minimal commands visible so a full-screen slide is obscured as little as possible; Reset restores the ready Compact surface.
+- Replace transparent-looking and oversized timer controls with a solid semantic command hierarchy: a restrained text primary action, filled secondary/icon controls, and a Control Center icon that cannot be mistaken for the operating-system maximize command.
 - Add a lightweight More menu that exposes the control center, contextual PowerPoint and phone-remote entry points, pinning, timer settings, and exit without permanently occupying the timer surface.
 - Add an Expanded Control Center based primarily on `docs/design/presentation-timer-expanded-ui-v2.png`: a full-width Timer Hero, a lower PowerPoint/phone capability row, and a low-chrome duration strip within the same window and view-model lifetime.
 - Give the Expanded Timer Hero the same state-appropriate primary action as Compact mode: Start in Ready, Pause in Running, Resume in Paused, and Reset only when applicable.
