@@ -97,7 +97,7 @@ Alternative considered: implement drag entirely with `WM_NCLBUTTONDOWN`. The ded
 
 ### 5. Implement the v2 Timer Hero hierarchy without unsupported chrome
 
-Compact uses one low-glare dark surface, a centered `Viewbox` containing a `DisplayTextBlockStyle` timer, and one bottom command row. It removes the visible Ready/Remaining-Time caption and keeps that information in the timer's accessible name and polite state announcement. Its Start/Pause/Resume control is a centered presenter-sized text button rather than a full-width bar. Reset, More, and Control Center use filled semantic surfaces without opacity-only borders; the Control Center glyph avoids the diagonal maximize metaphor.
+Compact uses one low-glare dark surface, a centered `Viewbox` containing a `DisplayTextBlockStyle` timer, and one bottom command row. It removes the visible Ready/Remaining-Time caption and keeps that information in the timer's accessible name and polite state announcement. Its Start/Pause/Resume control is a centered presenter-sized text button rather than a full-width bar. Reset, More, and Control Center use filled semantic surfaces without opacity-only borders; the Compact expand action uses the system `FullScreen` outward-arrow glyph and Expanded uses the paired `BackToWindow` inward-arrow glyph, keeping the mode transition easy to remember while remaining distinct from the caption maximize command.
 
 Presentation HUD uses the same solid low-glare surface, a draggable time region, and three 40×40 actions at most: Pause or Resume, Control Center, and More. Reset is moved into More so the persistent surface stays narrow. The HUD uses the same timer foreground semantics and accessible status as the larger roots.
 
