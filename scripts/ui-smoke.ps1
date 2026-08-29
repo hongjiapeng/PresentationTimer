@@ -177,8 +177,20 @@ try {
         Activate-Element $toggle
     }
 
-    Test-UI 'Compact Start enters the smaller Presentation HUD' {
+    Test-UI 'Compact Start stays in place and swaps to Pause' {
         Activate-Element (Get-Element -Root $root -AutomationId 'CompactStartButton')
+        $null = Get-Element -Root $root -AutomationId 'CompactTimerRoot'
+        $null = Get-Element -Root $root -AutomationId 'CompactPauseButton'
+        $bounds = $root.Current.BoundingRectangle
+        if ([Math]::Abs($bounds.Width - (440 * $scale)) -gt 32 -or
+            [Math]::Abs($bounds.Height - (240 * $scale)) -gt 32) {
+            throw "Compact moved or resized unexpectedly after Start: $bounds."
+        }
+    }
+
+    Test-UI 'Explicit HUD action enters the smaller Presentation HUD' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'CompactMoreButton')
+        Activate-Element (Get-Element -Root $desktop -AutomationId 'EnterPresentationHudMenuItem')
         $null = Get-Element -Root $root -AutomationId 'PresentationHudRoot'
         $bounds = $root.Current.BoundingRectangle
         if ([Math]::Abs($bounds.Width - (288 * $scale)) -gt 32 -or

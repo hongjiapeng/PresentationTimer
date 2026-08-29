@@ -44,6 +44,8 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     /// <summary>Raised when shell or presentation properties change.</summary>
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    internal event Action<FrameworkElement>? DragRegionLoaded;
+
     private enum ControlCenterSection
     {
         Timer,
@@ -108,9 +110,12 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         }
     }
 
-    internal FrameworkElement CompactDragRegionElement => this.CompactDragRegion;
-
-    internal FrameworkElement PresentationHudDragRegionElement => this.PresentationHudDragRegion;
+    internal FrameworkElement? ActiveDragRegion => this._shellMode switch
+    {
+        DesktopShellMode.Compact => this.CompactDragRegion,
+        DesktopShellMode.PresentationHud => this.PresentationHudDragRegion,
+        _ => null,
+    };
 
     internal MainViewModel ViewModel { get; }
 
@@ -140,6 +145,14 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         }
     }
 
+    private void CompactDragRegion_Loaded(object sender, RoutedEventArgs args)
+    {
+        if (this.IsCompactMode && sender is FrameworkElement dragRegion)
+        {
+            this.DragRegionLoaded?.Invoke(dragRegion);
+        }
+    }
+
     private async void CustomDurationButton_Click(object sender, RoutedEventArgs args)
     {
         this.ViewModel.IsValidationOpen = false;
@@ -158,6 +171,14 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void ExitMenuItem_Click(object sender, RoutedEventArgs args) =>
         this._windowController.RequestClose();
+
+    private void EnterPresentationHudMenuItem_Click(object sender, RoutedEventArgs args)
+    {
+        if (!this.ViewModel.CanStart)
+        {
+            this.EnterPresentationHudMode();
+        }
+    }
 
     private void ExpandButton_Click(object sender, RoutedEventArgs args) =>
         this.OpenControlCenter(ControlCenterSection.Timer);
@@ -178,11 +199,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         {
             _ = this.DispatcherQueue.TryEnqueue(() =>
             {
-                if (this._shellMode == DesktopShellMode.Compact && !this.ViewModel.CanStart)
-                {
-                    this.EnterPresentationHudMode();
-                }
-                else if (this._shellMode == DesktopShellMode.PresentationHud && this.ViewModel.CanStart)
+                if (this._shellMode == DesktopShellMode.PresentationHud && this.ViewModel.CanStart)
                 {
                     this.EnterCompactMode();
                 }
@@ -195,6 +212,14 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void PowerPointMenuItem_Click(object sender, RoutedEventArgs args) =>
         this.OpenControlCenter(ControlCenterSection.PowerPoint);
+
+    private void PresentationHudDragRegion_Loaded(object sender, RoutedEventArgs args)
+    {
+        if (this.IsPresentationHudMode && sender is FrameworkElement dragRegion)
+        {
+            this.DragRegionLoaded?.Invoke(dragRegion);
+        }
+    }
 
     private void RemoteMenuItem_Click(object sender, RoutedEventArgs args)
     {

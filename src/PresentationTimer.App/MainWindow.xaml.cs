@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using PresentationTimer.App.Localization;
@@ -23,14 +25,25 @@ public sealed partial class MainWindow : Window
     private const int MinimumExpandedHeight = 600;
     private const int MinimumExpandedWidth = 800;
     private const int DwmWindowAttributeCornerPreference = 33;
+    private const int DwmWindowAttributeBorderColor = 34;
+    private const int DwmWindowBorderColorDefault = unchecked((int)0xFFFFFFFF);
+    private const int DwmWindowBorderColorNone = unchecked((int)0xFFFFFFFE);
     private const int DwmWindowCornerPreferenceDefault = 0;
     private const int DwmWindowCornerPreferenceRoundSmall = 3;
+    private const int WindowCornerRadius = 12;
+    private const int ResizeAnimationDurationMs = 180;
+    private const int ResizeAnimationFrameIntervalMs = 15;
     private readonly ILogger<MainWindow> _logger;
     private readonly MainPage _mainPage;
     private readonly WindowController _windowController;
+    private readonly DispatcherQueueTimer _resizeAnimationTimer;
+    private readonly Stopwatch _animationStopwatch = new Stopwatch();
     private RectInt32? _compactBounds;
     private RectInt32? _expandedBounds;
     private RectInt32? _presentationHudBounds;
+    private RectInt32 _animationFrom;
+    private RectInt32 _animationTo;
+    private int _animationCornerRadiusPx;
     private DesktopWindowMode _windowMode = DesktopWindowMode.Compact;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
@@ -54,11 +67,14 @@ public sealed partial class MainWindow : Window
         this.InitializeComponent();
         this.Title = strings.Get("WindowTitle");
         this.ExtendsContentIntoTitleBar = true;
-        this.SetTitleBar(this.AppTitleBar);
         this.AppWindow.SetIcon("Assets/AppIcon.ico");
         this.AppWindow.Closing += this.OnClosing;
+        this._mainPage.DragRegionLoaded += this.OnDragRegionLoaded;
         this.RootFrame.Content = mainPage;
         this._windowController.Attach(this);
+        this._resizeAnimationTimer = this.DispatcherQueue.CreateTimer();
+        this._resizeAnimationTimer.Interval = TimeSpan.FromMilliseconds(ResizeAnimationFrameIntervalMs);
+        this._resizeAnimationTimer.Tick += this.OnResizeAnimationTick;
         this.EnterCompactMode();
     }
 
@@ -88,7 +104,6 @@ public sealed partial class MainWindow : Window
         }
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
-        this.SetTitleBar(this._mainPage.CompactDragRegionElement);
         presenter.SetBorderAndTitleBar(false, false);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
@@ -96,14 +111,17 @@ public sealed partial class MainWindow : Window
         presenter.PreferredMinimumWidth = 0;
         presenter.PreferredMinimumHeight = 0;
 
-        RectInt32 target = this._compactBounds ?? this.GetCurrentBounds();
+        RectInt32 startBounds = this.GetCurrentBounds();
+        RectInt32 target = this._compactBounds ?? startBounds;
         target.Width = this.ToPhysicalPixels(CompactWidth);
         target.Height = this.ToPhysicalPixels(CompactHeight);
         target = ClampToVisibleWorkArea(target);
-        this.AppWindow.MoveAndResize(target);
         this._compactBounds = target;
         this._windowMode = DesktopWindowMode.Compact;
+        this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
         this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
+        this.RequestBorderColor(DwmWindowBorderColorNone);
+        this.BeginResizeAnimation(startBounds, target, this.ToPhysicalPixels(WindowCornerRadius));
     }
 
     internal void EnterPresentationHudMode()
@@ -123,7 +141,6 @@ public sealed partial class MainWindow : Window
         }
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
-        this.SetTitleBar(this._mainPage.PresentationHudDragRegionElement);
         presenter.SetBorderAndTitleBar(false, false);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
@@ -132,16 +149,19 @@ public sealed partial class MainWindow : Window
         presenter.PreferredMinimumHeight = 0;
 
         bool hasRetainedBounds = this._presentationHudBounds is not null;
-        RectInt32 target = this._presentationHudBounds ?? this.GetCurrentBounds();
+        RectInt32 startBounds = this.GetCurrentBounds();
+        RectInt32 target = this._presentationHudBounds ?? startBounds;
         target.Width = this.ToPhysicalPixels(PresentationHudWidth);
         target.Height = this.ToPhysicalPixels(PresentationHudHeight);
         target = hasRetainedBounds
             ? ClampToVisibleWorkArea(target)
             : SnapToNearestWorkAreaCorner(target, this.ToPhysicalPixels(PresentationHudWorkAreaInset));
-        this.AppWindow.MoveAndResize(target);
         this._presentationHudBounds = target;
         this._windowMode = DesktopWindowMode.PresentationHud;
+        this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
         this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
+        this.RequestBorderColor(DwmWindowBorderColorNone);
+        this.BeginResizeAnimation(startBounds, target, this.ToPhysicalPixels(WindowCornerRadius));
     }
 
     internal void EnterExpandedMode()
@@ -150,6 +170,8 @@ public sealed partial class MainWindow : Window
         {
             return;
         }
+
+        this._resizeAnimationTimer.Stop();
 
         if (this._windowMode == DesktopWindowMode.Compact)
         {
@@ -169,6 +191,8 @@ public sealed partial class MainWindow : Window
         this.AppTitleBar.Visibility = Visibility.Visible;
         this.SetTitleBar(this.AppTitleBar);
         this.RequestCornerPreference(DwmWindowCornerPreferenceDefault);
+        this.RequestBorderColor(DwmWindowBorderColorDefault);
+        this.ClearWindowRegion();
 
         RectInt32 target = this._expandedBounds ?? this.GetCurrentBounds();
         if (this._expandedBounds is null)
@@ -205,6 +229,20 @@ public sealed partial class MainWindow : Window
         int attribute,
         ref int attributeValue,
         int attributeSize);
+
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("gdi32.dll")]
+    private static extern nint CreateRoundRectRgn(
+        int leftRect,
+        int topRect,
+        int rightRect,
+        int bottomRect,
+        int widthEllipse,
+        int heightEllipse);
+
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("user32.dll")]
+    private static extern int SetWindowRgn(nint windowHandle, nint region, bool redraw);
 
     [LoggerMessage(4000, LogLevel.Error, "Window shutdown encountered an error")]
     private static partial void LogWindowShutdownFailed(ILogger logger, Exception exception);
@@ -245,6 +283,8 @@ public sealed partial class MainWindow : Window
         return ClampToVisibleWorkArea(new RectInt32(x, y, width, height));
     }
 
+    private static int Lerp(int from, int to, double t) => (int)Math.Round(from + ((to - from) * t));
+
     private RectInt32 GetCurrentBounds() => new RectInt32(
         this.AppWindow.Position.X,
         this.AppWindow.Position.Y,
@@ -260,6 +300,77 @@ public sealed partial class MainWindow : Window
             ref preference,
             sizeof(int));
     }
+
+    private void RequestBorderColor(int color)
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        _ = DwmSetWindowAttribute(
+            windowHandle,
+            DwmWindowAttributeBorderColor,
+            ref color,
+            sizeof(int));
+    }
+
+    private void SetTitleBarIfLoaded(FrameworkElement? dragRegion)
+    {
+        if (dragRegion?.XamlRoot is not null)
+        {
+            this.SetTitleBar(dragRegion);
+        }
+    }
+
+    private void ApplyRoundedWindowRegion(int widthPx, int heightPx, int radiusPx)
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        nint region = CreateRoundRectRgn(0, 0, widthPx, heightPx, radiusPx * 2, radiusPx * 2);
+        _ = SetWindowRgn(windowHandle, region, true);
+    }
+
+    private void ClearWindowRegion()
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        _ = SetWindowRgn(windowHandle, 0, true);
+    }
+
+    private void BeginResizeAnimation(RectInt32 from, RectInt32 to, int cornerRadiusPx)
+    {
+        this._resizeAnimationTimer.Stop();
+
+        bool unchanged = from.X == to.X && from.Y == to.Y && from.Width == to.Width && from.Height == to.Height;
+        if (unchanged)
+        {
+            this.AppWindow.MoveAndResize(to);
+            this.ApplyRoundedWindowRegion(to.Width, to.Height, cornerRadiusPx);
+            return;
+        }
+
+        this._animationFrom = from;
+        this._animationTo = to;
+        this._animationCornerRadiusPx = cornerRadiusPx;
+        this._animationStopwatch.Restart();
+        this._resizeAnimationTimer.Start();
+    }
+
+    private void OnResizeAnimationTick(DispatcherQueueTimer sender, object args)
+    {
+        double t = Math.Min(1d, this._animationStopwatch.Elapsed.TotalMilliseconds / ResizeAnimationDurationMs);
+        double eased = 1d - Math.Pow(1d - t, 3d);
+        RectInt32 step = new RectInt32(
+            Lerp(this._animationFrom.X, this._animationTo.X, eased),
+            Lerp(this._animationFrom.Y, this._animationTo.Y, eased),
+            Lerp(this._animationFrom.Width, this._animationTo.Width, eased),
+            Lerp(this._animationFrom.Height, this._animationTo.Height, eased));
+
+        this.AppWindow.MoveAndResize(step);
+        this.ApplyRoundedWindowRegion(step.Width, step.Height, this._animationCornerRadiusPx);
+
+        if (t >= 1d)
+        {
+            this._resizeAnimationTimer.Stop();
+        }
+    }
+
+    private void OnDragRegionLoaded(FrameworkElement dragRegion) => this.SetTitleBar(dragRegion);
 
     private int ToPhysicalPixels(int effectivePixels)
     {
@@ -294,6 +405,7 @@ public sealed partial class MainWindow : Window
         }
         finally
         {
+            this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
             this._windowController.Detach(this);
             this._shutdownComplete = true;
             this.Close();

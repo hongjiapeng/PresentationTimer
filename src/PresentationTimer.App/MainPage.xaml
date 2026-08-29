@@ -22,41 +22,49 @@
                 <RowDefinition Height="64" />
             </Grid.RowDefinitions>
 
-            <Grid ColumnSpacing="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="48" />
-                </Grid.ColumnDefinitions>
                 <Grid
                     x:Name="CompactDragRegion"
                     AutomationProperties.AutomationId="CompactDragRegion"
-                    Background="Transparent" />
+                    Grid.RowSpan="2"
+                    Background="Transparent"
+                    Loaded="CompactDragRegion_Loaded"
+                    Margin="0,0,48,0">
+                    <Viewbox Margin="16,24,16,0" MaxHeight="104" MaxWidth="360" Stretch="Uniform">
+                        <TextBlock
+                            AutomationProperties.AutomationId="CompactTimerDisplay"
+                            CharacterSpacing="-40"
+                            FontSize="96"
+                            FontWeight="SemiBold"
+                            Foreground="{x:Bind TimerForeground, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
+                            TextAlignment="Center" />
+                    </Viewbox>
+                </Grid>
                 <Button
                     x:Name="CompactExpandButton"
                     x:Uid="CompactExpandButton"
                     AutomationProperties.AutomationId="CompactExpandButton"
-                    Grid.Column="1"
+                    HorizontalAlignment="Right"
                     Click="ExpandButton_Click"
                     Style="{StaticResource PresenterCompactIconButtonStyle}"
                     TabIndex="0">
-                    <SymbolIcon AutomationProperties.AccessibilityView="Raw" Symbol="View" />
+                    <Grid AutomationProperties.AccessibilityView="Raw" Width="16" Height="16" RowSpacing="4" ColumnSpacing="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="6" />
+                            <RowDefinition Height="6" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="6" />
+                            <ColumnDefinition Width="6" />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                        <Rectangle Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                        <Rectangle Grid.Row="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                        <Rectangle Grid.Row="1" Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    </Grid>
                 </Button>
-            </Grid>
 
-            <Grid Grid.Row="1" Margin="16,0">
-                <Viewbox MaxHeight="104" MaxWidth="408" Stretch="Uniform">
-                    <TextBlock
-                        AutomationProperties.AutomationId="CompactTimerDisplay"
-                        CharacterSpacing="-40"
-                        FontSize="96"
-                        FontWeight="SemiBold"
-                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
-                        Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
-                        TextAlignment="Center" />
-                </Viewbox>
-            </Grid>
-
-            <Grid Grid.Row="2" Padding="12,8" ColumnSpacing="8">
+                <Grid Grid.Row="2" Padding="12,8" ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -128,8 +136,12 @@
                             <MenuFlyoutItem
                                 x:Uid="OpenControlCenterMenuItem"
                                 AutomationProperties.AutomationId="OpenControlCenterMenuItem"
-                                Click="OpenControlCenterMenuItem_Click"
-                                Icon="View" />
+                                Click="OpenControlCenterMenuItem_Click" />
+                            <MenuFlyoutItem
+                                x:Uid="EnterPresentationHudMenuItem"
+                                AutomationProperties.AutomationId="EnterPresentationHudMenuItem"
+                                Click="EnterPresentationHudMenuItem_Click"
+                                IsEnabled="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}" />
                             <MenuFlyoutItem
                                 AutomationProperties.AutomationId="RemoteMenuItem"
                                 Click="RemoteMenuItem_Click"
@@ -182,6 +194,7 @@
                 x:Name="PresentationHudDragRegion"
                 AutomationProperties.AutomationId="PresentationHudDragRegion"
                 Background="Transparent"
+                Loaded="PresentationHudDragRegion_Loaded"
                 Padding="8,0">
                 <Viewbox MaxHeight="64" MaxWidth="148" Stretch="Uniform">
                     <TextBlock
@@ -225,7 +238,20 @@
                 Click="ExpandButton_Click"
                 Style="{StaticResource PresenterCompactIconButtonStyle}"
                 TabIndex="1">
-                <SymbolIcon AutomationProperties.AccessibilityView="Raw" Symbol="View" />
+                <Grid AutomationProperties.AccessibilityView="Raw" Width="16" Height="16" RowSpacing="4" ColumnSpacing="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="6" />
+                        <RowDefinition Height="6" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6" />
+                        <ColumnDefinition Width="6" />
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    <Rectangle Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    <Rectangle Grid.Row="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                    <Rectangle Grid.Row="1" Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
+                </Grid>
             </Button>
             <Button
                 x:Name="HudMoreButton"
@@ -245,8 +271,7 @@
                         <MenuFlyoutItem
                             x:Uid="OpenControlCenterMenuItem"
                             AutomationProperties.AutomationId="HudOpenControlCenterMenuItem"
-                            Click="OpenControlCenterMenuItem_Click"
-                            Icon="View" />
+                            Click="OpenControlCenterMenuItem_Click" />
                         <MenuFlyoutItem
                             AutomationProperties.AutomationId="HudRemoteMenuItem"
                             Click="RemoteMenuItem_Click"

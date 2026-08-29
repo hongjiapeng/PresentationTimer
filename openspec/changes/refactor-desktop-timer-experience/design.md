@@ -32,7 +32,7 @@ The reference images define hierarchy and states rather than literal pixels. `pr
 
 `MainPage` will host three mutually exclusive top-level roots: `CompactRoot`, `PresentationHudRoot`, and `ControlCenterRoot`. `x:Load` will bind them to a small shell-mode enum projection so hidden trees are unloaded, while all roots bind to the same existing `MainViewModel` instance. Entering a mode changes page presentation state and asks `WindowController` to apply the corresponding top-level window behavior; it never reconstructs the page, view model, service, or timer notifier.
 
-Starting from Compact automatically selects Presentation HUD after the authoritative state leaves Ready. Pausing and resuming retain HUD; Reset returns it to Compact. Starting from Expanded deliberately remains Expanded so configuration and connectivity work is not unexpectedly hidden. Collapsing Expanded selects HUD when the timer is Running or Paused and Compact when it is Ready.
+Starting from Compact remains Compact and swaps Start to Pause in place. Presentation HUD is entered only through an explicit More-menu action while Running or Paused; pausing and resuming then retain HUD, and Reset returns it to Compact. Starting from Expanded deliberately remains Expanded so configuration and connectivity work is not unexpectedly hidden. Collapsing Expanded selects HUD when the timer is Running or Paused and Compact when it is Ready.
 
 Window-mode state is a shell concern, so `MainPage` will own it along with current-process pinning and focused Control Center section. `MainViewModel` remains responsible for projecting aggregate session state and executing application-service commands. Thin XAML-root operations such as showing a `ContentDialog` and moving focus after expansion remain in page code-behind; business validation and timer configuration remain in the view model.
 
@@ -73,9 +73,10 @@ Compact mode will:
 
 - hide the existing `TitleBar` control;
 - call `OverlappedPresenter.SetBorderAndTitleBar(false, false)`;
-- use a dedicated, non-interactive drag strip registered through `Window.SetTitleBar` so command buttons remain client input;
+- use the entire non-interactive timer display region through `Window.SetTitleBar`, excluding command buttons, so the obvious central surface drags the window;
 - resize to 440×240 effective pixels using `GetDpiForWindow` conversion;
 - request small rounded DWM corners when supported and tolerate an unsupported result;
+- request no DWM border color in Compact and HUD, restoring the system default border in Expanded;
 - prevent user resizing by setting presenter resizability off while compact.
 
 Presentation HUD will reuse Compact's borderless presenter and small-corner request, register its own non-interactive time region as the drag surface, disable resizing/caption actions, and resize to 288×96 effective pixels. Its first position is snapped to the nearest current work-area corner with a small inset; later user dragging is retained for the process lifetime and clamped after display or DPI changes.
@@ -133,7 +134,7 @@ Update `scripts/ui-smoke.ps1` to target the new stable automation identifiers an
 - [Toggling presenter chrome can produce stale sizing or a transient frame on some Windows builds] → Centralize the order of presenter, title-bar, move, and resize operations in `MainWindow`; smoke both directions repeatedly before polishing.
 - [A fixed compact size can clip long localized or multi-hour values] → Scale only the timer through a bounded `Viewbox`, reserve command space, test English/Chinese and multi-hour overtime at 100–200% DPI.
 - [Unloading one root with `x:Load` can drop focus and reopen flyouts incorrectly] → Close transient UI before switching, restore focus explicitly after layout, and keep session/view-model objects outside the unloaded root.
-- [Automatically shrinking on Start can surprise a user configuring the Control Center] → Auto-enter HUD only from Compact; starting in Expanded stays in place, while Collapse chooses HUD only for Running or Paused.
+- [Automatically shrinking on Start makes the primary action feel discontinuous] → Start stays in its current Compact or Expanded surface; HUD requires an explicit menu action, while Collapse chooses HUD only for Running or Paused.
 - [A HUD can still cover meaningful slide content] → Keep it substantially smaller than Compact, preserve dragging, snap its first placement to a work-area corner, and retain that user-selected HUD position for the process lifetime.
 - [Forced dark Compact styling can conflict with accessibility themes] → Apply dark theme only to the compact child surface and supply a High Contrast dictionary using system brushes; do not hardcode foreground colors at usage sites.
 - [Current PowerPoint auto-monitoring has no explicit refresh command] → Represent the real status and focus the PowerPoint region; retain the existing two-second reconciliation instead of adding a misleading connection button.

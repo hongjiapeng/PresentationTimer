@@ -142,6 +142,8 @@
   <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>更多</value></data>
   <data name="HudResetMenuItem.Text" xml:space="preserve"><value>重置计时器</value></data>
   <data name="OpenControlCenterMenuItem.Text" xml:space="preserve"><value>打开控制中心</value></data>
+  <data name="EnterPresentationHudMenuItem.Text" xml:space="preserve"><value>切换到演示悬浮窗</value></data>
+  <data name="EnterPresentationHudMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>切换到更小的演示悬浮窗</value></data>
   <data name="AlwaysOnTopMenuItem.Text" xml:space="preserve"><value>始终置顶</value></data>
   <data name="TimerSettingsMenuItem.Text" xml:space="preserve"><value>计时器设置</value></data>
   <data name="ExitMenuItem.Text" xml:space="preserve"><value>退出</value></data>

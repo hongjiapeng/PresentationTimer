@@ -8,7 +8,8 @@ Record the date, Windows version, build commit/archive identifier, PowerPoint ve
 |---|---|---|---|
 | Compact launch | Start at 100%, 150%, and 200% display scale | Borderless 440×240 effective-pixel timer; no PPT, phone, QR, notes, or duration form | Not run |
 | Compact controls | Inspect the ready surface, then activate Start | No visible Ready/Remaining-Time caption; restrained centered primary button; solid Reset/More/Control Center surfaces; Control Center is not mistaken for maximize | Not run |
-| Presentation HUD | Compact Start → Pause → Resume → More/Reset | Same window becomes approximately 288×96 effective pixels; only time, state action, Control Center, and More remain; Reset returns to Compact | Not run |
+| Compact continuity | Ready → Start; Running → Pause; Paused → Resume | The 440×240 window does not jump or resize; only the state-appropriate command changes in place | Not run |
+| Presentation HUD | Start → More → Switch to presentation HUD → Pause → Resume → More/Reset | Explicit action changes the same window to approximately 288×96 effective pixels; only time, state action, Control Center, and More remain; Reset returns to Compact | Not run |
 | HUD placement | Start near each work-area quadrant, drag HUD, expand/collapse, and change display topology | First HUD placement uses the nearest inset corner; the dragged process-lifetime HUD position returns and remains visible | Not run |
 | Timer states | Cross 01:00, 00:00, +00:00:01, and multiple hours | Warning includes 01:00 through zero; overtime uses `+hh:mm:ss`; state text remains available without color | Not run |
 | More menu | Open every state-dependent entry and toggle Always on Top | Entries reflect current PPT/phone state; Timer Settings deep-links to duration; Exit performs coordinated shutdown | Not run |
@@ -20,6 +21,8 @@ Record the date, Windows version, build commit/archive identifier, PowerPoint ve
 | Themes | Expanded Light/Dark; Windows High Contrast; Compact in both app themes | Compact stays low-glare; High Contrast uses system colors; focus and text remain distinguishable | Not run |
 | Localization | Run `en-US` and `zh-CN` at all supported scales | Labels, menus, tooltips, validation, automation names, and multi-hour values do not clip | Not run |
 | Windows fallback | Repeat Compact check on supported Windows 10 host | Square corners are acceptable; drag, input, sizing, and shutdown remain functional | Not run |
+
+When validating the real window edge, launch once with **Ctrl+F5** (Start Without Debugging). Visual Studio's XAML Hot Reload runtime tools add an in-app overlay during F5 debugging; its thin edge highlight and centered toolbar tab are debugger chrome, not the app's DWM border. If needed, hide it under **Tools > Options > Debugging > XAML Hot Reload** by clearing **Enable XAML Hot Reload**, then restart the app. Compact and HUD must still suppress their actual DWM border and remain draggable from the timer surface outside this debugging overlay.
 
 The desktop refactor must not change the monotonic Timer calculation, PowerPoint COM lifecycle, SignalR hub and remote host behavior, QR credentials/token rotation, or phone web UI contract. Validate those preserved boundaries with the automated Core/Remote suites and the integration matrices below.
 

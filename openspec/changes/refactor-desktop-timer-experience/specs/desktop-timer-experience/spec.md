@@ -42,12 +42,17 @@ The primary text action SHALL use a restrained presenter-sized target rather tha
 - **THEN** the timer returns to Ready at the currently configured target duration
 
 ### Requirement: Presentation HUD minimizes slide obstruction
-Starting the authoritative timer from Compact mode SHALL transform the same window into a borderless Presentation HUD of approximately 288 by 96 effective pixels. The HUD SHALL remain draggable and topmost according to the current preference, and SHALL show the authoritative timer plus only Pause or Resume, Control Center, and More. It SHALL NOT create a timer, page, window, PowerPoint lifecycle, or session subscription.
+While the authoritative timer is Running or Paused, Compact mode SHALL expose an explicit Switch to Presentation HUD action. Activating it SHALL transform the same window into a borderless Presentation HUD of approximately 288 by 96 effective pixels. The HUD SHALL remain draggable and topmost according to the current preference, and SHALL show the authoritative timer plus only Pause or Resume, Control Center, and More. It SHALL NOT create a timer, page, window, PowerPoint lifecycle, or session subscription.
 
 #### Scenario: Compact timer starts
 - **WHEN** the Ready timer is started from Compact mode
+- **THEN** the same Compact window remains visible
+- **AND** its primary action changes from Start to Pause without an automatic size or position jump
+
+#### Scenario: Presenter explicitly enters HUD
+- **WHEN** the timer is Running or Paused and Switch to Presentation HUD is activated
 - **THEN** the same window enters Presentation HUD mode
-- **AND** the HUD displays the Running time from the same authoritative snapshot
+- **AND** the HUD displays time from the same authoritative snapshot
 - **AND** the HUD occupies substantially less slide area than Compact mode
 
 #### Scenario: HUD timer is paused and resumed
@@ -68,6 +73,10 @@ Starting the authoritative timer from Compact mode SHALL transform the same wind
 #### Scenario: Timer starts in Control Center
 - **WHEN** the Ready timer is started while Expanded Control Center is visible
 - **THEN** the Control Center remains visible and changes its primary action to Pause in place
+
+#### Scenario: Ready timer cannot enter HUD
+- **WHEN** the authoritative timer is Ready
+- **THEN** Switch to Presentation HUD is unavailable until the timer starts
 
 ### Requirement: Timer visuals communicate normal, warning, and overtime states
 The timer display SHALL derive its value from the authoritative timer snapshot rather than a view-owned countdown. A countdown above one minute SHALL use the normal timer treatment, remaining time from `01:00` through `00:00` SHALL use a warning treatment, and negative remaining time SHALL use a critical overtime treatment with a leading `+`. Expanded mode SHALL show the configured target and a determinate remaining-ratio indicator that is full in Ready, decreases toward zero while Running, remains fixed while Paused, and is empty in overtime. State and progress meaning SHALL be conveyed through accessible text in addition to color or shape.
@@ -231,7 +240,7 @@ The Control Center SHALL offer 10, 15, 20, and 30 minute presets plus Custom whi
 Compact Timer SHALL be borderless, low-glare, draggable from non-interactive surface areas, rounded where supported by the operating system, and approximately 440 by 240 effective pixels. Presentation HUD SHALL use the same borderless treatment at approximately 288 by 96 effective pixels. Expanded Control Center SHALL provide normal caption actions, be resizable from approximately 920 by 680 effective pixels, and enforce a usable minimum size. Switching modes SHALL be DPI-aware and SHALL retain separate current-process Compact, HUD, and Expanded rectangles when those rectangles remain visible on a display.
 
 #### Scenario: Compact window is dragged
-- **WHEN** the user drags a non-interactive area of Compact Timer
+- **WHEN** the user drags the timer display or another non-interactive area of Compact Timer
 - **THEN** the operating system moves the window
 - **AND** timer buttons remain clickable rather than acting as drag regions
 
