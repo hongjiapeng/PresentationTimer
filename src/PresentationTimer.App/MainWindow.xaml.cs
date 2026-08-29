@@ -19,7 +19,6 @@ public sealed partial class MainWindow : Window
     private const int CompactWidth = 440;
     private const int PresentationHudHeight = 96;
     private const int PresentationHudWidth = 288;
-    private const int PresentationHudWorkAreaInset = 12;
     private const int ExpandedHeight = 680;
     private const int ExpandedWidth = 920;
     private const int MinimumExpandedHeight = 600;
@@ -167,14 +166,10 @@ public sealed partial class MainWindow : Window
         presenter.PreferredMinimumWidth = 0;
         presenter.PreferredMinimumHeight = 0;
 
-        bool hasRetainedBounds = this._presentationHudBounds is not null;
-        RectInt32 startBounds = this.GetCurrentBounds();
-        RectInt32 target = this._presentationHudBounds ?? startBounds;
+        RectInt32 target = this._presentationHudBounds ?? this.GetCurrentBounds();
         target.Width = this.ToPhysicalPixels(PresentationHudWidth);
         target.Height = this.ToPhysicalPixels(PresentationHudHeight);
-        target = hasRetainedBounds
-            ? ClampToVisibleWorkArea(target)
-            : SnapToNearestWorkAreaCorner(target, this.ToPhysicalPixels(PresentationHudWorkAreaInset));
+        target = ClampToVisibleWorkArea(target);
         this._presentationHudBounds = target;
         this._windowMode = DesktopWindowMode.PresentationHud;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
@@ -303,26 +298,6 @@ public sealed partial class MainWindow : Window
             Math.Clamp(bounds.Y, workArea.Y, maximumY),
             width,
             height);
-    }
-
-    private static RectInt32 SnapToNearestWorkAreaCorner(RectInt32 bounds, int inset)
-    {
-        DisplayArea displayArea = DisplayArea.GetFromRect(bounds, DisplayAreaFallback.Primary);
-        RectInt32 workArea = displayArea.WorkArea;
-        int width = Math.Min(bounds.Width, Math.Max(1, workArea.Width - (inset * 2)));
-        int height = Math.Min(bounds.Height, Math.Max(1, workArea.Height - (inset * 2)));
-        int boundsCenterX = bounds.X + (bounds.Width / 2);
-        int boundsCenterY = bounds.Y + (bounds.Height / 2);
-        int workAreaCenterX = workArea.X + (workArea.Width / 2);
-        int workAreaCenterY = workArea.Y + (workArea.Height / 2);
-        int x = boundsCenterX < workAreaCenterX
-            ? workArea.X + inset
-            : workArea.X + workArea.Width - width - inset;
-        int y = boundsCenterY < workAreaCenterY
-            ? workArea.Y + inset
-            : workArea.Y + workArea.Height - height - inset;
-
-        return ClampToVisibleWorkArea(new RectInt32(x, y, width, height));
     }
 
     private static int Lerp(int from, int to, double t) => (int)Math.Round(from + ((to - from) * t));
@@ -467,7 +442,7 @@ public sealed partial class MainWindow : Window
     private void UpdateTitleBarPinMargin()
     {
         double rightInset = this.ToEffectivePixels(this.AppWindow.TitleBar.RightInset);
-        this.TitleBarPinButton.Margin = new Thickness(0, 0, rightInset + 8, 0);
+        this.TitleBarPinButton.Margin = new Thickness(0, 0, rightInset + 8, 4);
     }
 
     private async void OnClosing(AppWindow sender, AppWindowClosingEventArgs args)

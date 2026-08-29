@@ -79,7 +79,7 @@ Compact mode will:
 - request no DWM border color in Compact and HUD, restoring the system default border in Expanded;
 - prevent user resizing by setting presenter resizability off while compact.
 
-Presentation HUD will reuse Compact's borderless presenter and small-corner request, register its own non-interactive time region as the drag surface, disable resizing/caption actions, and resize to 288×96 effective pixels. Its first position is snapped to the nearest current work-area corner with a small inset; later user dragging is retained for the process lifetime and clamped after display or DPI changes.
+Presentation HUD will reuse Compact's borderless presenter and small-corner request, register its own non-interactive time region as the drag surface, disable resizing/caption actions, and resize to 288×96 effective pixels. Its first transition preserves the current window position while changing only the size; later user dragging is retained for the process lifetime and clamped after display or DPI changes.
 
 Expanded mode will:
 
@@ -135,7 +135,7 @@ Update `scripts/ui-smoke.ps1` to target the new stable automation identifiers an
 - [A fixed compact size can clip long localized or multi-hour values] → Scale only the timer through a bounded `Viewbox`, reserve command space, test English/Chinese and multi-hour overtime at 100–200% DPI.
 - [Unloading one root with `x:Load` can drop focus and reopen flyouts incorrectly] → Close transient UI before switching, restore focus explicitly after layout, and keep session/view-model objects outside the unloaded root.
 - [Automatically shrinking on Start makes the primary action feel discontinuous] → Start stays in its current Compact or Expanded surface; HUD requires an explicit menu action, while Collapse chooses HUD only for Running or Paused.
-- [A HUD can still cover meaningful slide content] → Keep it substantially smaller than Compact, preserve dragging, snap its first placement to a work-area corner, and retain that user-selected HUD position for the process lifetime.
+- [A HUD can still cover meaningful slide content] → Keep it substantially smaller than Compact, preserve the user's current position on first entry, and retain later user-selected HUD positions for the process lifetime.
 - [Forced dark Compact styling can conflict with accessibility themes] → Apply dark theme only to the compact child surface and supply a High Contrast dictionary using system brushes; do not hardcode foreground colors at usage sites.
 - [Current PowerPoint auto-monitoring has no explicit refresh command] → Represent the real status and focus the PowerPoint region; retain the existing two-second reconciliation instead of adding a misleading connection button.
 - [UI-only tests cannot prove COM, LAN, or DWM integration] → Keep automated tests at deterministic seams and require the existing/manual integration matrix before completion.

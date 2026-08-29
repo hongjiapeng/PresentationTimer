@@ -47,6 +47,6 @@
 ## 7. Presentation HUD and command polish
 
 - [x] 7.1 Remove the visible Compact status caption while retaining localized accessible timer state, replace the maximize-like glyph, and apply solid semantic primary/secondary/icon command styles with restrained sizes.
-- [x] 7.2 Add a third `PresentationHud` page/window mode at approximately 288×96 effective pixels with a dedicated drag region, current-process bounds, corner placement, and the same always-on-top state.
+- [x] 7.2 Add a third `PresentationHud` page/window mode at approximately 288×96 effective pixels with a dedicated drag region, current-process bounds that preserve the user's position, and the same always-on-top state.
 - [x] 7.3 Keep Start in Compact, enter HUD only through an explicit non-ready action, keep Pause/Resume in HUD, return Reset to Compact, keep Expanded Start in place, and make active Control Center Collapse return to HUD without creating session state.
 - [x] 7.4 Update localized resources, smoke/manual verification coverage, run strict OpenSpec validation, focused/full tests, and Debug/Release x64 builds; leave environment-dependent launch/theme/DPI checks open when the WinUI launch prerequisite is unavailable.

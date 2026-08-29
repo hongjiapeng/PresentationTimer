@@ -574,7 +574,7 @@
                                 AutomationProperties.AutomationId="OpenPowerPointFileButton"
                                 Click="OpenPowerPointFileButton_Click"
                                 IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}"
-                                Style="{StaticResource PresenterCommandButtonStyle}" />
+                                Style="{StaticResource PresenterPrimaryCommandButtonStyle}" />
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Button
                                     x:Uid="PreviousSlideButton"

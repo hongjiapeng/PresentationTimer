@@ -130,6 +130,7 @@
                 <Setter Property="MinWidth" Value="72" />
                 <Setter Property="MinHeight" Value="44" />
                 <Setter Property="Padding" Value="16,8" />
+                <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

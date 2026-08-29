@@ -30,7 +30,7 @@
             x:Uid="TitleBarPinButton"
             AutomationProperties.AutomationId="TitleBarPinButton"
             HorizontalAlignment="Right"
-            VerticalAlignment="Center"
+            VerticalAlignment="Bottom"
             Canvas.ZIndex="1"
             IsChecked="{x:Bind PresenterPage.IsAlwaysOnTop, Mode=TwoWay}"
             Style="{StaticResource PresenterTitleBarToggleStyle}">
