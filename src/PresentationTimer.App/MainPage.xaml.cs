@@ -196,16 +196,22 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     private void OnActualThemeChanged(FrameworkElement sender, object args) =>
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.TimerForeground)));
 
-    private async void OpenPowerPointFileButton_Click(object sender, RoutedEventArgs args)
+    private async void OpenPowerPointFileButton_Click(object sender, RoutedEventArgs args) =>
+        await this.SelectAndOpenPowerPointAsync();
+
+    private async void OpenPowerPointFileMenuItem_Click(object sender, RoutedEventArgs args) =>
+        await this.SelectAndOpenPowerPointAsync();
+
+    private async Task SelectAndOpenPowerPointAsync()
     {
         if (this._isPresentationPickerOpen ||
+            !this.ViewModel.CanOpenPresentation ||
             ((App)Application.Current).MainWindow is not MainWindow window)
         {
             return;
         }
 
         this._isPresentationPickerOpen = true;
-        this.OpenPowerPointFileButton.IsEnabled = false;
         try
         {
             var picker = new FileOpenPicker(window.AppWindow.Id);
@@ -223,7 +229,6 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         finally
         {
             this._isPresentationPickerOpen = false;
-            this.OpenPowerPointFileButton.IsEnabled = this.ViewModel.CanOpenPresentation;
         }
     }
 

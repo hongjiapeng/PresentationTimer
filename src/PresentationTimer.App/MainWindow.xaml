@@ -11,7 +11,7 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
+    <Grid x:Name="WindowLayoutRoot" SizeChanged="WindowLayoutRoot_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -23,17 +23,19 @@
             <TitleBar.IconSource>
                 <SymbolIconSource Symbol="Clock" />
             </TitleBar.IconSource>
-            <TitleBar.RightHeader>
-                <ToggleButton
-                    x:Name="TitleBarPinButton"
-                    x:Uid="TitleBarPinButton"
-                    AutomationProperties.AutomationId="TitleBarPinButton"
-                    IsChecked="{x:Bind PresenterPage.IsAlwaysOnTop, Mode=TwoWay}"
-                    Style="{StaticResource PresenterTitleBarToggleStyle}">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE718;" />
-                </ToggleButton>
-            </TitleBar.RightHeader>
         </TitleBar>
+
+        <ToggleButton
+            x:Name="TitleBarPinButton"
+            x:Uid="TitleBarPinButton"
+            AutomationProperties.AutomationId="TitleBarPinButton"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Canvas.ZIndex="1"
+            IsChecked="{x:Bind PresenterPage.IsAlwaysOnTop, Mode=TwoWay}"
+            Style="{StaticResource PresenterTitleBarToggleStyle}">
+            <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE718;" />
+        </ToggleButton>
 
         <Frame x:Name="RootFrame" Grid.Row="1" />
     </Grid>

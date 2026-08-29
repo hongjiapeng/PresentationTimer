@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Net;
+using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.WebUtilities;
 using PresentationTimer.Remote.Networking;
 using RemoteHost = PresentationTimer.Remote.RemoteSessionHost;
@@ -20,6 +21,60 @@ public sealed class NetworkAddressProviderTests
         Assert.IsFalse(NetworkAddressProvider.IsEligible(IPAddress.Parse("169.254.10.20")));
         Assert.IsFalse(NetworkAddressProvider.IsEligible(IPAddress.Parse("224.0.0.1")));
         Assert.IsFalse(NetworkAddressProvider.IsEligible(IPAddress.IPv6Loopback));
+    }
+
+    /// <summary>Verifies physical LAN adapters are preferred over virtual and tunnel adapters.</summary>
+    [TestMethod]
+    public void GetInterfacePriority_PhysicalAndVirtualAdapters_PrefersPhysicalLan()
+    {
+        // Act
+        int wirelessPriority = NetworkAddressProvider.GetInterfacePriority(
+            "WLAN",
+            "Intel(R) Wi-Fi 6E AX211 160MHz",
+            NetworkInterfaceType.Wireless80211);
+        int ethernetPriority = NetworkAddressProvider.GetInterfacePriority(
+            "Ethernet",
+            "Intel(R) Ethernet Controller",
+            NetworkInterfaceType.Ethernet);
+        int virtualPriority = NetworkAddressProvider.GetInterfacePriority(
+            "vEthernet (WSL)",
+            "Hyper-V Virtual Ethernet Adapter",
+            NetworkInterfaceType.Ethernet);
+        int tunnelPriority = NetworkAddressProvider.GetInterfacePriority(
+            "VPN",
+            "WireGuard Tunnel",
+            NetworkInterfaceType.Tunnel);
+
+        // Assert
+        Assert.IsLessThan(virtualPriority, wirelessPriority);
+        Assert.IsLessThan(virtualPriority, ethernetPriority);
+        Assert.AreEqual(virtualPriority, tunnelPriority);
+    }
+
+    /// <summary>Verifies endpoint binding keeps provider preference and leaves loopback last.</summary>
+    [TestMethod]
+    public void OrderBoundCandidateUrls_UnorderedEndpoints_PreservesPreferredAdapterOrder()
+    {
+        // Arrange
+        var physical = new Uri("http://192.168.1.8:41001");
+        var virtualAdapter = new Uri("http://172.19.208.1:41002");
+        var loopback = new Uri("http://127.0.0.1:41003");
+        NetworkAddressCandidate[] requestedCandidates =
+        [
+            new NetworkAddressCandidate(IPAddress.Parse(physical.Host), "WLAN"),
+            new NetworkAddressCandidate(IPAddress.Parse(virtualAdapter.Host), "vEthernet (WSL)"),
+        ];
+
+        // Act
+        ImmutableArray<Uri> ordered = RemoteHost.OrderBoundCandidateUrls(
+            [virtualAdapter, loopback, physical],
+            requestedCandidates);
+
+        // Assert
+        Assert.HasCount(3, ordered);
+        Assert.AreEqual(physical, ordered[0]);
+        Assert.AreEqual(virtualAdapter, ordered[1]);
+        Assert.AreEqual(loopback, ordered[2]);
     }
 
     /// <summary>Verifies every bound adapter becomes a distinct labeled choice with an exact QR payload.</summary>

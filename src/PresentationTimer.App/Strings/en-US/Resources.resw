@@ -178,6 +178,8 @@
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More control center actions</value></data>
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
   <data name="PowerPointOpenMenuItem.Text" xml:space="preserve"><value>PowerPoint</value></data>
+  <data name="SelectAndPresentPowerPointMenuItem.Text" xml:space="preserve"><value>Select and present PPT</value></data>
+  <data name="SelectAndPresentPowerPointMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Select a PowerPoint file and start its slide show</value></data>
   <data name="RemoteOpenMenuItem.Text" xml:space="preserve"><value>Phone remote</value></data>
   <data name="SpeakerNotesPhoneHint.Text" xml:space="preserve"><value>Speaker notes are available on the phone presenter.</value></data>
   <data name="DisplayPairingQrButton.Content" xml:space="preserve"><value>Display pairing QR</value></data>

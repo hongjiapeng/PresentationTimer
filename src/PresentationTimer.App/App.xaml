@@ -62,7 +62,7 @@
                 <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
-                <Setter Property="Padding" Value="20" />
+                <Setter Property="Padding" Value="16" />
             </Style>
             <Style x:Key="PresenterCommandButtonStyle" TargetType="Button">
                 <Setter Property="MinWidth" Value="44" />
@@ -100,21 +100,23 @@
                 <Setter Property="CornerRadius" Value="26" />
             </Style>
             <Style x:Key="PresenterHeroActionButtonStyle" TargetType="Button">
-                <Setter Property="Width" Value="56" />
-                <Setter Property="Height" Value="56" />
+                <Setter Property="Width" Value="48" />
+                <Setter Property="Height" Value="48" />
+                <Setter Property="MinWidth" Value="48" />
+                <Setter Property="MinHeight" Value="48" />
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="Background" Value="{ThemeResource PresenterCommandSurfaceBrush}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="28" />
+                <Setter Property="CornerRadius" Value="24" />
             </Style>
             <Style x:Key="PresenterHeroPrimaryActionButtonStyle" BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
-                <Setter Property="Width" Value="64" />
-                <Setter Property="Height" Value="64" />
-                <Setter Property="MinWidth" Value="64" />
-                <Setter Property="MinHeight" Value="64" />
+                <Setter Property="Width" Value="56" />
+                <Setter Property="Height" Value="56" />
+                <Setter Property="MinWidth" Value="56" />
+                <Setter Property="MinHeight" Value="56" />
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="CornerRadius" Value="32" />
+                <Setter Property="CornerRadius" Value="28" />
             </Style>
             <Style x:Key="PresenterTitleBarToggleStyle" TargetType="ToggleButton">
                 <Setter Property="Width" Value="40" />

@@ -318,6 +318,24 @@ public sealed partial class RemoteSessionHost : IRemoteSessionHost, IAsyncDispos
         };
     }
 
+    internal static ImmutableArray<Uri> OrderBoundCandidateUrls(
+        IEnumerable<Uri> boundCandidateUrls,
+        IReadOnlyList<NetworkAddressCandidate> requestedCandidates)
+    {
+        ArgumentNullException.ThrowIfNull(boundCandidateUrls);
+        ArgumentNullException.ThrowIfNull(requestedCandidates);
+        var requestedOrder = requestedCandidates
+            .Select(static (candidate, index) => new KeyValuePair<IPAddress, int>(candidate.Address, index))
+            .ToDictionary();
+
+        return boundCandidateUrls
+            .OrderBy(uri => requestedOrder.TryGetValue(IPAddress.Parse(uri.Host), out int index)
+                ? index
+                : int.MaxValue)
+            .ThenBy(static uri => uri.AbsoluteUri, StringComparer.Ordinal)
+            .ToImmutableArray();
+    }
+
     private static Uri BuildPairingUri(Uri selectedUrl, string pairingToken)
     {
         string value = QueryHelpers.AddQueryString(
@@ -336,7 +354,7 @@ public sealed partial class RemoteSessionHost : IRemoteSessionHost, IAsyncDispos
             .Select(static candidate => candidate.Address)
             .ToHashSet();
 
-        return applications.SelectMany(static application =>
+        IEnumerable<Uri> boundCandidateUrls = applications.SelectMany(static application =>
         {
             IServer server = application.Services.GetRequiredService<IServer>();
             IServerAddressesFeature? addresses = server.Features.Get<IServerAddressesFeature>();
@@ -344,10 +362,8 @@ public sealed partial class RemoteSessionHost : IRemoteSessionHost, IAsyncDispos
         })
             .Select(static address => new Uri(address, UriKind.Absolute))
             .Where(uri => IPAddress.TryParse(uri.Host, out IPAddress? address) &&
-                (requested.Contains(address) || (allowLoopbackPairing && IPAddress.IsLoopback(address))))
-            .OrderBy(static uri => IPAddress.IsLoopback(IPAddress.Parse(uri.Host)))
-            .ThenBy(static uri => uri.AbsoluteUri, StringComparer.Ordinal)
-            .ToImmutableArray();
+                (requested.Contains(address) || (allowLoopbackPairing && IPAddress.IsLoopback(address))));
+        return OrderBoundCandidateUrls(boundCandidateUrls, requestedCandidates);
     }
 
     private static async Task StartEndpointAsync(

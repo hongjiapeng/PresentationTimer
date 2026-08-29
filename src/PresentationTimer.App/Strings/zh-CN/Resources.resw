@@ -178,6 +178,8 @@
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>更多控制中心操作</value></data>
   <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>更多</value></data>
   <data name="PowerPointOpenMenuItem.Text" xml:space="preserve"><value>PowerPoint</value></data>
+  <data name="SelectAndPresentPowerPointMenuItem.Text" xml:space="preserve"><value>选择并放映 PPT</value></data>
+  <data name="SelectAndPresentPowerPointMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>选择 PowerPoint 文件并开始幻灯片放映</value></data>
   <data name="RemoteOpenMenuItem.Text" xml:space="preserve"><value>手机遥控</value></data>
   <data name="SpeakerNotesPhoneHint.Text" xml:space="preserve"><value>可在手机演示端查看演讲者备注。</value></data>
   <data name="DisplayPairingQrButton.Content" xml:space="preserve"><value>显示配对二维码</value></data>

@@ -27,6 +27,24 @@ internal interface INetworkAddressProvider
 
 internal sealed class NetworkAddressProvider : INetworkAddressProvider
 {
+    private const int EthernetPriority = 1;
+    private const int OtherPhysicalPriority = 2;
+    private const int VirtualAdapterPriority = 10;
+    private const int WirelessPriority = 0;
+    private static readonly string[] VirtualAdapterMarkers =
+    [
+        "hyper-v",
+        "virtual",
+        "vethernet",
+        "vmware",
+        "virtualbox",
+        "wsl",
+        "vpn",
+        "wireguard",
+        "tailscale",
+        "zerotier",
+    ];
+
     public IReadOnlyList<NetworkAddressCandidate> GetCandidates()
     {
         return NetworkInterface.GetAllNetworkInterfaces()
@@ -43,12 +61,49 @@ internal sealed class NetworkAddressProvider : INetworkAddressProvider
                         label = networkInterface.Description;
                     }
 
-                    return new NetworkAddressCandidate(address.Address, label);
+                    return new
+                    {
+                        Candidate = new NetworkAddressCandidate(address.Address, label),
+                        Priority = GetInterfacePriority(
+                            networkInterface.Name,
+                            networkInterface.Description,
+                            networkInterface.NetworkInterfaceType),
+                    };
                 }))
-            .DistinctBy(static candidate => candidate.Address)
-            .OrderBy(static candidate => candidate.InterfaceLabel, StringComparer.CurrentCultureIgnoreCase)
-            .ThenBy(static candidate => candidate.Address.ToString(), StringComparer.Ordinal)
+            .GroupBy(static entry => entry.Candidate.Address)
+            .Select(static group => group
+                .OrderBy(static entry => entry.Priority)
+                .ThenBy(static entry => entry.Candidate.InterfaceLabel, StringComparer.CurrentCultureIgnoreCase)
+                .First())
+            .OrderBy(static entry => entry.Priority)
+            .ThenBy(static entry => entry.Candidate.InterfaceLabel, StringComparer.CurrentCultureIgnoreCase)
+            .ThenBy(static entry => entry.Candidate.Address.ToString(), StringComparer.Ordinal)
+            .Select(static entry => entry.Candidate)
             .ToArray();
+    }
+
+    internal static int GetInterfacePriority(
+        string? name,
+        string? description,
+        NetworkInterfaceType interfaceType)
+    {
+        string identity = string.Concat(name, " ", description);
+        if (interfaceType is NetworkInterfaceType.Tunnel or NetworkInterfaceType.Ppp ||
+            VirtualAdapterMarkers.Any(marker => identity.Contains(marker, StringComparison.OrdinalIgnoreCase)))
+        {
+            return VirtualAdapterPriority;
+        }
+
+        return interfaceType switch
+        {
+            NetworkInterfaceType.Wireless80211 => WirelessPriority,
+            NetworkInterfaceType.Ethernet or
+            NetworkInterfaceType.Ethernet3Megabit or
+            NetworkInterfaceType.FastEthernetFx or
+            NetworkInterfaceType.FastEthernetT or
+            NetworkInterfaceType.GigabitEthernet => EthernetPriority,
+            _ => OtherPhysicalPriority,
+        };
     }
 
     internal static bool IsEligible(IPAddress address)

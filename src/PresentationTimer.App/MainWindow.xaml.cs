@@ -114,6 +114,7 @@ public sealed partial class MainWindow : Window
         }
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
+        this.TitleBarPinButton.Visibility = Visibility.Collapsed;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
         presenter.IsResizable = false;
@@ -157,6 +158,7 @@ public sealed partial class MainWindow : Window
         }
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
+        this.TitleBarPinButton.Visibility = Visibility.Collapsed;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
         presenter.IsResizable = false;
@@ -208,6 +210,8 @@ public sealed partial class MainWindow : Window
         presenter.PreferredMinimumWidth = this.ToPhysicalPixels(MinimumExpandedWidth);
         presenter.PreferredMinimumHeight = this.ToPhysicalPixels(MinimumExpandedHeight);
         this.AppTitleBar.Visibility = Visibility.Visible;
+        this.TitleBarPinButton.Visibility = Visibility.Visible;
+        this.UpdateTitleBarPinMargin();
         this.SetTitleBar(this.AppTitleBar);
         this.RequestCornerPreference(DwmWindowCornerPreferenceDefault);
         this.RequestBorderColor(DwmWindowBorderColorDefault);
@@ -363,6 +367,14 @@ public sealed partial class MainWindow : Window
     private void OnActivated(object sender, WindowActivatedEventArgs args) =>
         this.RequestBorderColor(this._borderColorPreference);
 
+    private void WindowLayoutRoot_SizeChanged(object sender, SizeChangedEventArgs args)
+    {
+        if (this._windowMode == DesktopWindowMode.Expanded)
+        {
+            this.UpdateTitleBarPinMargin();
+        }
+    }
+
     private void SetWindowChromeVisibility(bool isVisible)
     {
         nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
@@ -442,6 +454,20 @@ public sealed partial class MainWindow : Window
         uint dpi = GetDpiForWindow(windowHandle);
         double scale = dpi == 0 ? 1d : dpi / 96d;
         return checked((int)Math.Round(effectivePixels * scale));
+    }
+
+    private double ToEffectivePixels(int physicalPixels)
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        uint dpi = GetDpiForWindow(windowHandle);
+        double scale = dpi == 0 ? 1d : dpi / 96d;
+        return physicalPixels / scale;
+    }
+
+    private void UpdateTitleBarPinMargin()
+    {
+        double rightInset = this.ToEffectivePixels(this.AppWindow.TitleBar.RightInset);
+        this.TitleBarPinButton.Margin = new Thickness(0, 0, rightInset + 8, 0);
     }
 
     private async void OnClosing(AppWindow sender, AppWindowClosingEventArgs args)
