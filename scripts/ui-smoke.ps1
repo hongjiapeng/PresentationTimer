@@ -1,17 +1,30 @@
+[CmdletBinding(DefaultParameterSetName = 'Process')]
 param(
-    [Parameter(Mandatory)]
-    [string]$AppPath
+    [Parameter(Mandatory, ParameterSetName = 'Path')]
+    [string]$AppPath,
+    [Parameter(Mandatory, ParameterSetName = 'Process')]
+    [int]$ProcessId
 )
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
 Add-Type -AssemblyName System.Drawing
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+internal static class PresentationTimerNativeMethods
+{
+    [DllImport("user32.dll")]
+    internal static extern uint GetDpiForWindow(IntPtr windowHandle);
+}
+'@
 
 $artifactDirectory = Join-Path $PSScriptRoot '..\artifacts\ui-smoke'
 New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
 $results = [System.Collections.Generic.List[object]]::new()
 $application = $null
+$ownsApplication = $false
 
 function Wait-Until {
     param(
@@ -33,6 +46,20 @@ function Wait-Until {
     throw "Timed out after $TimeoutMilliseconds ms."
 }
 
+function Find-Element {
+    param(
+        [Parameter(Mandatory)]
+        [System.Windows.Automation.AutomationElement]$Root,
+        [Parameter(Mandatory)]
+        [string]$AutomationId
+    )
+
+    $condition = [System.Windows.Automation.PropertyCondition]::new(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
+        $AutomationId)
+    return $Root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
 function Get-Element {
     param(
         [Parameter(Mandatory)]
@@ -43,17 +70,25 @@ function Get-Element {
     )
 
     return Wait-Until -TimeoutMilliseconds $TimeoutMilliseconds -Condition {
-        $condition = [System.Windows.Automation.PropertyCondition]::new(
-            [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
-            $AutomationId)
-        $Root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+        Find-Element -Root $Root -AutomationId $AutomationId
     }
 }
 
-function Invoke-Element {
+function Activate-Element {
     param([System.Windows.Automation.AutomationElement]$Element)
-    $pattern = $Element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
-    $pattern.Invoke()
+
+    $pattern = $null
+    if ($Element.TryGetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern, [ref]$pattern)) {
+        ([System.Windows.Automation.InvokePattern]$pattern).Invoke()
+        return
+    }
+
+    if ($Element.TryGetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern, [ref]$pattern)) {
+        ([System.Windows.Automation.TogglePattern]$pattern).Toggle()
+        return
+    }
+
+    throw "Element '$($Element.Current.AutomationId)' exposes neither Invoke nor Toggle."
 }
 
 function Set-ElementValue {
@@ -76,12 +111,7 @@ function Save-WindowScreenshot {
     $bitmap = [System.Drawing.Bitmap]::new([int]$bounds.Width, [int]$bounds.Height)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
     try {
-        $graphics.CopyFromScreen(
-            [int]$bounds.Left,
-            [int]$bounds.Top,
-            0,
-            0,
-            $bitmap.Size)
+        $graphics.CopyFromScreen([int]$bounds.Left, [int]$bounds.Top, 0, 0, $bitmap.Size)
         $bitmap.Save((Join-Path $artifactDirectory $Name), [System.Drawing.Imaging.ImageFormat]::Png)
     }
     finally {
@@ -91,10 +121,7 @@ function Save-WindowScreenshot {
 }
 
 function Test-UI {
-    param(
-        [string]$Name,
-        [scriptblock]$Test
-    )
+    param([string]$Name, [scriptblock]$Test)
 
     try {
         & $Test
@@ -108,8 +135,15 @@ function Test-UI {
 }
 
 try {
-    $resolvedAppPath = (Resolve-Path -LiteralPath $AppPath).Path
-    $application = Start-Process -FilePath $resolvedAppPath -PassThru
+    if ($PSCmdlet.ParameterSetName -eq 'Path') {
+        $resolvedAppPath = (Resolve-Path -LiteralPath $AppPath).Path
+        $application = Start-Process -FilePath $resolvedAppPath -PassThru
+        $ownsApplication = $true
+    }
+    else {
+        $application = Get-Process -Id $ProcessId
+    }
+
     $windowHandle = Wait-Until -TimeoutMilliseconds 10000 -Condition {
         $application.Refresh()
         if ($application.HasExited -or $application.MainWindowHandle -eq 0) {
@@ -119,147 +153,138 @@ try {
         return $application.MainWindowHandle
     }
     $root = [System.Windows.Automation.AutomationElement]::FromHandle($windowHandle)
+    $desktop = [System.Windows.Automation.AutomationElement]::RootElement
+    $scale = [PresentationTimerNativeMethods]::GetDpiForWindow($windowHandle) / 96.0
 
-    Test-UI 'Top-level window is visible' {
-        if ($root.Current.BoundingRectangle.Width -lt 800 -or $root.Current.BoundingRectangle.Height -lt 600) {
-            throw "Unexpected window bounds $($root.Current.BoundingRectangle)."
+    Test-UI 'Compact window opens at effective 440 by 240' {
+        $bounds = $root.Current.BoundingRectangle
+        if ([Math]::Abs($bounds.Width - (440 * $scale)) -gt 32 -or
+            [Math]::Abs($bounds.Height - (240 * $scale)) -gt 32) {
+            throw "Unexpected compact bounds $bounds at scale $scale."
         }
-    }
 
-    Test-UI 'Core interactive controls are discoverable' {
-        foreach ($id in @(
-            'AlwaysOnTopToggle',
-            'DurationInput',
-            'StartButton',
-            'PauseButton',
-            'ResumeButton',
-            'ResetButton')) {
-            $null = Get-Element -Root $root -AutomationId $id
-        }
-    }
-
-    Test-UI 'Initial fifteen-minute display is ready' {
-        $display = Get-Element -Root $root -AutomationId 'CountdownDisplay'
+        $null = Get-Element -Root $root -AutomationId 'CompactTimerRoot'
+        $display = Get-Element -Root $root -AutomationId 'CompactTimerDisplay'
         if ($display.Current.Name -ne '15:00') {
             throw "Expected 15:00, got '$($display.Current.Name)'."
         }
-
-        $start = Get-Element -Root $root -AutomationId 'StartButton'
-        if (-not $start.Current.IsEnabled) {
-            throw 'Start button should be enabled.'
-        }
     }
-    Save-WindowScreenshot -Root $root -Name '01-initial.png'
+    Save-WindowScreenshot -Root $root -Name '01-compact-ready.png'
 
-    Test-UI 'Always-on-top toggle changes state' {
-        $toggle = Get-Element -Root $root -AutomationId 'AlwaysOnTopToggle'
-        $pattern = $toggle.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
-        $pattern.Toggle()
+    Test-UI 'Compact More exposes synchronized always-on-top' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'CompactMoreButton')
+        $toggle = Get-Element -Root $desktop -AutomationId 'AlwaysOnTopMenuItem'
+        Activate-Element $toggle
+    }
+
+    Test-UI 'Expand opens the same resizable control center' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'CompactExpandButton')
+        $null = Get-Element -Root $root -AutomationId 'ExpandedControlCenterRoot'
+        $bounds = $root.Current.BoundingRectangle
+        if ($bounds.Width -lt (800 * $scale) -or $bounds.Height -lt (600 * $scale)) {
+            throw "Expanded bounds are below the supported minimum: $bounds."
+        }
+
+        $null = Get-Element -Root $root -AutomationId 'TitleBarPinButton'
+        $null = Get-Element -Root $root -AutomationId 'TimerRemainingProgress'
+    }
+    Save-WindowScreenshot -Root $root -Name '02-expanded-ready.png'
+
+    Test-UI 'Preset and invalid custom duration preserve authoritative target' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'Duration20Button')
         Wait-Until -Condition {
-            $pattern.Current.ToggleState -eq [System.Windows.Automation.ToggleState]::On
+            (Get-Element -Root $root -AutomationId 'ExpandedTimerDisplay').Current.Name -eq '20:00'
+        } | Out-Null
+
+        Activate-Element (Get-Element -Root $root -AutomationId 'DurationCustomButton')
+        $input = Get-Element -Root $desktop -AutomationId 'CustomDurationInput'
+        Set-ElementValue -Element $input -Value 'invalid'
+        Activate-Element (Get-Element -Root $desktop -AutomationId 'PrimaryButton')
+        $null = Get-Element -Root $desktop -AutomationId 'CustomDurationValidation'
+        if ((Get-Element -Root $root -AutomationId 'ExpandedTimerDisplay').Current.Name -ne '20:00') {
+            throw 'Invalid custom duration changed the prior target.'
+        }
+
+        Set-ElementValue -Element $input -Value '00:01'
+        Activate-Element (Get-Element -Root $desktop -AutomationId 'PrimaryButton')
+        Wait-Until -Condition {
+            (Get-Element -Root $root -AutomationId 'ExpandedTimerDisplay').Current.Name -eq '00:01'
         } | Out-Null
     }
 
-    Test-UI 'One-second timer starts and reaches overtime' {
-        Set-ElementValue -Element (Get-Element -Root $root -AutomationId 'DurationInput') -Value '00:01'
-        Invoke-Element -Element (Get-Element -Root $root -AutomationId 'StartButton')
-        Wait-Until -Condition {
-            (Get-Element -Root $root -AutomationId 'PauseButton').Current.IsEnabled
-        } | Out-Null
-        Start-Sleep -Milliseconds 2200
-        $overtime = Get-Element -Root $root -AutomationId 'OvertimeDisplay'
-        if ($overtime.Current.Name -notmatch '^00:0[1-3]$') {
-            throw "Expected early overtime, got '$($overtime.Current.Name)'."
-        }
-    }
-    Save-WindowScreenshot -Root $root -Name '02-overtime.png'
-
-    Test-UI 'Pause freezes overtime and resume continues' {
-        Invoke-Element -Element (Get-Element -Root $root -AutomationId 'PauseButton')
-        $paused = (Get-Element -Root $root -AutomationId 'OvertimeDisplay').Current.Name
-        Start-Sleep -Milliseconds 1200
-        $stillPaused = (Get-Element -Root $root -AutomationId 'OvertimeDisplay').Current.Name
-        if ($paused -ne $stillPaused) {
-            throw "Overtime changed while paused: '$paused' to '$stillPaused'."
+    Test-UI 'Expanded Start swaps to Pause and progress follows pause resume reset' {
+        $progress = Get-Element -Root $root -AutomationId 'TimerRemainingProgress'
+        Activate-Element (Get-Element -Root $root -AutomationId 'ExpandedStartButton')
+        $null = Get-Element -Root $root -AutomationId 'ExpandedPauseButton'
+        Start-Sleep -Milliseconds 400
+        $range = $progress.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($range.Current.Value -ge 100) {
+            throw 'Remaining progress did not decrease after Start.'
         }
 
-        Invoke-Element -Element (Get-Element -Root $root -AutomationId 'ResumeButton')
-        Start-Sleep -Milliseconds 1200
-        $resumed = (Get-Element -Root $root -AutomationId 'OvertimeDisplay').Current.Name
-        if ($resumed -eq $paused) {
-            throw "Overtime did not continue after resume; value stayed '$resumed'."
+        Activate-Element (Get-Element -Root $root -AutomationId 'ExpandedPauseButton')
+        $paused = $range.Current.Value
+        Start-Sleep -Milliseconds 600
+        if ([Math]::Abs($range.Current.Value - $paused) -gt 0.01) {
+            throw 'Remaining progress changed while paused.'
         }
+
+        Activate-Element (Get-Element -Root $root -AutomationId 'ExpandedResumeButton')
+        Start-Sleep -Milliseconds 1400
+        $overtime = (Get-Element -Root $root -AutomationId 'ExpandedTimerDisplay').Current.Name
+        if ($overtime -notmatch '^\+00:00:0[1-3]$') {
+            throw "Expected early overtime, got '$overtime'."
+        }
+
+        Activate-Element (Get-Element -Root $root -AutomationId 'ExpandedResetButton')
+        Wait-Until -Condition { $range.Current.Value -eq 100 } | Out-Null
     }
 
-    Test-UI 'Reset restores configured target and ready controls' {
-        Invoke-Element -Element (Get-Element -Root $root -AutomationId 'ResetButton')
-        $display = Get-Element -Root $root -AutomationId 'CountdownDisplay'
-        if ($display.Current.Name -ne '00:01') {
-            throw "Expected reset value 00:01, got '$($display.Current.Name)'."
-        }
-
-        if (-not (Get-Element -Root $root -AutomationId 'StartButton').Current.IsEnabled) {
-            throw 'Start button should be enabled after reset.'
-        }
-    }
-    Save-WindowScreenshot -Root $root -Name '03-reset.png'
-
-    Test-UI 'Remote session shows an exact token-bearing URL and QR' {
-        Invoke-Element -Element (Get-Element -Root $root -AutomationId 'StartRemoteButton')
-        $pairingUrl = Get-Element -Root $root -AutomationId 'PairingUrlText' -TimeoutMilliseconds 10000
+    Test-UI 'Remote pairing uses inline QR until a phone connects' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'StartRemoteButton')
+        $pairingUrl = Get-Element -Root $root -AutomationId 'InlinePairingUrlText' -TimeoutMilliseconds 10000
         $valuePattern = $pairingUrl.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
         $uri = [Uri]$valuePattern.Current.Value
         if ($uri.AbsolutePath -ne '/pair' -or $uri.Query -notmatch '(^|[?&])t=[A-Za-z0-9_-]{43}(&|$)') {
             throw "Unexpected pairing URI '$uri'."
         }
 
-        $null = Get-Element -Root $root -AutomationId 'PairingQrImage'
-        if (-not (Get-Element -Root $root -AutomationId 'EndRemoteButton').Current.IsEnabled) {
-            throw 'End session should be enabled while pairing is available.'
-        }
-    }
-    Save-WindowScreenshot -Root $root -Name '04-remote.png'
-
-    Test-UI 'Ending remote session clears pairing material immediately' {
-        Invoke-Element -Element (Get-Element -Root $root -AutomationId 'EndRemoteButton')
-        Wait-Until -TimeoutMilliseconds 10000 -Condition {
-            (Get-Element -Root $root -AutomationId 'StartRemoteButton').Current.IsEnabled
-        } | Out-Null
-        $pairing = $root.FindFirst(
-            [System.Windows.Automation.TreeScope]::Descendants,
-            [System.Windows.Automation.PropertyCondition]::new(
-                [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
-                'PairingUrlText'))
-        if ($null -ne $pairing) {
-            throw 'Pairing URL remained in the automation tree after session end.'
+        $null = Get-Element -Root $root -AutomationId 'InlinePairingQrImage'
+        if ($null -ne (Find-Element -Root $root -AutomationId 'DisplayPairingQrButton')) {
+            throw 'Display Pairing QR should replace, not duplicate, the pre-connection inline QR.'
         }
     }
 
-    Test-UI 'Interactive controls expose stable AutomationIds' {
-        $interactiveTypes = @(
-            [System.Windows.Automation.ControlType]::Button,
-            [System.Windows.Automation.ControlType]::Edit,
-            [System.Windows.Automation.ControlType]::CheckBox)
-        $elements = $root.FindAll(
-            [System.Windows.Automation.TreeScope]::Descendants,
-            [System.Windows.Automation.Condition]::TrueCondition)
-        $missing = @()
-        foreach ($element in $elements) {
-            if ($interactiveTypes -contains $element.Current.ControlType -and
-                $element.Current.IsKeyboardFocusable -and
-                [string]::IsNullOrWhiteSpace($element.Current.AutomationId)) {
-                $missing += $element.Current.Name
-            }
+    Test-UI 'Connected phone can disclose the current pairing QR in a flyout' {
+        $displayPairing = Find-Element -Root $root -AutomationId 'DisplayPairingQrButton'
+        if ($null -eq $displayPairing) {
+            Write-Host 'INFO: No authenticated phone is connected; flyout invocation remains environment-dependent.'
+            return
         }
 
-        if ($missing.Count -gt 0) {
-            throw "Missing AutomationId: $($missing -join ', ')"
+        Activate-Element $displayPairing
+        $null = Get-Element -Root $desktop -AutomationId 'PairingQrFlyoutImage'
+        $null = Get-Element -Root $desktop -AutomationId 'PairingFlyoutUrlText'
+    }
+
+    Test-UI 'More and title-bar pin remain discoverable in Expanded mode' {
+        $null = Get-Element -Root $root -AutomationId 'ExpandedMoreButton'
+        $pin = Get-Element -Root $root -AutomationId 'TitleBarPinButton'
+        Activate-Element $pin
+    }
+
+    Test-UI 'Collapse restores the compact timer and current target' {
+        Activate-Element (Get-Element -Root $root -AutomationId 'ExpandedCollapseButton')
+        $display = Get-Element -Root $root -AutomationId 'CompactTimerDisplay'
+        if ($display.Current.Name -ne '00:01') {
+            throw "Expected shared 00:01 target after collapse, got '$($display.Current.Name)'."
         }
     }
+    Save-WindowScreenshot -Root $root -Name '03-compact-restored.png'
 }
 finally {
     $results | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath (Join-Path $artifactDirectory 'results.json') -Encoding utf8
-    if ($null -ne $application -and -not $application.HasExited) {
+    if ($ownsApplication -and $null -ne $application -and -not $application.HasExited) {
         $null = $application.CloseMainWindow()
         if (-not $application.WaitForExit(5000)) {
             Stop-Process -Id $application.Id

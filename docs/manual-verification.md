@@ -2,6 +2,32 @@
 
 Record the date, Windows version, build commit/archive identifier, PowerPoint version and bitness, network, and device/browser for every run. Do not mark an unavailable environment as passed.
 
+## Compact and Expanded desktop experience
+
+| Area | Check | Expected result | Result / evidence |
+|---|---|---|---|
+| Compact launch | Start at 100%, 150%, and 200% display scale | Borderless 440×240 effective-pixel timer; no PPT, phone, QR, notes, or duration form | Not run |
+| Compact controls | Ready → Start; Running → Pause; Paused → Resume; Reset | Exactly one primary action; Reset only outside Ready; controls remain clickable beside the drag region | Not run |
+| Timer states | Cross 01:00, 00:00, +00:00:01, and multiple hours | Warning includes 01:00 through zero; overtime uses `+hh:mm:ss`; state text remains available without color | Not run |
+| More menu | Open every state-dependent entry and toggle Always on Top | Entries reflect current PPT/phone state; Timer Settings deep-links to duration; Exit performs coordinated shutdown | Not run |
+| Mode switching | Drag Compact, expand, resize, collapse, repeat 20 times | Same window and session; prior Compact rectangle returns on a visible work area; pin state stays synchronized | Not run |
+| Expanded hierarchy | Inspect at 920×680 and minimum 800×600 effective pixels | Full-width card-free Timer Hero, lower PPT/Remote modules, and duration-only strip follow the v2 reference | Not run |
+| Expanded timer | Start, Pause, Resume, Reset and inspect progress | Action swaps in place; remaining progress is determinate, fixed while paused, and empty in overtime | Not run |
+| Duration | Select 10/15/20/30, accept `1:05:30`, reject malformed input | Authoritative target updates only while Ready; invalid input keeps the prior target and dialog open | Not run |
+| Remote QR | Pair zero, one, and multiple authenticated phones | QR is inline before connection; after connection only count remains and Display Pairing QR opens the same material | Not run |
+| Themes | Expanded Light/Dark; Windows High Contrast; Compact in both app themes | Compact stays low-glare; High Contrast uses system colors; focus and text remain distinguishable | Not run |
+| Localization | Run `en-US` and `zh-CN` at all supported scales | Labels, menus, tooltips, validation, automation names, and multi-hour values do not clip | Not run |
+| Windows fallback | Repeat Compact check on supported Windows 10 host | Square corners are acceptable; drag, input, sizing, and shutdown remain functional | Not run |
+
+The desktop refactor must not change the monotonic Timer calculation, PowerPoint COM lifecycle, SignalR hub and remote host behavior, QR credentials/token rotation, or phone web UI contract. Validate those preserved boundaries with the automated Core/Remote suites and the integration matrices below.
+
+### Implementation verification record — 2026-08-29
+
+- Passed App/Core/Remote automated suites: 23 + 50 + 23 tests.
+- Passed Debug and Release x64 solution builds with zero warnings and zero errors.
+- Passed strict OpenSpec validation and PowerShell syntax validation for `scripts/ui-smoke.ps1`.
+- The repository WinUI workflow built successfully, but this host did not have the `winapp` CLI in `PATH`; the workflow therefore skipped launch. Compact/Expanded runtime, theme/DPI, PowerPoint, phone, and DWM checks below remain explicitly **Not run**, rather than being reported as passes.
+
 ## PowerPoint fixture
 
 Use `tests/fixtures/PresentationTimer.PowerPointFixture.pptx`, whose six numbered slides cover baseline, empty notes, multiline notes, literal markup-like text, a genuinely hidden slide, and a final slide. Keep the deck open after every app-shutdown check. Record detailed findings in [powerpoint-manual-checklist.md](powerpoint-manual-checklist.md).

@@ -4,10 +4,17 @@ namespace PresentationTimer.App.Commands;
 
 internal sealed class DelegateCommand : ICommand
 {
-    private readonly Func<bool>? _canExecute;
-    private readonly Action _execute;
+    private readonly Predicate<object?>? _canExecute;
+    private readonly Action<object?> _execute;
 
     public DelegateCommand(Action execute, Func<bool>? canExecute = null)
+    {
+        ArgumentNullException.ThrowIfNull(execute);
+        this._execute = _ => execute();
+        this._canExecute = canExecute is null ? null : _ => canExecute();
+    }
+
+    public DelegateCommand(Action<object?> execute, Predicate<object?>? canExecute = null)
     {
         ArgumentNullException.ThrowIfNull(execute);
         this._execute = execute;
@@ -16,9 +23,9 @@ internal sealed class DelegateCommand : ICommand
 
     public event EventHandler? CanExecuteChanged;
 
-    public bool CanExecute(object? parameter) => this._canExecute?.Invoke() ?? true;
+    public bool CanExecute(object? parameter) => this._canExecute?.Invoke(parameter) ?? true;
 
-    public void Execute(object? parameter) => this._execute();
+    public void Execute(object? parameter) => this._execute(parameter);
 
     public void RaiseCanExecuteChanged() => this.CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 }

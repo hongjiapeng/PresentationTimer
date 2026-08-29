@@ -17,6 +17,7 @@ namespace PresentationTimer.App.ViewModels;
 internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 {
     private readonly DelegateCommand _pauseCommand;
+    private readonly DelegateCommand _configureDurationCommand;
     private readonly DelegateCommand _previousSlideCommand;
     private readonly DelegateCommand _resetCommand;
     private readonly DelegateCommand _resumeCommand;
@@ -36,15 +37,21 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     private bool _canStartRemote;
     private string _durationText = "15:00";
     private bool _isDisposed;
+    private bool _hasSpeakerNotes;
     private bool _isOvertime;
+    private bool _isResetVisible;
+    private bool _isWarning;
     private bool _isNavigating;
     private bool _isRemoteOperationPending;
     private bool _isValidationOpen;
     private string _powerPointStatusText = string.Empty;
+    private string _powerPointMenuText = string.Empty;
     private string _slidePositionText = string.Empty;
     private string _speakerNotes = string.Empty;
     private string _remoteStatusText = string.Empty;
+    private string _remoteMenuText = string.Empty;
     private string _remoteConnectionText = string.Empty;
+    private int _remoteConnectionCount;
     private string _pairingUrl = string.Empty;
     private ImmutableArray<DesktopPairingCandidate> _pairingCandidates =
         ImmutableArray<DesktopPairingCandidate>.Empty;
@@ -54,6 +61,11 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
     private long _pairingRevision;
     private int _selectedPairingCandidateIndex = -1;
     private string _timerDisplay = "15:00";
+    private string _targetDisplay = "15:00";
+    private string _targetStatusText = string.Empty;
+    private double _timerProgressValue = 100;
+    private TimerVisualState _timerVisualState;
+    private DurationPreset _selectedDurationPreset = DurationPreset.FifteenMinutes;
     private string _timerModeLabel = string.Empty;
     private string _timerStatusText = string.Empty;
     private string _validationMessage = string.Empty;
@@ -73,6 +85,9 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         this._pauseCommand = new DelegateCommand(this.Pause, () => this.CanPause);
         this._resumeCommand = new DelegateCommand(this.Resume, () => this.CanResume);
         this._resetCommand = new DelegateCommand(this.Reset);
+        this._configureDurationCommand = new DelegateCommand(
+            parameter => this.TryConfigureDuration(parameter as string),
+            _ => this.CanStart);
         this._previousSlideCommand = new DelegateCommand(
             () => this.StartNavigation(forward: false),
             () => this.CanNavigateSlides);
@@ -115,6 +130,30 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         private set => this.SetProperty(ref this._timerDisplay, value);
     }
 
+    public string TargetDisplay
+    {
+        get => this._targetDisplay;
+        private set => this.SetProperty(ref this._targetDisplay, value);
+    }
+
+    public string TargetStatusText
+    {
+        get => this._targetStatusText;
+        private set => this.SetProperty(ref this._targetStatusText, value);
+    }
+
+    public double TimerProgressValue
+    {
+        get => this._timerProgressValue;
+        private set => this.SetProperty(ref this._timerProgressValue, value);
+    }
+
+    public TimerVisualState TimerVisualState
+    {
+        get => this._timerVisualState;
+        private set => this.SetProperty(ref this._timerVisualState, value);
+    }
+
     public string TimerModeLabel
     {
         get => this._timerModeLabel;
@@ -133,6 +172,12 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         private set => this.SetProperty(ref this._powerPointStatusText, value);
     }
 
+    public string PowerPointMenuText
+    {
+        get => this._powerPointMenuText;
+        private set => this.SetProperty(ref this._powerPointMenuText, value);
+    }
+
     public string SlidePositionText
     {
         get => this._slidePositionText;
@@ -145,16 +190,40 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         private set => this.SetProperty(ref this._speakerNotes, value);
     }
 
+    public bool HasSpeakerNotes
+    {
+        get => this._hasSpeakerNotes;
+        private set => this.SetProperty(ref this._hasSpeakerNotes, value);
+    }
+
     public string RemoteStatusText
     {
         get => this._remoteStatusText;
         private set => this.SetProperty(ref this._remoteStatusText, value);
     }
 
+    public string RemoteMenuText
+    {
+        get => this._remoteMenuText;
+        private set => this.SetProperty(ref this._remoteMenuText, value);
+    }
+
     public string RemoteConnectionText
     {
         get => this._remoteConnectionText;
         private set => this.SetProperty(ref this._remoteConnectionText, value);
+    }
+
+    public int RemoteConnectionCount
+    {
+        get => this._remoteConnectionCount;
+        private set
+        {
+            if (this.SetProperty(ref this._remoteConnectionCount, value))
+            {
+                this.NotifyRemotePairingVisibilityChanged();
+            }
+        }
     }
 
     public string PairingUrl
@@ -164,7 +233,7 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         {
             if (this.SetProperty(ref this._pairingUrl, value))
             {
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPairingVisible)));
+                this.NotifyRemotePairingVisibilityChanged();
             }
         }
     }
@@ -176,12 +245,18 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         {
             if (this.SetProperty(ref this._pairingQrImage, value))
             {
-                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPairingVisible)));
+                this.NotifyRemotePairingVisibilityChanged();
             }
         }
     }
 
     public bool IsPairingVisible => !string.IsNullOrWhiteSpace(this.PairingUrl);
+
+    public bool HasRemoteConnections => this.RemoteConnectionCount > 0;
+
+    public bool ShowInlinePairing => this.IsPairingVisible && !this.HasRemoteConnections;
+
+    public bool ShowPairingFlyoutAction => this.IsPairingVisible && this.HasRemoteConnections;
 
     public IReadOnlyList<string> PairingCandidateLabels
     {
@@ -242,6 +317,44 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 
     public bool IsCountdown => !this.IsOvertime;
 
+    public bool IsWarning
+    {
+        get => this._isWarning;
+        private set => this.SetProperty(ref this._isWarning, value);
+    }
+
+    public bool IsResetVisible
+    {
+        get => this._isResetVisible;
+        private set => this.SetProperty(ref this._isResetVisible, value);
+    }
+
+    public DurationPreset SelectedDurationPreset
+    {
+        get => this._selectedDurationPreset;
+        private set
+        {
+            if (this.SetProperty(ref this._selectedDurationPreset, value))
+            {
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTenMinutePreset)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsFifteenMinutePreset)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsTwentyMinutePreset)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsThirtyMinutePreset)));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsCustomDuration)));
+            }
+        }
+    }
+
+    public bool IsTenMinutePreset => this.SelectedDurationPreset == DurationPreset.TenMinutes;
+
+    public bool IsFifteenMinutePreset => this.SelectedDurationPreset == DurationPreset.FifteenMinutes;
+
+    public bool IsTwentyMinutePreset => this.SelectedDurationPreset == DurationPreset.TwentyMinutes;
+
+    public bool IsThirtyMinutePreset => this.SelectedDurationPreset == DurationPreset.ThirtyMinutes;
+
+    public bool IsCustomDuration => this.SelectedDurationPreset == DurationPreset.Custom;
+
     public bool CanStart
     {
         get => this._canStart;
@@ -286,6 +399,8 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 
     public ICommand ResetCommand => this._resetCommand;
 
+    public ICommand ConfigureDurationCommand => this._configureDurationCommand;
+
     public ICommand PreviousSlideCommand => this._previousSlideCommand;
 
     public ICommand NextSlideCommand => this._nextSlideCommand;
@@ -308,22 +423,37 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         this._isDisposed = true;
     }
 
-    private static string FormatTimer(TimeSpan value)
+    internal bool TryConfigureDuration(string? durationText)
     {
-        long totalSeconds = Math.Max(0, checked((long)value.TotalSeconds));
-        long hours = totalSeconds / 3600;
-        long minutes = (totalSeconds % 3600) / 60;
-        long seconds = totalSeconds % 60;
+        if (!this.CanStart || string.IsNullOrWhiteSpace(durationText))
+        {
+            this.ShowTimerValidation();
+            return false;
+        }
 
-        return hours > 0
-            ? string.Format(CultureInfo.CurrentCulture, "{0}:{1:00}:{2:00}", hours, minutes, seconds)
-            : string.Format(CultureInfo.CurrentCulture, "{0:00}:{1:00}", minutes, seconds);
+        OperationResult<TimerSnapshot> configured = this._sessionService.ConfigureTimer(durationText);
+        if (!configured.IsSuccess)
+        {
+            this.ShowTimerValidation();
+            return false;
+        }
+
+        this.DurationText = durationText.Trim();
+        this.IsValidationOpen = false;
+        return true;
     }
 
     private void ApplyState(PresentationSessionState state)
     {
-        this.TimerDisplay = FormatTimer(state.Timer.DisplayValue);
-        this.IsOvertime = state.Timer.IsOvertime;
+        TimerPresentation timer = TimerPresentation.FromSnapshot(state.Timer);
+        this.TimerDisplay = timer.DisplayText;
+        this.TargetDisplay = timer.TargetText;
+        this.TimerProgressValue = timer.RemainingRatio * 100;
+        this.TimerVisualState = timer.VisualState;
+        this.IsWarning = timer.VisualState == TimerVisualState.Warning;
+        this.IsOvertime = timer.VisualState == TimerVisualState.Overtime;
+        this.IsResetVisible = timer.IsResetVisible;
+        this.SelectedDurationPreset = timer.DurationPreset;
         this.TimerModeLabel = this._strings.Get(state.Timer.IsOvertime
             ? "TimerModeOvertime"
             : "TimerModeRemaining");
@@ -334,6 +464,11 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             TimerRunState.Paused => "TimerStatePaused",
             _ => "TimerStateReady",
         });
+        this.TargetStatusText = string.Format(
+            CultureInfo.CurrentCulture,
+            this._strings.Get("TimerTargetStatusFormat"),
+            this.TargetDisplay,
+            this.TimerStatusText);
         this.PowerPointStatusText = this._strings.Get(state.Presentation.Connection switch
         {
             PresentationConnectionState.Running => "PowerPointStateRunning",
@@ -343,6 +478,10 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
             PresentationConnectionState.Disconnected => "PowerPointStateDisconnected",
             _ => "PowerPointStateUnavailable",
         });
+        this.PowerPointMenuText = string.Format(
+            CultureInfo.CurrentCulture,
+            this._strings.Get("PowerPointMenuStatusFormat"),
+            this.PowerPointStatusText);
         this.SlidePositionText = state.Presentation.CurrentSlideIndex is int current &&
             state.Presentation.TotalSlides is int total
             ? string.Format(
@@ -351,7 +490,8 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
                 current,
                 total)
             : string.Empty;
-        this.SpeakerNotes = string.IsNullOrWhiteSpace(state.Presentation.SpeakerNotes)
+        this.HasSpeakerNotes = !string.IsNullOrWhiteSpace(state.Presentation.SpeakerNotes);
+        this.SpeakerNotes = !this.HasSpeakerNotes
             ? this._strings.Get("PowerPointNoNotes")
             : state.Presentation.SpeakerNotes;
         this.RemoteStatusText = this._strings.Get(state.Remote.LastErrorCode == ErrorCodes.RemoteNoLanAddress
@@ -373,6 +513,13 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
                 this._strings.Get("RemotePhoneCountFormat"),
                 count),
         };
+        this.RemoteConnectionCount = state.Remote.AuthenticatedConnectionCount;
+        this.RemoteMenuText = state.Remote.Status is RemoteSessionStatus.Stopped or RemoteSessionStatus.Failed
+            ? this._strings.Get("RemoteMenuStart")
+            : string.Format(
+                CultureInfo.CurrentCulture,
+                this._strings.Get("RemoteMenuStatusFormat"),
+                this.RemoteConnectionText);
         this.CanStart = state.Timer.RunState == TimerRunState.Ready;
         this.CanPause = state.Timer.RunState == TimerRunState.Running;
         this.CanResume = state.Timer.RunState == TimerRunState.Paused;
@@ -386,6 +533,7 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         this._startCommand.RaiseCanExecuteChanged();
         this._pauseCommand.RaiseCanExecuteChanged();
         this._resumeCommand.RaiseCanExecuteChanged();
+        this._configureDurationCommand.RaiseCanExecuteChanged();
         this._previousSlideCommand.RaiseCanExecuteChanged();
         this._nextSlideCommand.RaiseCanExecuteChanged();
         this._startRemoteCommand.RaiseCanExecuteChanged();
@@ -425,10 +573,8 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
 
     private void Start()
     {
-        OperationResult<TimerSnapshot> configured = this._sessionService.ConfigureTimer(this.DurationText);
-        if (!configured.IsSuccess)
+        if (!this.TryConfigureDuration(this.DurationText))
         {
-            this.ShowTimerValidation();
             return;
         }
 
@@ -543,6 +689,14 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         this.CanEndRemote = false;
         this._startRemoteCommand.RaiseCanExecuteChanged();
         this._endRemoteCommand.RaiseCanExecuteChanged();
+    }
+
+    private void NotifyRemotePairingVisibilityChanged()
+    {
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPairingVisible)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.HasRemoteConnections)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowInlinePairing)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ShowPairingFlyoutAction)));
     }
 
     private async Task ApplyPairingAsync(DesktopPairingDescriptor? descriptor, long revision)

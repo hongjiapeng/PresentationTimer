@@ -30,6 +30,15 @@ internal sealed class WindowController
     public void SetAlwaysOnTop(bool isAlwaysOnTop) =>
         this._window?.SetAlwaysOnTop(isAlwaysOnTop);
 
+    /// <summary>Transforms the active process window into the compact timer.</summary>
+    public void EnterCompact() => this._window?.EnterCompactMode();
+
+    /// <summary>Transforms the active process window into the expanded control center.</summary>
+    public void EnterExpanded() => this._window?.EnterExpandedMode();
+
+    /// <summary>Requests normal coordinated application shutdown.</summary>
+    public void RequestClose() => this._window?.Close();
+
     /// <summary>Stops UI-owned timer notifications on the window dispatcher.</summary>
     /// <returns>A task that completes after the UI notification source is stopped.</returns>
     public Task StopUiNotificationsAsync()

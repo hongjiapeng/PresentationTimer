@@ -23,6 +23,16 @@
             <TitleBar.IconSource>
                 <ImageIconSource ImageSource="Assets/AppIcon.ico" />
             </TitleBar.IconSource>
+            <TitleBar.RightHeader>
+                <ToggleButton
+                    x:Name="TitleBarPinButton"
+                    x:Uid="TitleBarPinButton"
+                    Width="44"
+                    Height="44"
+                    IsChecked="{x:Bind PresenterPage.IsAlwaysOnTop, Mode=TwoWay}">
+                    <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE718;" />
+                </ToggleButton>
+            </TitleBar.RightHeader>
         </TitleBar>
 
         <Frame x:Name="RootFrame" Grid.Row="1" />
