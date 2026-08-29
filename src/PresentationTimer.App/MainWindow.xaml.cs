@@ -33,6 +33,14 @@ public sealed partial class MainWindow : Window
     private const int WindowCornerRadius = 12;
     private const int ResizeAnimationDurationMs = 180;
     private const int ResizeAnimationFrameIntervalMs = 15;
+    private const int GetWindowLongStyleIndex = -16;
+    private const int SetWindowPositionNoSize = 0x0001;
+    private const int SetWindowPositionNoMove = 0x0002;
+    private const int SetWindowPositionNoZOrder = 0x0004;
+    private const int SetWindowPositionNoActivate = 0x0010;
+    private const int SetWindowPositionFrameChanged = 0x0020;
+    private const int WindowStyleCaption = 0x00C00000;
+    private const int WindowStyleThickFrame = 0x00040000;
     private readonly ILogger<MainWindow> _logger;
     private readonly MainPage _mainPage;
     private readonly WindowController _windowController;
@@ -44,6 +52,9 @@ public sealed partial class MainWindow : Window
     private RectInt32 _animationFrom;
     private RectInt32 _animationTo;
     private int _animationCornerRadiusPx;
+    private int _borderColorPreference = DwmWindowBorderColorDefault;
+    private nint _originalWindowStyle;
+    private bool _hasOriginalWindowStyle;
     private DesktopWindowMode _windowMode = DesktopWindowMode.Compact;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
@@ -69,6 +80,7 @@ public sealed partial class MainWindow : Window
         this.ExtendsContentIntoTitleBar = true;
         this.AppWindow.SetIcon("Assets/AppIcon.ico");
         this.AppWindow.Closing += this.OnClosing;
+        this.Activated += this.OnActivated;
         this._mainPage.DragRegionLoaded += this.OnDragRegionLoaded;
         this.RootFrame.Content = mainPage;
         this._windowController.Attach(this);
@@ -94,6 +106,8 @@ public sealed partial class MainWindow : Window
             return;
         }
 
+        this.CaptureOriginalWindowStyle();
+
         if (this._windowMode == DesktopWindowMode.Expanded)
         {
             this._expandedBounds = this.GetCurrentBounds();
@@ -105,6 +119,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         presenter.SetBorderAndTitleBar(false, false);
+        this.RemoveWindowChrome();
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -131,6 +146,8 @@ public sealed partial class MainWindow : Window
             return;
         }
 
+        this.CaptureOriginalWindowStyle();
+
         if (this._windowMode == DesktopWindowMode.Compact)
         {
             this._compactBounds = this.GetCurrentBounds();
@@ -142,6 +159,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         presenter.SetBorderAndTitleBar(false, false);
+        this.RemoveWindowChrome();
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -183,6 +201,7 @@ public sealed partial class MainWindow : Window
         }
 
         presenter.SetBorderAndTitleBar(true, true);
+        this.RestoreOriginalWindowStyle();
         presenter.IsResizable = true;
         presenter.IsMaximizable = true;
         presenter.IsMinimizable = true;
@@ -244,6 +263,25 @@ public sealed partial class MainWindow : Window
     [DllImport("user32.dll")]
     private static extern int SetWindowRgn(nint windowHandle, nint region, bool redraw);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW")]
+    private static extern nint GetWindowLongPtr(nint windowHandle, int index);
+
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
+    private static extern nint SetWindowLongPtr(nint windowHandle, int index, nint newValue);
+
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(
+        nint windowHandle,
+        nint insertAfter,
+        int x,
+        int y,
+        int width,
+        int height,
+        int flags);
+
     [LoggerMessage(4000, LogLevel.Error, "Window shutdown encountered an error")]
     private static partial void LogWindowShutdownFailed(ILogger logger, Exception exception);
 
@@ -285,6 +323,16 @@ public sealed partial class MainWindow : Window
 
     private static int Lerp(int from, int to, double t) => (int)Math.Round(from + ((to - from) * t));
 
+    private static void RefreshWindowFrame(nint windowHandle)
+    {
+        int flags = SetWindowPositionNoSize |
+            SetWindowPositionNoMove |
+            SetWindowPositionNoZOrder |
+            SetWindowPositionNoActivate |
+            SetWindowPositionFrameChanged;
+        _ = SetWindowPos(windowHandle, 0, 0, 0, 0, 0, flags);
+    }
+
     private RectInt32 GetCurrentBounds() => new RectInt32(
         this.AppWindow.Position.X,
         this.AppWindow.Position.Y,
@@ -303,12 +351,49 @@ public sealed partial class MainWindow : Window
 
     private void RequestBorderColor(int color)
     {
+        this._borderColorPreference = color;
         nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
         _ = DwmSetWindowAttribute(
             windowHandle,
             DwmWindowAttributeBorderColor,
             ref color,
             sizeof(int));
+    }
+
+    private void OnActivated(object sender, WindowActivatedEventArgs args) =>
+        this.RequestBorderColor(this._borderColorPreference);
+
+    private void CaptureOriginalWindowStyle()
+    {
+        if (this._hasOriginalWindowStyle)
+        {
+            return;
+        }
+
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        this._originalWindowStyle = GetWindowLongPtr(windowHandle, GetWindowLongStyleIndex);
+        this._hasOriginalWindowStyle = true;
+    }
+
+    private void RemoveWindowChrome()
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        nint windowStyle = GetWindowLongPtr(windowHandle, GetWindowLongStyleIndex);
+        nint borderlessStyle = windowStyle & ~(WindowStyleCaption | WindowStyleThickFrame);
+        _ = SetWindowLongPtr(windowHandle, GetWindowLongStyleIndex, borderlessStyle);
+        RefreshWindowFrame(windowHandle);
+    }
+
+    private void RestoreOriginalWindowStyle()
+    {
+        if (!this._hasOriginalWindowStyle)
+        {
+            return;
+        }
+
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        _ = SetWindowLongPtr(windowHandle, GetWindowLongStyleIndex, this._originalWindowStyle);
+        RefreshWindowFrame(windowHandle);
     }
 
     private void SetTitleBarIfLoaded(FrameworkElement? dragRegion)
@@ -405,6 +490,7 @@ public sealed partial class MainWindow : Window
         }
         finally
         {
+            this.Activated -= this.OnActivated;
             this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
             this._windowController.Detach(this);
             this._shutdownComplete = true;
