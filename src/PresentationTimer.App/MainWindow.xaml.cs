@@ -53,8 +53,6 @@ public sealed partial class MainWindow : Window
     private RectInt32 _animationTo;
     private int _animationCornerRadiusPx;
     private int _borderColorPreference = DwmWindowBorderColorDefault;
-    private nint _originalWindowStyle;
-    private bool _hasOriginalWindowStyle;
     private DesktopWindowMode _windowMode = DesktopWindowMode.Compact;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
@@ -106,8 +104,6 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        this.CaptureOriginalWindowStyle();
-
         if (this._windowMode == DesktopWindowMode.Expanded)
         {
             this._expandedBounds = this.GetCurrentBounds();
@@ -119,7 +115,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         presenter.SetBorderAndTitleBar(false, false);
-        this.RemoveWindowChrome();
+        this.SetWindowChromeVisibility(false);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -146,8 +142,6 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        this.CaptureOriginalWindowStyle();
-
         if (this._windowMode == DesktopWindowMode.Compact)
         {
             this._compactBounds = this.GetCurrentBounds();
@@ -159,7 +153,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         presenter.SetBorderAndTitleBar(false, false);
-        this.RemoveWindowChrome();
+        this.SetWindowChromeVisibility(false);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -201,7 +195,7 @@ public sealed partial class MainWindow : Window
         }
 
         presenter.SetBorderAndTitleBar(true, true);
-        this.RestoreOriginalWindowStyle();
+        this.SetWindowChromeVisibility(true);
         presenter.IsResizable = true;
         presenter.IsMaximizable = true;
         presenter.IsMinimizable = true;
@@ -363,36 +357,15 @@ public sealed partial class MainWindow : Window
     private void OnActivated(object sender, WindowActivatedEventArgs args) =>
         this.RequestBorderColor(this._borderColorPreference);
 
-    private void CaptureOriginalWindowStyle()
-    {
-        if (this._hasOriginalWindowStyle)
-        {
-            return;
-        }
-
-        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
-        this._originalWindowStyle = GetWindowLongPtr(windowHandle, GetWindowLongStyleIndex);
-        this._hasOriginalWindowStyle = true;
-    }
-
-    private void RemoveWindowChrome()
+    private void SetWindowChromeVisibility(bool isVisible)
     {
         nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
         nint windowStyle = GetWindowLongPtr(windowHandle, GetWindowLongStyleIndex);
-        nint borderlessStyle = windowStyle & ~(WindowStyleCaption | WindowStyleThickFrame);
-        _ = SetWindowLongPtr(windowHandle, GetWindowLongStyleIndex, borderlessStyle);
-        RefreshWindowFrame(windowHandle);
-    }
-
-    private void RestoreOriginalWindowStyle()
-    {
-        if (!this._hasOriginalWindowStyle)
-        {
-            return;
-        }
-
-        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
-        _ = SetWindowLongPtr(windowHandle, GetWindowLongStyleIndex, this._originalWindowStyle);
+        nint chromeStyle = WindowStyleCaption | WindowStyleThickFrame;
+        nint updatedStyle = isVisible
+            ? windowStyle | chromeStyle
+            : windowStyle & ~chromeStyle;
+        _ = SetWindowLongPtr(windowHandle, GetWindowLongStyleIndex, updatedStyle);
         RefreshWindowFrame(windowHandle);
     }
 
