@@ -63,20 +63,12 @@
                 </Viewbox>
             </Grid>
 
-            <Grid Grid.Row="2" Padding="12,4" ColumnSpacing="8">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Grid Grid.Row="2" Padding="12,4">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="8">
                 <Button
                     x:Name="CompactExpandButton"
                     x:Uid="CompactExpandButton"
                     AutomationProperties.AutomationId="CompactExpandButton"
-                    Grid.Column="1"
                     Click="ExpandButton_Click"
                     Style="{StaticResource PresenterCompactIconButtonStyle}"
                     TabIndex="0">
@@ -87,7 +79,6 @@
                     x:Uid="CompactStartIconButton"
                     x:Load="{x:Bind ViewModel.CanStart, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactStartButton"
-                    Grid.Column="2"
                     Command="{x:Bind ViewModel.StartCommand, Mode=OneTime}"
                     Width="52"
                     Height="52"
@@ -105,7 +96,6 @@
                     x:Uid="HudPauseButton"
                     x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactPauseButton"
-                    Grid.Column="2"
                     Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
                     Width="52"
                     Height="52"
@@ -123,7 +113,6 @@
                     x:Uid="HudResumeButton"
                     x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactResumeButton"
-                    Grid.Column="2"
                     Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
                     Width="52"
                     Height="52"
@@ -141,7 +130,6 @@
                     x:Uid="CompactResetIconButton"
                     x:Load="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}"
                     AutomationProperties.AutomationId="CompactResetButton"
-                    Grid.Column="3"
                     Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
                     Style="{StaticResource PresenterCompactIconButtonStyle}"
                     TabIndex="2">
@@ -153,7 +141,6 @@
                 <Button
                     x:Uid="CompactMoreButton"
                     AutomationProperties.AutomationId="CompactMoreButton"
-                    Grid.Column="4"
                     Style="{StaticResource PresenterCompactIconButtonStyle}"
                     TabIndex="3">
                     <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
@@ -202,6 +189,7 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
+                </StackPanel>
             </Grid>
         </Grid>
 
