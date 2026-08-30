@@ -11,7 +11,10 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid x:Name="WindowLayoutRoot" SizeChanged="WindowLayoutRoot_SizeChanged">
+    <Grid
+        x:Name="WindowLayoutRoot"
+        Background="{ThemeResource PresenterWindowSurfaceBrush}"
+        SizeChanged="WindowLayoutRoot_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

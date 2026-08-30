@@ -14,8 +14,7 @@
             AutomationProperties.AutomationId="CompactTimerRoot"
             AutomationProperties.LiveSetting="Polite"
             AutomationProperties.Name="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}"
-            Background="{ThemeResource PresenterCompactSurfaceBrush}"
-            RequestedTheme="Dark">
+            Background="{ThemeResource PresenterCompactSurfaceBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
@@ -201,8 +200,7 @@
             AutomationProperties.Name="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}"
             Background="{ThemeResource PresenterCompactSurfaceBrush}"
             Padding="8"
-            ColumnSpacing="4"
-            RequestedTheme="Dark">
+            ColumnSpacing="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -319,6 +317,7 @@
             x:Name="ExpandedRoot"
             x:Load="{x:Bind IsExpandedMode, Mode=OneWay}"
             AutomationProperties.AutomationId="ExpandedControlCenterRoot"
+            Background="{ThemeResource PresenterWindowSurfaceBrush}"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <Grid Padding="24,8,24,16" RowSpacing="12">
