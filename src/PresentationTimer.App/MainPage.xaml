@@ -258,20 +258,7 @@
                 Click="ExpandButton_Click"
                 Style="{StaticResource PresenterCompactIconButtonStyle}"
                 TabIndex="1">
-                <Grid AutomationProperties.AccessibilityView="Raw" Width="16" Height="16" RowSpacing="4" ColumnSpacing="4">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="6" />
-                        <RowDefinition Height="6" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6" />
-                        <ColumnDefinition Width="6" />
-                    </Grid.ColumnDefinitions>
-                    <Rectangle Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                    <Rectangle Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                    <Rectangle Grid.Row="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                    <Rectangle Grid.Row="1" Grid.Column="1" Fill="{ThemeResource TextFillColorPrimaryBrush}" RadiusX="1" RadiusY="1" />
-                </Grid>
+                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE740;" />
             </Button>
             <Button
                 x:Name="HudMoreButton"
