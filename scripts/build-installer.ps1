@@ -32,6 +32,7 @@ dotnet publish src/PresentationTimer.App/PresentationTimer.App.csproj `
     --configuration Release `
     -p:Platform=x64 `
     "-p:Version=$Version" `
+    -p:PublishReadyToRun=false `
     -p:DebugType=none `
     -p:DebugSymbols=false `
     --output $publishPath

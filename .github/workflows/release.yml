@@ -57,6 +57,7 @@ jobs:
             --configuration Release `
             -p:Platform=x64 `
             "-p:Version=$version" `
+            -p:PublishReadyToRun=false `
             -p:DebugType=none `
             -p:DebugSymbols=false `
             --output "artifacts/win-x64"
