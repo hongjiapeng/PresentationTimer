@@ -1,0 +1,143 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    name: Test
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore PresentationTimer.sln
+
+      - name: Build
+        run: dotnet build PresentationTimer.sln --configuration Release --no-restore -p:Platform=x64
+
+      - name: Test
+        run: dotnet test PresentationTimer.sln --configuration Release --no-build -p:Platform=x64 --verbosity normal
+
+  windows-installer:
+    name: Windows installer
+    runs-on: windows-latest
+    needs: test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish Windows application
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          if ($version.StartsWith("v")) {
+            $version = $version.Substring(1)
+          }
+
+          dotnet publish src/PresentationTimer.App/PresentationTimer.App.csproj `
+            --configuration Release `
+            -p:Platform=x64 `
+            "-p:Version=$version" `
+            -p:DebugType=none `
+            -p:DebugSymbols=false `
+            --output "artifacts/win-x64"
+
+      - name: Package portable zip
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          $tag = "${{ github.ref_name }}"
+          Compress-Archive -Path "artifacts/win-x64/*" -DestinationPath "dist/presentationtimer-$tag-win-x64.zip" -Force
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress --yes
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          if ($version.StartsWith("v")) {
+            $version = $version.Substring(1)
+          }
+
+          $isccCommand = Get-Command iscc.exe -ErrorAction SilentlyContinue
+          $iscc = if ($null -eq $isccCommand) { $null } else { $isccCommand.Path }
+          if ([string]::IsNullOrWhiteSpace($iscc)) {
+            $iscc = @(
+              (Join-Path ${env:ProgramFiles} "Inno Setup 6\ISCC.exe"),
+              (Join-Path ${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"),
+              (Join-Path ${env:LOCALAPPDATA} "Programs\Inno Setup 6\ISCC.exe")
+            ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not (Test-Path $iscc)) {
+            throw "Inno Setup compiler was not found."
+          }
+
+          & $iscc `
+            "/DAppVersion=$version" `
+            "/DSourceDir=$pwd\artifacts\win-x64" `
+            "/DOutputDir=$pwd\dist" `
+            "$pwd\installer\PresentationTimer.iss"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup compilation failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Upload Windows release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentationtimer-${{ github.ref_name }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [windows-installer]
+
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${GITHUB_REF_NAME}"
+          repo="${GITHUB_REPOSITORY}"
+
+          if gh release view "$tag" --repo "$repo" >/dev/null 2>&1; then
+            echo "Release $tag already exists; uploading assets"
+            gh release upload "$tag" dist/* --repo "$repo" --clobber
+          else
+            gh release create "$tag" dist/* \
+              --repo "$repo" \
+              --title "PresentationTimer $tag" \
+              --generate-notes \
+              --verify-tag
+          fi

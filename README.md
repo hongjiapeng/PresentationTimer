@@ -91,3 +91,20 @@ dotnet publish .\src\PresentationTimer.App\PresentationTimer.App.csproj -c Relea
 ```
 
 Launch `PresentationTimer.App.exe` directly from that directory. Uninstall/rollback is closing the app and deleting or replacing that portable directory; the MVP stores no presentation, token, or account data. Local diagnostic logs remain under `%LOCALAPPDATA%\PresentationTimer\Logs` unless removed separately. See [docs/manual-verification.md](docs/manual-verification.md) and the [PowerPoint checklist](docs/powerpoint-manual-checklist.md) before sharing a build.
+
+## Windows installer
+
+GitHub Releases provide a Windows installer (`PresentationTimer-<version>-win-x64-Setup.exe`, built with Inno Setup 6) and a portable zip (`presentationtimer-<tag>-win-x64.zip`). The installer:
+
+- Installs per-user to `%LOCALAPPDATA%\Programs\PresentationTimer`; no administrator rights are required
+- Supports English, Simplified Chinese, and Traditional Chinese UI language
+- Optionally creates a desktop shortcut and starts PresentationTimer when you sign in to Windows
+- Leaves the diagnostic logs under `%LOCALAPPDATA%\PresentationTimer\Logs` when uninstalled
+
+Build the installer locally (Inno Setup 6 must be installed):
+
+```powershell
+.\scripts\build-installer.ps1 -Version 0.1.0
+```
+
+Cut a release by running `.\scripts\release.ps1 0.1.0` after committing and pushing all intended changes. The script runs the test suite, creates an annotated `v*` tag, and pushes it; GitHub Actions (`.github/workflows/release.yml`) then builds the installer and portable zip and creates or updates the GitHub Release.

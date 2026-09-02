@@ -12,3 +12,4 @@
 *.nupkg
 TestResults/
 artifacts/
+dist/
