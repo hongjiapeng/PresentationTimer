@@ -87,7 +87,7 @@ Application composition uses Microsoft.Extensions.DependencyInjection with const
 Create the unpackaged, self-contained x64 dogfood output with NativeAOT and trimming disabled:
 
 ```powershell
-dotnet publish .\src\PresentationTimer.App\PresentationTimer.App.csproj -c Release -p:Platform=x64 -p:PublishProfile=win-x64 -o .\artifacts\publish\win-x64
+dotnet publish .\src\PresentationTimer.App\PresentationTimer.App.csproj -c Release -p:Platform=x64 -r win-x64 -o .\artifacts\publish\win-x64
 ```
 
 Launch `PresentationTimer.App.exe` directly from that directory. Uninstall/rollback is closing the app and deleting or replacing that portable directory; the MVP stores no presentation, token, or account data. Local diagnostic logs remain under `%LOCALAPPDATA%\PresentationTimer\Logs` unless removed separately. See [docs/manual-verification.md](docs/manual-verification.md) and the [PowerPoint checklist](docs/powerpoint-manual-checklist.md) before sharing a build.
