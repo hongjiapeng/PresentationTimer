@@ -13,14 +13,11 @@
     <PackageReference Include="QRCoder" />
   </ItemGroup>
 
+  <!-- Web assets are embedded from wwwroot so the remote host is self-contained.
+       The SignalR client is vendored under wwwroot/vendor (source: @microsoft/signalr, see package.json);
+       node_modules must never be a build input because it is not committed. -->
   <ItemGroup>
     <EmbeddedResource Include="wwwroot\**\*" />
-    <EmbeddedResource
-      Include="node_modules\@microsoft\signalr\dist\browser\signalr.min.js"
-      LogicalName="PresentationTimer.Remote.wwwroot.vendor.signalr.min.js" />
-    <EmbeddedResource
-      Include="node_modules\@microsoft\signalr\src\third-party-notices.txt"
-      LogicalName="PresentationTimer.Remote.wwwroot.vendor.signalr-third-party-notices.txt" />
   </ItemGroup>
 
 </Project>
