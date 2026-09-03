@@ -1,6 +1,20 @@
 # PresentationTimer
 
+[中文](./README.zh.md) · **English**
+
 PresentationTimer is a local-first Windows presenter workspace built with .NET 10 and WinUI 3. It combines an accurate countdown/overtime timer, PowerPoint file selection/control and speaker-note monitoring, and an authenticated phone browser remote over the local network.
+
+## Screenshots
+
+The expanded UI design shows the intended presenter workspace hierarchy. The compact timer and presenter HUD screenshots show the focused timer surfaces.
+
+<p>
+  <img src="docs/design/presentation-timer-expanded-ui-v2.png" alt="PresentationTimer expanded UI design" width="720">
+</p>
+<p>
+  <img src="docs/screenshots/compact-timer.png" alt="PresentationTimer compact timer" width="660">
+  <img src="docs/screenshots/presenter-hud.png" alt="PresentationTimer presenter HUD" width="440">
+</p>
 
 ## Prerequisites
 
@@ -54,6 +68,12 @@ Run the desktop UI smoke checks after a Debug x64 build:
 3. Select **Start remote**. Scan the displayed QR code from a phone on the same trusted Wi-Fi/LAN.
 4. Use the browser's Previous/Next buttons and view the authoritative slide number, plain-text notes, and remaining/overtime value.
 5. Select **End session** immediately after the talk. The QR token and every browser cookie from that session become invalid.
+
+## PowerPoint fixture
+
+[`tests/fixtures/PresentationTimer.PowerPointFixture.pptx`](tests/fixtures/PresentationTimer.PowerPointFixture.pptx) is an original, programmatically authored six-slide deck for manual verification. It covers empty notes, multiline notes, markup-like text that must remain plain text, a genuinely hidden slide, and the final-slide boundary. It contains no external images, charts, factual claims, or third-party assets.
+
+This deck is suitable for GitHub as a test fixture or manual-verification sample. Keep that purpose clear in its name and documentation; it is not intended to be the project's product-demo deck.
 
 ## Trusted-LAN security boundary
 
