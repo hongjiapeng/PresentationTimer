@@ -66,14 +66,12 @@ button { font: inherit; }
 .navigation { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; padding-top: .9rem; border-top: 1px solid #334356; }
 button { display: flex; align-items: center; justify-content: center; min-height: 4.25rem; padding: .7rem 1rem; border-radius: .85rem; font-weight: 700; cursor: pointer; transition: background-color .16s ease; }
 button:focus-visible { outline: 3px solid #a9edff; outline-offset: 3px; }
-#previous { color: #e2edf6; background: #2a3747; border: 1px solid #46586c; }
-#next { color: #091b2b; background: #61c8f5; border: 1px solid #61c8f5; }
+#previous, #next { color: #091b2b; background: #61c8f5; border: 1px solid #61c8f5; }
 .navigation button { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 @media (hover: hover) and (pointer: fine) {
-  #previous:not(:disabled):hover { background: #36475b; }
-  #next:not(:disabled):hover { background: #8cdbfa; }
+  .navigation button:not(:disabled):hover { background: #8cdbfa; }
 }
-button:disabled { opacity: .48; cursor: not-allowed; }
+#previous:disabled, #next:disabled { color: #a8b9ca; background: #2a3747; border-color: #46586c; cursor: not-allowed; }
 @media (orientation: landscape) and (min-width: 680px) {
   .presenter-shell { grid-template-columns: minmax(17rem, .82fr) 1.18fr; grid-template-rows: auto auto minmax(0, 1fr) auto; }
   .topbar, .session-line, .navigation { grid-column: 1 / -1; }

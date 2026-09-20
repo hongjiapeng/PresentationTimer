@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/presenter.test.cjs"
+  },
   "dependencies": {
     "@microsoft/signalr": "10.0.11"
   }
