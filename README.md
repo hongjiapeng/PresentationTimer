@@ -39,6 +39,8 @@ It runs locally, does not require an account, and does not close your presentati
 | **Local-first** | No account or cloud service; session credentials stay in memory and are revoked when the session ends |
 | **Presentation modes** | Expanded workspace, compact timer, and presenter HUD |
 
+The presenter HUD docks at the lower-right edge of the display that contains the control center. Move it to a different display if you use a separate presenter screen; its position is kept when you switch modes. Compact and HUD modes are excluded from supported Windows screen capture by default. The **More → Hide timer from screen capture** setting can turn this off. Capture exclusion does not hide the timer on a physically mirrored projector or from every third-party capture method.
+
 ## Quick start
 
 1. Download the Windows installer or portable zip from [GitHub Releases](https://github.com/hongjiapeng/PresentationTimer/releases).

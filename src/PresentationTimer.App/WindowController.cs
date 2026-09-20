@@ -30,6 +30,11 @@ internal sealed class WindowController
     public void SetAlwaysOnTop(bool isAlwaysOnTop) =>
         this._window?.SetAlwaysOnTop(isAlwaysOnTop);
 
+    /// <summary>Controls whether the compact presenter window is excluded from supported screen capture.</summary>
+    /// <param name="isHiddenFromCapture">Whether capture exclusion is requested.</param>
+    public void SetHiddenFromCapture(bool isHiddenFromCapture) =>
+        this._window?.SetHidePresenterFromCapture(isHiddenFromCapture);
+
     /// <summary>Transforms the active process window into the compact timer.</summary>
     public void EnterCompact() => this._window?.EnterCompactMode();
 

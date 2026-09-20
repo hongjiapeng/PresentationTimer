@@ -17,8 +17,9 @@ public sealed partial class MainWindow : Window
 {
     private const int CompactHeight = 240;
     private const int CompactWidth = 440;
-    private const int PresentationHudHeight = 96;
-    private const int PresentationHudWidth = 340;
+    private const int PresentationHudHeight = 72;
+    private const int PresentationHudWidth = 248;
+    private const int PresentationHudEdgeMargin = 16;
     private const int ExpandedHeight = 680;
     private const int ExpandedWidth = 920;
     private const int MinimumExpandedHeight = 600;
@@ -40,6 +41,8 @@ public sealed partial class MainWindow : Window
     private const int SetWindowPositionFrameChanged = 0x0020;
     private const int WindowStyleCaption = 0x00C00000;
     private const int WindowStyleThickFrame = 0x00040000;
+    private const uint WindowDisplayAffinityNone = 0;
+    private const uint WindowDisplayAffinityExcludeFromCapture = 0x00000011;
     private readonly ILogger<MainWindow> _logger;
     private readonly MainPage _mainPage;
     private readonly WindowController _windowController;
@@ -55,6 +58,7 @@ public sealed partial class MainWindow : Window
     private DesktopWindowMode _windowMode = DesktopWindowMode.Expanded;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
+    private bool _hidePresenterFromCapture = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -138,6 +142,7 @@ public sealed partial class MainWindow : Window
         // still applying DWM regions frame by frame.
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
+        this.UpdateCaptureAffinity();
     }
 
     internal void EnterPresentationHudMode()
@@ -166,9 +171,26 @@ public sealed partial class MainWindow : Window
         presenter.PreferredMinimumWidth = 0;
         presenter.PreferredMinimumHeight = 0;
 
-        RectInt32 target = this._presentationHudBounds ?? this.GetCurrentBounds();
-        target.Width = this.ToPhysicalPixels(PresentationHudWidth);
-        target.Height = this.ToPhysicalPixels(PresentationHudHeight);
+        int width = this.ToPhysicalPixels(PresentationHudWidth);
+        int height = this.ToPhysicalPixels(PresentationHudHeight);
+        RectInt32 target;
+        if (this._presentationHudBounds is RectInt32 savedBounds)
+        {
+            target = new RectInt32(savedBounds.X, savedBounds.Y, width, height);
+        }
+        else
+        {
+            // Dock on the display that currently hosts the presenter controls.
+            // A manually moved HUD keeps its saved position on later visits.
+            RectInt32 workArea = DisplayArea.GetFromRect(this.GetCurrentBounds(), DisplayAreaFallback.Primary).WorkArea;
+            int margin = this.ToPhysicalPixels(PresentationHudEdgeMargin);
+            target = new RectInt32(
+                workArea.X + workArea.Width - width - margin,
+                workArea.Y + workArea.Height - height - margin,
+                width,
+                height);
+        }
+
         target = ClampToVisibleWorkArea(target);
         this._presentationHudBounds = target;
         this._windowMode = DesktopWindowMode.PresentationHud;
@@ -177,6 +199,7 @@ public sealed partial class MainWindow : Window
         this.RequestBorderColor(DwmWindowBorderColorNone);
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
+        this.UpdateCaptureAffinity();
     }
 
     internal void EnterExpandedMode()
@@ -224,6 +247,7 @@ public sealed partial class MainWindow : Window
         this._expandedBounds = target;
 
         this._windowMode = DesktopWindowMode.Expanded;
+        this.UpdateCaptureAffinity();
     }
 
     internal void SetAlwaysOnTop(bool isAlwaysOnTop)
@@ -247,6 +271,12 @@ public sealed partial class MainWindow : Window
         this.Close();
     }
 
+    internal void SetHidePresenterFromCapture(bool hidePresenterFromCapture)
+    {
+        this._hidePresenterFromCapture = hidePresenterFromCapture;
+        this.UpdateCaptureAffinity();
+    }
+
     internal RectInt32 CopyWindowStateTo(MainWindow replacementWindow)
     {
         ArgumentNullException.ThrowIfNull(replacementWindow);
@@ -254,6 +284,10 @@ public sealed partial class MainWindow : Window
         RectInt32 appWindowBounds = this.GetCurrentBounds();
         RectInt32 nativeWindowBounds = this.GetNativeWindowBounds();
         replacementWindow.PresenterPage.IsAlwaysOnTop = this.PresenterPage.IsAlwaysOnTop;
+        replacementWindow.PresenterPage.IsHiddenFromCapture = this.PresenterPage.IsHiddenFromCapture;
+        replacementWindow._presentationHudBounds = this._windowMode == DesktopWindowMode.PresentationHud
+            ? appWindowBounds
+            : this._presentationHudBounds;
         replacementWindow.AppWindow.MoveAndResize(appWindowBounds);
 
         switch (this._windowMode)
@@ -280,6 +314,11 @@ public sealed partial class MainWindow : Window
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern uint GetDpiForWindow(nint windowHandle);
+
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetWindowDisplayAffinity(nint windowHandle, uint affinity);
 
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("dwmapi.dll")]
@@ -329,6 +368,9 @@ public sealed partial class MainWindow : Window
     [LoggerMessage(4000, LogLevel.Error, "Window shutdown encountered an error")]
     private static partial void LogWindowShutdownFailed(ILogger logger, Exception exception);
 
+    [LoggerMessage(4001, LogLevel.Warning, "Could not update presenter capture visibility (Win32 error {ErrorCode})")]
+    private static partial void LogCaptureAffinityFailed(ILogger logger, int errorCode);
+
     private static RectInt32 ClampToVisibleWorkArea(RectInt32 bounds)
     {
         DisplayArea displayArea = DisplayArea.GetFromRect(bounds, DisplayAreaFallback.Primary);
@@ -355,6 +397,18 @@ public sealed partial class MainWindow : Window
             SetWindowPositionNoActivate |
             SetWindowPositionFrameChanged;
         _ = SetWindowPos(windowHandle, 0, 0, 0, 0, 0, flags);
+    }
+
+    private void UpdateCaptureAffinity()
+    {
+        uint affinity = this._hidePresenterFromCapture && this._windowMode != DesktopWindowMode.Expanded
+            ? WindowDisplayAffinityExcludeFromCapture
+            : WindowDisplayAffinityNone;
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        if (!SetWindowDisplayAffinity(windowHandle, affinity))
+        {
+            LogCaptureAffinityFailed(this._logger, Marshal.GetLastWin32Error());
+        }
     }
 
     private RectInt32 GetCurrentBounds() => new RectInt32(

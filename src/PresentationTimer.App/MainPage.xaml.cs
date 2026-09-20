@@ -20,6 +20,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     private readonly WindowController _windowController;
     private readonly string _languageTag = LanguageManager.CurrentLanguageTag;
     private bool _isAlwaysOnTop;
+    private bool _isHiddenFromCapture = true;
     private bool _isPresentationPickerOpen;
     private bool _isPreparedForShutdown;
     private DesktopShellMode _shellMode = DesktopShellMode.Expanded;
@@ -80,6 +81,19 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
             }
 
             this._windowController.SetAlwaysOnTop(value);
+        }
+    }
+
+    /// <summary>Gets or sets a value indicating whether the compact presenter window is hidden from supported screen capture.</summary>
+    public bool IsHiddenFromCapture
+    {
+        get => this._isHiddenFromCapture;
+        set
+        {
+            if (this.SetProperty(ref this._isHiddenFromCapture, value))
+            {
+                this._windowController.SetHiddenFromCapture(value);
+            }
         }
     }
 

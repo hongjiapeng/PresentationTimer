@@ -175,6 +175,10 @@
                                 x:Uid="AlwaysOnTopMenuItem"
                                 AutomationProperties.AutomationId="AlwaysOnTopMenuItem"
                                 IsChecked="{x:Bind IsAlwaysOnTop, Mode=TwoWay}" />
+                            <ToggleMenuFlyoutItem
+                                x:Uid="HideFromCaptureMenuItem"
+                                AutomationProperties.AutomationId="CompactHideFromCaptureMenuItem"
+                                IsChecked="{x:Bind IsHiddenFromCapture, Mode=TwoWay}" />
                             <MenuFlyoutItem
                                 x:Uid="TimerSettingsMenuItem"
                                 AutomationProperties.AutomationId="TimerSettingsMenuItem"
@@ -216,11 +220,10 @@
             AutomationProperties.LiveSetting="Polite"
             AutomationProperties.Name="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}"
             Background="{ThemeResource PresenterCompactSurfaceBrush}"
-            Padding="12,8"
+            Padding="8,7"
             ColumnSpacing="6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -230,17 +233,17 @@
                 AutomationProperties.AutomationId="PresentationHudDragRegion"
                 Background="Transparent"
                 Loaded="PresentationHudDragRegion_Loaded"
-                Padding="6,0,10,0"
-                RowSpacing="4">
+                Padding="4,0,4,0"
+                RowSpacing="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Viewbox MaxHeight="60" MaxWidth="164" Stretch="Uniform">
+                <Viewbox MaxHeight="48" MaxWidth="140" Stretch="Uniform">
                     <TextBlock
                         AutomationProperties.AutomationId="HudTimerDisplay"
                         CharacterSpacing="-32"
-                        FontSize="60"
+                        FontSize="48"
                         FontWeight="SemiBold"
                         Foreground="{x:Bind TimerForeground, Mode=OneWay}"
                         Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
@@ -277,22 +280,12 @@
                 <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE768;" />
             </Button>
             <Button
-                x:Name="HudControlCenterButton"
-                x:Uid="HudControlCenterButton"
-                AutomationProperties.AutomationId="HudControlCenterButton"
-                Grid.Column="2"
-                Click="ExpandButton_Click"
-                Style="{StaticResource PresenterHudActionButtonStyle}"
-                TabIndex="1">
-                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE740;" />
-            </Button>
-            <Button
                 x:Name="HudMoreButton"
                 x:Uid="HudMoreButton"
                 AutomationProperties.AutomationId="HudMoreButton"
-                Grid.Column="3"
+                Grid.Column="2"
                 Style="{StaticResource PresenterHudActionButtonStyle}"
-                TabIndex="2">
+                TabIndex="1">
                 <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
                 <Button.Flyout>
                     <MenuFlyout>
@@ -326,6 +319,10 @@
                             x:Uid="AlwaysOnTopMenuItem"
                             AutomationProperties.AutomationId="HudAlwaysOnTopMenuItem"
                             IsChecked="{x:Bind IsAlwaysOnTop, Mode=TwoWay}" />
+                        <ToggleMenuFlyoutItem
+                            x:Uid="HideFromCaptureMenuItem"
+                            AutomationProperties.AutomationId="HudHideFromCaptureMenuItem"
+                            IsChecked="{x:Bind IsHiddenFromCapture, Mode=TwoWay}" />
                         <MenuFlyoutItem
                             x:Uid="TimerSettingsMenuItem"
                             AutomationProperties.AutomationId="HudTimerSettingsMenuItem"
