@@ -102,7 +102,8 @@
     connectionState = state;
     connectionLabel.textContent = strings[state];
     connectionLabel.dataset.state = state;
-    const canNavigate = state === "connected" && !invocationPending;
+    // The pending guard blocks duplicate commands without flashing the disabled button style.
+    const canNavigate = state === "connected";
     previous.disabled = !canNavigate;
     next.disabled = !canNavigate;
   };
@@ -214,14 +215,17 @@
   const navigate = async (method) => {
     if (invocationPending || connection.state !== signalR.HubConnectionState.Connected) return;
     invocationPending = true;
-    setConnectionState("connected");
     try {
       await connection.invoke(method);
     } catch {
-      setConnectionState("disconnected");
+      if (connection.state !== signalR.HubConnectionState.Connected) {
+        setConnectionState("disconnected");
+      }
     } finally {
       invocationPending = false;
-      if (connection.state === signalR.HubConnectionState.Connected) setConnectionState("connected");
+      if (connection.state === signalR.HubConnectionState.Connected && connectionState !== "connected") {
+        setConnectionState("connected");
+      }
     }
   };
 
