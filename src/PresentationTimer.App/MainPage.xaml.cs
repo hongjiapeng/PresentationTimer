@@ -21,7 +21,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     private bool _isAlwaysOnTop;
     private bool _isPresentationPickerOpen;
     private bool _isPreparedForShutdown;
-    private DesktopShellMode _shellMode = DesktopShellMode.Compact;
+    private DesktopShellMode _shellMode = DesktopShellMode.Expanded;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainPage"/> class.

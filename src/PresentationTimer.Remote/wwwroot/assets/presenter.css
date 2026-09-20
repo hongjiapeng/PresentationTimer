@@ -1,51 +1,77 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
   font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-  background: Canvas;
-  color: CanvasText;
+  background: #141b26;
+  color: #f4f8fd;
+  font-synthesis: none;
 }
-
 * { box-sizing: border-box; }
-
 body { margin: 0; min-height: 100vh; }
-
+button, select { font: inherit; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .presenter-shell {
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 1rem;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: clamp(1rem, 3vh, 1.5rem);
   min-height: 100vh;
-  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
-    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  min-height: 100dvh;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right))
+    max(1.25rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
 }
-
-header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
-.connection { margin: 0; font-weight: 650; }
-.connection[data-state="connected"] { color: #0f7b0f; }
-.connection[data-state="expired"], .connection[data-state="disconnected"] { color: #c42b1c; }
-.slide-position { margin: 0; font-variant-numeric: tabular-nums; }
-
+.topbar, .session-line { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.identity { display: flex; align-items: center; gap: .7rem; font-size: .95rem; font-weight: 680; letter-spacing: .01em; }
+.identity-mark { width: 1.1rem; height: 1.1rem; border: .19rem solid #61c8f5; border-left-color: transparent; border-radius: 50%; transform: rotate(-35deg); }
+.language-control select { max-width: 9rem; padding: .45rem 1.7rem .45rem .6rem; color: #cbd8e8; background: #222d3c; border: 1px solid #3b4c5f; border-radius: .6rem; }
+.connection, .slide-position { margin: 0; font-size: .94rem; font-variant-numeric: tabular-nums; }
+.connection { display: inline-flex; align-items: center; gap: .55rem; color: #d3e1ec; font-weight: 650; }
+.connection::before { content: ""; width: .55rem; height: .55rem; flex: none; border-radius: 50%; background: #8091a6; }
+.connection[data-state="connected"]::before { background: #58d9aa; box-shadow: 0 0 0 .18rem #58d9aa20; }
+.connection[data-state="expired"]::before, .connection[data-state="disconnected"]::before { background: #ff9a8d; }
+.slide-position { color: #a8b9ca; text-align: right; }
 .timer {
+  position: relative;
   display: grid;
-  justify-items: center;
-  gap: .25rem;
-  padding: 1rem;
-  border: 1px solid ButtonBorder;
-  border-radius: .75rem;
+  justify-items: start;
+  align-content: center;
+  gap: .5rem;
+  min-height: 12rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
+  overflow: hidden;
+  border: 1px solid #334356;
+  border-radius: 1.25rem;
+  background: #1d2836;
 }
-
-.timer strong { font-size: clamp(3rem, 18vw, 6rem); line-height: 1; font-variant-numeric: tabular-nums; }
-.timer.overtime { color: #c42b1c; }
-.notes-panel { overflow: auto; }
-.notes-panel h1 { font-size: 1rem; }
-.notes { white-space: pre-wrap; font-size: 1.15rem; line-height: 1.55; }
-
-.navigation { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-button { min-height: 4rem; border: 1px solid ButtonBorder; border-radius: .75rem; font: inherit; font-weight: 650; }
-button:focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
-
-@media (orientation: landscape) {
-  .presenter-shell { grid-template-columns: minmax(13rem, .8fr) 1.2fr; grid-template-rows: auto 1fr auto; }
-  header, .navigation { grid-column: 1 / -1; }
-  .timer { grid-column: 1; }
-  .notes-panel { grid-column: 2; }
+.timer-label { color: #b1c6d9; font-size: .92rem; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; }
+.timer strong { color: #a9edff; font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif; font-size: clamp(5rem, 19vw, 9rem); font-weight: 600; line-height: .98; letter-spacing: -.055em; font-variant-numeric: tabular-nums; }
+.timer-rule { position: absolute; inset: auto auto 0 0; width: 38%; height: .28rem; background: #61c8f5; border-radius: 0 .3rem .3rem 0; }
+.timer.overtime strong, .timer.overtime .timer-label { color: #ffac9d; }
+.timer.overtime .timer-rule { background: #ff8d7b; }
+.notes-panel { min-height: 0; overflow: auto; padding: .15rem .15rem 1rem; }
+.notes-panel h1 { margin: 0 0 1rem; color: #9db4c9; font-size: .88rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.notes { margin: 0; max-width: 46rem; white-space: pre-wrap; overflow-wrap: anywhere; font-size: clamp(1.15rem, 2.5vw, 1.5rem); line-height: 1.6; }
+.notes.is-empty { color: #a8b8c9; }
+.navigation { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; padding-top: .9rem; border-top: 1px solid #334356; }
+button { display: flex; align-items: center; justify-content: center; gap: .7rem; min-height: 4.25rem; padding: .7rem 1rem; border-radius: .85rem; font-weight: 700; cursor: pointer; transition: background-color .16s ease, transform .16s ease; }
+button:not(:disabled):active { transform: scale(.98); }
+button:focus-visible, select:focus-visible { outline: 3px solid #a9edff; outline-offset: 3px; }
+#previous { color: #e2edf6; background: #2a3747; border: 1px solid #46586c; }
+#previous:not(:disabled):hover { background: #36475b; }
+#next { color: #091b2b; background: #61c8f5; border: 1px solid #61c8f5; }
+#next:not(:disabled):hover { background: #8cdbfa; }
+button:disabled { opacity: .48; cursor: not-allowed; }
+@media (orientation: landscape) and (min-width: 680px) {
+  .presenter-shell { grid-template-columns: minmax(17rem, .82fr) 1.18fr; grid-template-rows: auto auto minmax(0, 1fr) auto; }
+  .topbar, .session-line, .navigation { grid-column: 1 / -1; }
+  .timer { grid-column: 1; align-self: start; }
+  .timer strong { font-size: clamp(4.5rem, 10vw, 7rem); }
+  .notes-panel { grid-column: 2; grid-row: 3; padding: .5rem 0; }
 }
+@media (max-height: 530px) {
+  .presenter-shell { gap: .7rem; }
+  .timer { min-height: 8.5rem; padding: 1rem 1.3rem; }
+  .timer strong { font-size: clamp(3.8rem, 13vh, 6rem); }
+  button { min-height: 3.5rem; }
+}
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }

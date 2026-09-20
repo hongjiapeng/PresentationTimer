@@ -4,26 +4,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#141b26">
   <title>Presentation Timer Remote</title>
   <link rel="stylesheet" href="/assets/presenter.css">
 </head>
 <body>
   <main class="presenter-shell">
-    <header>
-      <p id="connection" class="connection" role="status">Connecting…</p>
-      <p id="slide-position" class="slide-position">Slide — / —</p>
+    <header class="topbar">
+      <div class="identity">
+        <span class="identity-mark" aria-hidden="true"></span>
+        <span id="app-name">Presentation Timer</span>
+      </div>
+      <label class="language-control">
+        <span id="language-label" class="sr-only">Language</span>
+        <select id="language" aria-labelledby="language-label">
+          <option value="en">English</option>
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="ja">日本語</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </label>
     </header>
-    <section class="timer" aria-live="polite">
-      <span id="timer-mode">Remaining</span>
+    <div class="session-line">
+      <p id="connection" class="connection" role="status" data-state="connecting">Connecting…</p>
+      <p id="slide-position" class="slide-position">Slide — / —</p>
+    </div>
+    <section class="timer" aria-live="polite" aria-atomic="true">
+      <span id="timer-mode" class="timer-label">Remaining</span>
       <strong id="timer-value">00:00</strong>
+      <span class="timer-rule" aria-hidden="true"></span>
     </section>
     <section class="notes-panel" aria-labelledby="notes-heading">
       <h1 id="notes-heading">Speaker notes</h1>
-      <p id="notes" class="notes">No speaker notes on this slide.</p>
+      <p id="notes" class="notes is-empty">No speaker notes on this slide.</p>
     </section>
     <nav class="navigation" aria-label="Slide navigation">
-      <button id="previous" type="button" disabled>Previous</button>
-      <button id="next" type="button" disabled>Next</button>
+      <button id="previous" type="button" disabled><span aria-hidden="true">←</span><span class="button-label">Previous</span></button>
+      <button id="next" type="button" disabled><span class="button-label">Next</span><span aria-hidden="true">→</span></button>
     </nav>
   </main>
   <script src="/vendor/signalr.min.js"></script>

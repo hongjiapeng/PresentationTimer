@@ -18,7 +18,7 @@ public sealed partial class MainWindow : Window
     private const int CompactHeight = 240;
     private const int CompactWidth = 440;
     private const int PresentationHudHeight = 96;
-    private const int PresentationHudWidth = 288;
+    private const int PresentationHudWidth = 340;
     private const int ExpandedHeight = 680;
     private const int ExpandedWidth = 920;
     private const int MinimumExpandedHeight = 600;
@@ -52,7 +52,7 @@ public sealed partial class MainWindow : Window
     private RectInt32 _animationTo;
     private int _animationCornerRadiusPx;
     private int _borderColorPreference = DwmWindowBorderColorDefault;
-    private DesktopWindowMode _windowMode = DesktopWindowMode.Compact;
+    private DesktopWindowMode _windowMode = DesktopWindowMode.Expanded;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
 
@@ -84,7 +84,7 @@ public sealed partial class MainWindow : Window
         this._resizeAnimationTimer = this.DispatcherQueue.CreateTimer();
         this._resizeAnimationTimer.Interval = TimeSpan.FromMilliseconds(ResizeAnimationFrameIntervalMs);
         this._resizeAnimationTimer.Tick += this.OnResizeAnimationTick;
-        this.EnterCompactMode();
+        this.EnterExpandedMode();
     }
 
     private enum DesktopWindowMode
