@@ -135,16 +135,11 @@
   <data name="LanguageMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Choose application language</value></data>
   <data name="SimplifiedChineseLanguageMenuItem.Text" xml:space="preserve"><value>简体中文</value></data>
   <data name="EnglishLanguageMenuItem.Text" xml:space="preserve"><value>English</value></data>
-  <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Open control center</value></data>
-  <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Open control center</value></data>
-  <data name="CompactExpandButton.AccessKey" xml:space="preserve"><value>E</value></data>
   <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More presenter actions</value></data>
   <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
     <data name="CompactMoreButton.AccessKey" xml:space="preserve"><value>M</value></data>
     <data name="CompactStartIconButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Start timer</value></data>
     <data name="CompactStartIconButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Start</value></data>
-    <data name="CompactResetIconButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Reset timer</value></data>
-    <data name="CompactResetIconButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Reset</value></data>
   <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Pause timer</value></data>
   <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Pause</value></data>
   <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Resume timer</value></data>
@@ -153,8 +148,8 @@
   <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
   <data name="HudResetMenuItem.Text" xml:space="preserve"><value>Reset timer</value></data>
   <data name="OpenControlCenterMenuItem.Text" xml:space="preserve"><value>Open control center</value></data>
-  <data name="EnterPresentationHudMenuItem.Text" xml:space="preserve"><value>Switch to presentation HUD</value></data>
-  <data name="EnterPresentationHudMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Switch to the smaller presentation HUD</value></data>
+  <data name="EnterPresentationHudMenuItem.Text" xml:space="preserve"><value>Switch to presentation timer</value></data>
+  <data name="EnterPresentationHudMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Switch to the presentation timer</value></data>
   <data name="AlwaysOnTopMenuItem.Text" xml:space="preserve"><value>Always on top</value></data>
   <data name="HideFromCaptureMenuItem.Text" xml:space="preserve"><value>Hide timer from screen capture</value></data>
   <data name="TimerSettingsMenuItem.Text" xml:space="preserve"><value>Timer settings</value></data>

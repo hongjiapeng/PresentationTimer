@@ -1,8 +1,11 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.Windows.Storage.Pickers;
 using PresentationTimer.App.Localization;
 using PresentationTimer.App.ViewModels;
@@ -15,14 +18,20 @@ namespace PresentationTimer.App;
 /// </summary>
 public sealed partial class MainPage : Page, INotifyPropertyChanged
 {
-    private const double CompactArcDashLength = 86d;
     private const double ExpandedArcDashLength = 106d;
+    private const double FloatingProgressWidth = 104d;
+    private static readonly TimeSpan FloatingRevealDuration = TimeSpan.FromMilliseconds(180);
+    private static readonly TimeSpan FloatingHideDelay = TimeSpan.FromMilliseconds(1250);
     private readonly WindowController _windowController;
+    private readonly DispatcherQueueTimer _floatingHideTimer;
     private readonly string _languageTag = LanguageManager.CurrentLanguageTag;
     private bool _isAlwaysOnTop;
     private bool _isHiddenFromCapture = true;
     private bool _isPresentationPickerOpen;
     private bool _isPreparedForShutdown;
+    private bool _isFloatingMenuOpen;
+    private bool _isFloatingPointerOver;
+    private Storyboard? _floatingAnimation;
     private DesktopShellMode _shellMode = DesktopShellMode.Expanded;
 
     /// <summary>
@@ -43,6 +52,9 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
             this.DispatcherQueue,
             strings);
         this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
+        this._floatingHideTimer = this.DispatcherQueue.CreateTimer();
+        this._floatingHideTimer.Interval = FloatingHideDelay;
+        this._floatingHideTimer.Tick += this.OnFloatingHideTick;
         this.ActualThemeChanged += this.OnActualThemeChanged;
         this.Unloaded += this.OnUnloaded;
     }
@@ -131,6 +143,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
                 case TimerVisualState.Warning:
                     resourceKey = "PresenterTimerWarningBrush";
                     break;
+                case TimerVisualState.Critical:
                 case TimerVisualState.Overtime:
                     resourceKey = "PresenterTimerOvertimeBrush";
                     break;
@@ -150,8 +163,9 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         _ => null,
     };
 
-    /// <summary>Gets the dash offset used by the compact progress arc.</summary>
-    internal double CompactArcProgressDashOffset { get; private set; }
+    /// <summary>Gets the noninteractive floating progress width in effective pixels.</summary>
+    internal double CompactProgressWidth =>
+        Math.Clamp(this.ViewModel.TimerProgressValue / 100d, 0d, 1d) * FloatingProgressWidth;
 
     /// <summary>Gets the dash offset used by the expanded progress arc.</summary>
     internal double ExpandedArcProgressDashOffset { get; private set; }
@@ -166,6 +180,9 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         }
 
         this._isPreparedForShutdown = true;
+        this._floatingHideTimer.Stop();
+        this._floatingHideTimer.Tick -= this.OnFloatingHideTick;
+        this._floatingAnimation?.Stop();
         this.Unloaded -= this.OnUnloaded;
         this.ActualThemeChanged -= this.OnActualThemeChanged;
         this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
@@ -175,6 +192,25 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     internal void RestoreCompactMode() => this.SetShellMode(DesktopShellMode.Compact);
 
     internal void RestorePresentationHudMode() => this.SetShellMode(DesktopShellMode.PresentationHud);
+
+    private static void AddFloatingAnimation(
+        Storyboard storyboard,
+        DependencyObject target,
+        string property,
+        double from,
+        double to)
+    {
+        var animation = new DoubleAnimation
+        {
+            From = from,
+            To = to,
+            Duration = new Duration(FloatingRevealDuration),
+            EnableDependentAnimation = true,
+        };
+        Storyboard.SetTarget(animation, target);
+        Storyboard.SetTargetProperty(animation, property);
+        storyboard.Children.Add(animation);
+    }
 
     private void CollapseButton_Click(object sender, RoutedEventArgs args)
     {
@@ -233,6 +269,137 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void ExpandButton_Click(object sender, RoutedEventArgs args) =>
         this.OpenControlCenter(ControlCenterSection.Timer);
+
+    private void FloatingTimer_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs args)
+    {
+        this._isFloatingPointerOver = true;
+        this._floatingHideTimer.Stop();
+        this.AnimateFloatingControls(show: true);
+    }
+
+    private void FloatingTimer_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs args)
+    {
+        this._isFloatingPointerOver = false;
+        if (!this._isFloatingMenuOpen)
+        {
+            this._floatingHideTimer.Stop();
+            this._floatingHideTimer.Start();
+        }
+    }
+
+    private void FloatingTimer_GotFocus(object sender, RoutedEventArgs args)
+    {
+        this._floatingHideTimer.Stop();
+        this.AnimateFloatingControls(show: true);
+    }
+
+    private void FloatingTimer_LostFocus(object sender, RoutedEventArgs args) =>
+        _ = this.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!this._isFloatingPointerOver && !this._isFloatingMenuOpen && !this.HasFloatingKeyboardFocus())
+            {
+                this._floatingHideTimer.Stop();
+                this._floatingHideTimer.Start();
+            }
+        });
+
+    private bool HasFloatingKeyboardFocus()
+    {
+        if (this.XamlRoot is null || FocusManager.GetFocusedElement(this.XamlRoot) is not UIElement focused ||
+            focused.FocusState != FocusState.Keyboard)
+        {
+            return false;
+        }
+
+        DependencyObject? current = focused;
+        UIElement? root = this.IsCompactMode ? this.CompactRoot : this.IsPresentationHudMode ? this.PresentationHudRoot : null;
+        while (current is not null)
+        {
+            if (ReferenceEquals(current, root))
+            {
+                return true;
+            }
+
+            current = VisualTreeHelper.GetParent(current);
+        }
+
+        return false;
+    }
+
+    private void FloatingMenu_Opened(object sender, object args)
+    {
+        this._isFloatingMenuOpen = true;
+        this._floatingHideTimer.Stop();
+        this.AnimateFloatingControls(show: true);
+    }
+
+    private void FloatingMenu_Closed(object sender, object args)
+    {
+        this._isFloatingMenuOpen = false;
+        if (!this._isFloatingPointerOver)
+        {
+            this._floatingHideTimer.Stop();
+            this._floatingHideTimer.Start();
+        }
+    }
+
+    private void OnFloatingHideTick(DispatcherQueueTimer sender, object args)
+    {
+        sender.Stop();
+        if (!this._isFloatingPointerOver && !this._isFloatingMenuOpen && !this.HasFloatingKeyboardFocus())
+        {
+            this.AnimateFloatingControls(show: false);
+        }
+    }
+
+    private void AnimateFloatingControls(bool show)
+    {
+        Grid controls;
+        Border overlay;
+        if (this.IsCompactMode)
+        {
+            controls = this.CompactControls;
+            overlay = this.CompactGlassOverlay;
+        }
+        else if (this.IsPresentationHudMode)
+        {
+            controls = this.HudControls;
+            overlay = this.HudGlassOverlay;
+        }
+        else
+        {
+            return;
+        }
+
+        if (controls?.RenderTransform is not TranslateTransform translation || overlay is null)
+        {
+            return;
+        }
+
+        double currentOpacity = controls.Opacity;
+        double currentX = translation.X;
+        double currentOverlayOpacity = overlay.Opacity;
+        this._floatingAnimation?.Stop();
+        controls.Opacity = currentOpacity;
+        translation.X = currentX;
+        overlay.Opacity = currentOverlayOpacity;
+        controls.IsHitTestVisible = show;
+
+        double targetOpacity = show ? 1d : 0d;
+        double targetX = show ? 0d : 6d;
+        var animation = new Storyboard();
+        AddFloatingAnimation(animation, controls, "Opacity", currentOpacity, targetOpacity);
+        AddFloatingAnimation(animation, translation, "X", currentX, targetX);
+        AddFloatingAnimation(animation, overlay, "Opacity", currentOverlayOpacity, targetOpacity);
+        animation.Completed += (_, _) =>
+        {
+            controls.Opacity = targetOpacity;
+            translation.X = targetX;
+            overlay.Opacity = targetOpacity;
+        };
+        this._floatingAnimation = animation;
+        animation.Begin();
+    }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args) =>
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.TimerForeground)));
@@ -348,21 +515,12 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
         this.SetShellMode(DesktopShellMode.Compact);
         this._windowController.EnterCompact();
-        _ = this.DispatcherQueue.TryEnqueue(() =>
-            this.CompactExpandButton.Focus(FocusState.Programmatic));
     }
 
     private void EnterPresentationHudMode()
     {
         this.SetShellMode(DesktopShellMode.PresentationHud);
         this._windowController.EnterPresentationHud();
-        _ = this.DispatcherQueue.TryEnqueue(() =>
-        {
-            Button target = this.ViewModel.CanPause
-                ? this.HudPauseButton
-                : this.HudResumeButton;
-            _ = target.Focus(FocusState.Programmatic);
-        });
     }
 
     private void SetShellMode(DesktopShellMode value)
@@ -372,6 +530,10 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
             return;
         }
 
+        this._floatingHideTimer.Stop();
+        this._floatingAnimation?.Stop();
+        this._isFloatingPointerOver = false;
+        this._isFloatingMenuOpen = false;
         this._shellMode = value;
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsCompactMode)));
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.IsPresentationHudMode)));
@@ -381,9 +543,8 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     private void UpdateArcProgressDashArrays()
     {
         double ratio = this.ViewModel.TimerProgressValue / 100d;
-        this.CompactArcProgressDashOffset = (1d - Math.Clamp(ratio, 0d, 1d)) * CompactArcDashLength;
         this.ExpandedArcProgressDashOffset = (1d - Math.Clamp(ratio, 0d, 1d)) * ExpandedArcDashLength;
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CompactArcProgressDashOffset)));
+        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.CompactProgressWidth)));
         this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ExpandedArcProgressDashOffset)));
     }
 

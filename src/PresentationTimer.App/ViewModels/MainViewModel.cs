@@ -487,7 +487,7 @@ internal sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         this.TargetDisplay = timer.TargetText;
         this.TimerProgressValue = timer.RemainingRatio * 100;
         this.TimerVisualState = timer.VisualState;
-        this.IsWarning = timer.VisualState == TimerVisualState.Warning;
+        this.IsWarning = timer.VisualState is TimerVisualState.Warning or TimerVisualState.Critical;
         this.IsOvertime = timer.VisualState == TimerVisualState.Overtime;
         this.IsResetVisible = timer.IsResetVisible;
         this.SelectedDurationPreset = timer.DurationPreset;

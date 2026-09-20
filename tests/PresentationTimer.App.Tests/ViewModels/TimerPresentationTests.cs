@@ -29,22 +29,29 @@ public sealed class TimerPresentationTests
         Assert.AreEqual("15:00", result.DisplayText);
     }
 
-    /// <summary>Verifies the normal, exact warning-boundary, and zero countdown states.</summary>
+    /// <summary>Verifies the percentage warning and critical boundaries, including zero.</summary>
+    /// <param name="targetSeconds">The configured duration in seconds.</param>
     /// <param name="remainingSeconds">The signed remaining seconds.</param>
     /// <param name="expectedState">The expected presentation state name.</param>
     /// <param name="expectedText">The expected countdown text.</param>
     [TestMethod]
-    [DataRow(901, "Normal", "15:01")]
-    [DataRow(60, "Warning", "01:00")]
-    [DataRow(0, "Warning", "00:00")]
+    [DataRow(1200, 901, "Normal", "15:01")]
+    [DataRow(1200, 241, "Normal", "04:01")]
+    [DataRow(1200, 240, "Warning", "04:00")]
+    [DataRow(600, 120, "Warning", "02:00")]
+    [DataRow(1200, 61, "Warning", "01:01")]
+    [DataRow(1200, 60, "Critical", "01:00")]
+    [DataRow(600, 30, "Critical", "00:30")]
+    [DataRow(1200, 0, "Critical", "00:00")]
     public void FromSnapshot_NonNegativeRemaining_SelectsExpectedVisualState(
+        int targetSeconds,
         int remainingSeconds,
         string expectedState,
         string expectedText)
     {
         var snapshot = new TimerSnapshot(
             TimerRunState.Running,
-            TimeSpan.FromMinutes(20),
+            TimeSpan.FromSeconds(targetSeconds),
             TimeSpan.FromSeconds(remainingSeconds));
 
         TimerPresentation result = TimerPresentation.FromSnapshot(snapshot);
@@ -53,14 +60,14 @@ public sealed class TimerPresentationTests
         Assert.AreEqual(expectedText, result.DisplayText);
     }
 
-    /// <summary>Verifies overtime text remains unambiguous for seconds, minutes, and multiple hours.</summary>
+    /// <summary>Verifies overtime text uses a leading minus and compact minutes or hours.</summary>
     /// <param name="remainingSeconds">The signed remaining seconds.</param>
     /// <param name="expectedText">The expected overtime text.</param>
     [TestMethod]
-    [DataRow(-1, "+00:00:01")]
-    [DataRow(-92, "+00:01:32")]
-    [DataRow(-10861, "+03:01:01")]
-    public void FromSnapshot_Overtime_UsesLeadingPlusAndHourFields(
+    [DataRow(-1, "-00:01")]
+    [DataRow(-92, "-01:32")]
+    [DataRow(-10861, "-03:01:01")]
+    public void FromSnapshot_Overtime_UsesLeadingMinusAndHourFields(
         int remainingSeconds,
         string expectedText)
     {

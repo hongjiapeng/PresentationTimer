@@ -14,203 +14,206 @@
             AutomationProperties.AutomationId="CompactTimerRoot"
             AutomationProperties.LiveSetting="Polite"
             AutomationProperties.Name="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}"
-            Background="{ThemeResource PresenterCompactSurfaceBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="64" />
-            </Grid.RowDefinitions>
-
-            <Grid
-                x:Name="CompactDragRegion"
-                AutomationProperties.AutomationId="CompactDragRegion"
-                Grid.RowSpan="2"
-                Background="Transparent"
-                Loaded="CompactDragRegion_Loaded">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="36" />
-                </Grid.RowDefinitions>
-                <Viewbox Margin="20,16,8,0" MaxHeight="96" MaxWidth="360" Stretch="Uniform">
-                    <TextBlock
-                        AutomationProperties.AutomationId="CompactTimerDisplay"
-                        CharacterSpacing="-40"
-                        FontSize="96"
-                        FontWeight="SemiBold"
-                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
-                        Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
-                        TextAlignment="Center" />
-                </Viewbox>
-                <Viewbox Grid.Row="1" Margin="24,0,4,0" Stretch="Uniform">
-                    <Canvas Width="360" Height="36">
-                        <Path
-                            Data="M 12,30 C 104,4 256,4 348,30"
-                            Stroke="{ThemeResource PresenterProgressTrackBrush}"
-                            StrokeEndLineCap="Round"
-                            StrokeStartLineCap="Round"
-                            StrokeThickness="4" />
-                        <Path
-                            AutomationProperties.AccessibilityView="Raw"
-                            Data="M 12,30 C 104,4 256,4 348,30"
-                            Stroke="{x:Bind TimerForeground, Mode=OneWay}"
-                            StrokeDashArray="86 86"
-                            StrokeDashOffset="{x:Bind CompactArcProgressDashOffset, Mode=OneWay}"
-                            StrokeEndLineCap="Round"
-                            StrokeStartLineCap="Round"
-                            StrokeThickness="4" />
-                    </Canvas>
-                </Viewbox>
-            </Grid>
-
-            <Grid Grid.Row="2" Padding="12,4">
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="8">
-                <Button
-                    x:Name="CompactExpandButton"
-                    x:Uid="CompactExpandButton"
-                    AutomationProperties.AutomationId="CompactExpandButton"
-                    Click="ExpandButton_Click"
-                    Style="{StaticResource PresenterCompactIconButtonStyle}"
-                    TabIndex="0">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE740;" />
-                </Button>
-                <Button
-                    x:Name="CompactStartButton"
-                    x:Uid="CompactStartIconButton"
-                    x:Load="{x:Bind ViewModel.CanStart, Mode=OneWay}"
-                    AutomationProperties.AutomationId="CompactStartButton"
-                    Command="{x:Bind ViewModel.StartCommand, Mode=OneTime}"
-                    Width="52"
-                    Height="52"
-                    MinWidth="52"
-                    MinHeight="52"
-                    Style="{StaticResource PresenterCompactPrimaryIconButtonStyle}"
-                    TabIndex="1">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE768;" />
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Enter" Modifiers="Control" />
-                    </Button.KeyboardAccelerators>
-                </Button>
-                <Button
-                    x:Name="CompactPauseButton"
-                    x:Uid="HudPauseButton"
-                    x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
-                    AutomationProperties.AutomationId="CompactPauseButton"
-                    Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
-                    Width="52"
-                    Height="52"
-                    MinWidth="52"
-                    MinHeight="52"
-                    Style="{StaticResource PresenterCompactPrimaryIconButtonStyle}"
-                    TabIndex="1">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE769;" />
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="P" Modifiers="Control" />
-                    </Button.KeyboardAccelerators>
-                </Button>
-                <Button
-                    x:Name="CompactResumeButton"
-                    x:Uid="HudResumeButton"
-                    x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
-                    AutomationProperties.AutomationId="CompactResumeButton"
-                    Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
-                    Width="52"
-                    Height="52"
-                    MinWidth="52"
-                    MinHeight="52"
-                    Style="{StaticResource PresenterCompactPrimaryIconButtonStyle}"
-                    TabIndex="1">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" FontSize="20" Glyph="&#xE768;" />
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="U" Modifiers="Control" />
-                    </Button.KeyboardAccelerators>
-                </Button>
-                <Button
-                    x:Name="CompactResetButton"
-                    x:Uid="CompactResetIconButton"
-                    x:Load="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}"
-                    AutomationProperties.AutomationId="CompactResetButton"
-                    Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
-                    Style="{StaticResource PresenterCompactIconButtonStyle}"
-                    TabIndex="2">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE777;" />
-                    <Button.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="R" Modifiers="Control" />
-                    </Button.KeyboardAccelerators>
-                </Button>
-                <Button
-                    x:Uid="CompactMoreButton"
-                    AutomationProperties.AutomationId="CompactMoreButton"
-                    Style="{StaticResource PresenterCompactIconButtonStyle}"
-                    TabIndex="3">
-                    <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
-                    <Button.Flyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem
-                                x:Uid="OpenControlCenterMenuItem"
-                                AutomationProperties.AutomationId="OpenControlCenterMenuItem"
-                                Click="OpenControlCenterMenuItem_Click" />
-                            <MenuFlyoutItem
-                                x:Uid="EnterPresentationHudMenuItem"
-                                AutomationProperties.AutomationId="EnterPresentationHudMenuItem"
-                                Click="EnterPresentationHudMenuItem_Click"
-                                IsEnabled="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}" />
-                            <MenuFlyoutItem
-                                AutomationProperties.AutomationId="RemoteMenuItem"
-                                Click="RemoteMenuItem_Click"
-                                Icon="CellPhone"
-                                Text="{x:Bind ViewModel.RemoteMenuText, Mode=OneWay}" />
-                            <MenuFlyoutItem
-                                AutomationProperties.AutomationId="PowerPointMenuItem"
-                                Click="PowerPointMenuItem_Click"
-                                Icon="Slideshow"
-                                Text="{x:Bind ViewModel.PowerPointMenuText, Mode=OneWay}" />
-                            <MenuFlyoutItem
-                                x:Uid="SelectAndPresentPowerPointMenuItem"
-                                AutomationProperties.AutomationId="SelectAndPresentPowerPointMenuItem"
-                                Click="OpenPowerPointFileMenuItem_Click"
-                                Icon="OpenFile"
-                                IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}" />
-                            <MenuFlyoutSeparator />
-                            <ToggleMenuFlyoutItem
-                                x:Uid="AlwaysOnTopMenuItem"
-                                AutomationProperties.AutomationId="AlwaysOnTopMenuItem"
-                                IsChecked="{x:Bind IsAlwaysOnTop, Mode=TwoWay}" />
-                            <ToggleMenuFlyoutItem
-                                x:Uid="HideFromCaptureMenuItem"
-                                AutomationProperties.AutomationId="CompactHideFromCaptureMenuItem"
-                                IsChecked="{x:Bind IsHiddenFromCapture, Mode=TwoWay}" />
-                            <MenuFlyoutItem
-                                x:Uid="TimerSettingsMenuItem"
-                                AutomationProperties.AutomationId="TimerSettingsMenuItem"
-                                Click="TimerSettingsMenuItem_Click"
-                                Icon="Clock" />
-                            <MenuFlyoutSubItem
-                                x:Uid="LanguageMenuItem"
-                                AutomationProperties.AutomationId="LanguageMenuItem"
-                                Icon="Globe">
-                                <ToggleMenuFlyoutItem
-                                    x:Uid="SimplifiedChineseLanguageMenuItem"
-                                    AutomationProperties.AutomationId="SimplifiedChineseLanguageMenuItem"
-                                    IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
-                                    Tag="zh-CN"
-                                    Click="LanguageMenuItem_Click" />
-                                <ToggleMenuFlyoutItem
-                                    x:Uid="EnglishLanguageMenuItem"
-                                    AutomationProperties.AutomationId="EnglishLanguageMenuItem"
-                                    IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
-                                    Tag="en-US"
-                                    Click="LanguageMenuItem_Click" />
-                            </MenuFlyoutSubItem>
-                            <MenuFlyoutSeparator />
-                            <MenuFlyoutItem
-                                x:Uid="ExitMenuItem"
-                                AutomationProperties.AutomationId="ExitMenuItem"
-                                Click="ExitMenuItem_Click" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
-                </StackPanel>
-            </Grid>
+            Background="Transparent"
+            PointerEntered="FloatingTimer_PointerEntered"
+            PointerExited="FloatingTimer_PointerExited"
+            GotFocus="FloatingTimer_GotFocus"
+            LostFocus="FloatingTimer_LostFocus">
+            <Border
+                Background="{ThemeResource PresenterHudSurfaceBrush}"
+                BorderBrush="{ThemeResource PresenterHudBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource PresenterHudCornerRadius}">
+                <Grid>
+                    <Border
+                        x:Name="CompactGlassOverlay"
+                        Background="{ThemeResource PresenterHudHoverBrush}"
+                        CornerRadius="{StaticResource PresenterHudCornerRadius}"
+                        IsHitTestVisible="False"
+                        Opacity="0" />
+                    <Grid Padding="12,8" ColumnSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="44" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <Grid RowSpacing="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="42" />
+                                <RowDefinition Height="2" />
+                            </Grid.RowDefinitions>
+                            <Grid
+                                x:Name="CompactDragRegion"
+                                AutomationProperties.AutomationId="CompactDragRegion"
+                                AutomationProperties.Name="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
+                                Background="Transparent"
+                                IsTabStop="True"
+                                TabIndex="0"
+                                Loaded="CompactDragRegion_Loaded">
+                                <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Width="104" Height="40" Stretch="Uniform">
+                                    <TextBlock
+                                        AutomationProperties.AutomationId="CompactTimerDisplay"
+                                        FontFamily="Segoe UI Variable"
+                                        FontSize="{StaticResource PresenterHudTimerFontSize}"
+                                        FontWeight="SemiBold"
+                                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
+                                        Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}" />
+                                </Viewbox>
+                            </Grid>
+                            <Grid
+                                AutomationProperties.AccessibilityView="Raw"
+                                Grid.Row="1"
+                                Width="104"
+                                Height="2"
+                                HorizontalAlignment="Left"
+                                Background="{ThemeResource PresenterHudProgressTrackBrush}"
+                                CornerRadius="1"
+                                IsHitTestVisible="False">
+                                <Border
+                                    Width="{x:Bind CompactProgressWidth, Mode=OneWay}"
+                                    Height="2"
+                                    HorizontalAlignment="Left"
+                                    Background="{x:Bind TimerForeground, Mode=OneWay}"
+                                    CornerRadius="1" />
+                            </Grid>
+                        </Grid>
+                        <Grid
+                            x:Name="CompactControls"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            ColumnSpacing="4"
+                            IsHitTestVisible="False"
+                            Opacity="0">
+                            <Grid.RenderTransform>
+                                <TranslateTransform X="6" />
+                            </Grid.RenderTransform>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                x:Name="CompactStartButton"
+                                x:Uid="CompactStartIconButton"
+                                x:Load="{x:Bind ViewModel.CanStart, Mode=OneWay}"
+                                AutomationProperties.AutomationId="CompactStartButton"
+                                Command="{x:Bind ViewModel.StartCommand, Mode=OneTime}"
+                                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
+                                TabIndex="1">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE768;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Enter" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <Button
+                                x:Name="CompactPauseButton"
+                                x:Uid="HudPauseButton"
+                                x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
+                                AutomationProperties.AutomationId="CompactPauseButton"
+                                Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
+                                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
+                                TabIndex="1">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE769;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="P" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <Button
+                                x:Name="CompactResumeButton"
+                                x:Uid="HudResumeButton"
+                                x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
+                                AutomationProperties.AutomationId="CompactResumeButton"
+                                Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
+                                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
+                                TabIndex="1">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE768;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="U" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
+                            </Button>
+                            <Button
+                                x:Name="CompactMoreButton"
+                                x:Uid="CompactMoreButton"
+                                AutomationProperties.AutomationId="CompactMoreButton"
+                                Grid.Column="1"
+                                Style="{StaticResource PresenterHudActionButtonStyle}"
+                                TabIndex="2">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
+                                <Button.Flyout>
+                                    <MenuFlyout Opened="FloatingMenu_Opened" Closed="FloatingMenu_Closed">
+                                        <MenuFlyoutItem
+                                            x:Uid="HudResetMenuItem"
+                                            AutomationProperties.AutomationId="CompactResetButton"
+                                            Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
+                                            IsEnabled="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}"
+                                            Icon="Refresh" />
+                                        <MenuFlyoutItem
+                                            x:Uid="OpenControlCenterMenuItem"
+                                            AutomationProperties.AutomationId="OpenControlCenterMenuItem"
+                                            Click="OpenControlCenterMenuItem_Click" />
+                                        <MenuFlyoutItem
+                                            x:Uid="EnterPresentationHudMenuItem"
+                                            AutomationProperties.AutomationId="EnterPresentationHudMenuItem"
+                                            Click="EnterPresentationHudMenuItem_Click"
+                                            IsEnabled="{x:Bind ViewModel.IsResetVisible, Mode=OneWay}" />
+                                        <MenuFlyoutItem
+                                            AutomationProperties.AutomationId="RemoteMenuItem"
+                                            Click="RemoteMenuItem_Click"
+                                            Icon="CellPhone"
+                                            Text="{x:Bind ViewModel.RemoteMenuText, Mode=OneWay}" />
+                                        <MenuFlyoutItem
+                                            AutomationProperties.AutomationId="PowerPointMenuItem"
+                                            Click="PowerPointMenuItem_Click"
+                                            Icon="Slideshow"
+                                            Text="{x:Bind ViewModel.PowerPointMenuText, Mode=OneWay}" />
+                                        <MenuFlyoutItem
+                                            x:Uid="SelectAndPresentPowerPointMenuItem"
+                                            AutomationProperties.AutomationId="SelectAndPresentPowerPointMenuItem"
+                                            Click="OpenPowerPointFileMenuItem_Click"
+                                            Icon="OpenFile"
+                                            IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}" />
+                                        <MenuFlyoutSeparator />
+                                        <ToggleMenuFlyoutItem
+                                            x:Uid="AlwaysOnTopMenuItem"
+                                            AutomationProperties.AutomationId="AlwaysOnTopMenuItem"
+                                            IsChecked="{x:Bind IsAlwaysOnTop, Mode=TwoWay}" />
+                                        <ToggleMenuFlyoutItem
+                                            x:Uid="HideFromCaptureMenuItem"
+                                            AutomationProperties.AutomationId="CompactHideFromCaptureMenuItem"
+                                            IsChecked="{x:Bind IsHiddenFromCapture, Mode=TwoWay}" />
+                                        <MenuFlyoutItem
+                                            x:Uid="TimerSettingsMenuItem"
+                                            AutomationProperties.AutomationId="TimerSettingsMenuItem"
+                                            Click="TimerSettingsMenuItem_Click"
+                                            Icon="Clock" />
+                                        <MenuFlyoutSubItem
+                                            x:Uid="LanguageMenuItem"
+                                            AutomationProperties.AutomationId="LanguageMenuItem"
+                                            Icon="Globe">
+                                            <ToggleMenuFlyoutItem
+                                                x:Uid="SimplifiedChineseLanguageMenuItem"
+                                                AutomationProperties.AutomationId="SimplifiedChineseLanguageMenuItem"
+                                                IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
+                                                Tag="zh-CN"
+                                                Click="LanguageMenuItem_Click" />
+                                            <ToggleMenuFlyoutItem
+                                                x:Uid="EnglishLanguageMenuItem"
+                                                AutomationProperties.AutomationId="EnglishLanguageMenuItem"
+                                                IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
+                                                Tag="en-US"
+                                                Click="LanguageMenuItem_Click" />
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem
+                                            x:Uid="ExitMenuItem"
+                                            AutomationProperties.AutomationId="ExitMenuItem"
+                                            Click="ExitMenuItem_Click" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
         </Grid>
 
         <Grid
@@ -219,140 +222,181 @@
             AutomationProperties.AutomationId="PresentationHudRoot"
             AutomationProperties.LiveSetting="Polite"
             AutomationProperties.Name="{x:Bind ViewModel.TargetStatusText, Mode=OneWay}"
-            Background="{ThemeResource PresenterCompactSurfaceBrush}"
-            Padding="8,7"
-            ColumnSpacing="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid
-                x:Name="PresentationHudDragRegion"
-                AutomationProperties.AutomationId="PresentationHudDragRegion"
-                Background="Transparent"
-                Loaded="PresentationHudDragRegion_Loaded"
-                Padding="4,0,4,0"
-                RowSpacing="3">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Viewbox MaxHeight="48" MaxWidth="140" Stretch="Uniform">
-                    <TextBlock
-                        AutomationProperties.AutomationId="HudTimerDisplay"
-                        CharacterSpacing="-32"
-                        FontSize="48"
-                        FontWeight="SemiBold"
-                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
-                        Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
-                        TextAlignment="Center" />
-                </Viewbox>
-                <ProgressBar
-                    AutomationProperties.AccessibilityView="Raw"
-                    Grid.Row="1"
-                    Height="3"
-                    Maximum="100"
-                    Value="{x:Bind ViewModel.TimerProgressValue, Mode=OneWay}" />
-            </Grid>
-
-            <Button
-                x:Name="HudPauseButton"
-                x:Uid="HudPauseButton"
-                x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
-                AutomationProperties.AutomationId="HudPauseButton"
-                Grid.Column="1"
-                Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
-                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
-                TabIndex="0">
-                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE769;" />
-            </Button>
-            <Button
-                x:Name="HudResumeButton"
-                x:Uid="HudResumeButton"
-                x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
-                AutomationProperties.AutomationId="HudResumeButton"
-                Grid.Column="1"
-                Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
-                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
-                TabIndex="0">
-                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE768;" />
-            </Button>
-            <Button
-                x:Name="HudMoreButton"
-                x:Uid="HudMoreButton"
-                AutomationProperties.AutomationId="HudMoreButton"
-                Grid.Column="2"
-                Style="{StaticResource PresenterHudActionButtonStyle}"
-                TabIndex="1">
-                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
-                <Button.Flyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem
-                            x:Uid="HudResetMenuItem"
-                            AutomationProperties.AutomationId="HudResetMenuItem"
-                            Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
-                            Icon="Refresh" />
-                        <MenuFlyoutItem
-                            x:Uid="OpenControlCenterMenuItem"
-                            AutomationProperties.AutomationId="HudOpenControlCenterMenuItem"
-                            Click="OpenControlCenterMenuItem_Click" />
-                        <MenuFlyoutItem
-                            AutomationProperties.AutomationId="HudRemoteMenuItem"
-                            Click="RemoteMenuItem_Click"
-                            Icon="CellPhone"
-                            Text="{x:Bind ViewModel.RemoteMenuText, Mode=OneWay}" />
-                        <MenuFlyoutItem
-                            AutomationProperties.AutomationId="HudPowerPointMenuItem"
-                            Click="PowerPointMenuItem_Click"
-                            Icon="Slideshow"
-                            Text="{x:Bind ViewModel.PowerPointMenuText, Mode=OneWay}" />
-                        <MenuFlyoutItem
-                            x:Uid="SelectAndPresentPowerPointMenuItem"
-                            AutomationProperties.AutomationId="HudSelectAndPresentPowerPointMenuItem"
-                            Click="OpenPowerPointFileMenuItem_Click"
-                            Icon="OpenFile"
-                            IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}" />
-                        <MenuFlyoutSeparator />
-                        <ToggleMenuFlyoutItem
-                            x:Uid="AlwaysOnTopMenuItem"
-                            AutomationProperties.AutomationId="HudAlwaysOnTopMenuItem"
-                            IsChecked="{x:Bind IsAlwaysOnTop, Mode=TwoWay}" />
-                        <ToggleMenuFlyoutItem
-                            x:Uid="HideFromCaptureMenuItem"
-                            AutomationProperties.AutomationId="HudHideFromCaptureMenuItem"
-                            IsChecked="{x:Bind IsHiddenFromCapture, Mode=TwoWay}" />
-                        <MenuFlyoutItem
-                            x:Uid="TimerSettingsMenuItem"
-                            AutomationProperties.AutomationId="HudTimerSettingsMenuItem"
-                            Click="TimerSettingsMenuItem_Click"
-                            Icon="Clock" />
-                        <MenuFlyoutSubItem
-                            x:Uid="LanguageMenuItem"
-                            AutomationProperties.AutomationId="HudLanguageMenuItem"
-                            Icon="Globe">
-                            <ToggleMenuFlyoutItem
-                                x:Uid="SimplifiedChineseLanguageMenuItem"
-                                AutomationProperties.AutomationId="HudSimplifiedChineseLanguageMenuItem"
-                                IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
-                                Tag="zh-CN"
-                                Click="LanguageMenuItem_Click" />
-                            <ToggleMenuFlyoutItem
-                                x:Uid="EnglishLanguageMenuItem"
-                                AutomationProperties.AutomationId="HudEnglishLanguageMenuItem"
-                                IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
-                                Tag="en-US"
-                                Click="LanguageMenuItem_Click" />
-                        </MenuFlyoutSubItem>
-                        <MenuFlyoutSeparator />
-                        <MenuFlyoutItem
-                            x:Uid="ExitMenuItem"
-                            AutomationProperties.AutomationId="HudExitMenuItem"
-                            Click="ExitMenuItem_Click" />
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
+            Background="Transparent"
+            PointerEntered="FloatingTimer_PointerEntered"
+            PointerExited="FloatingTimer_PointerExited"
+            GotFocus="FloatingTimer_GotFocus"
+            LostFocus="FloatingTimer_LostFocus">
+            <Border
+                Background="{ThemeResource PresenterHudSurfaceBrush}"
+                BorderBrush="{ThemeResource PresenterHudBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource PresenterHudCornerRadius}">
+                <Grid>
+                    <Border
+                        x:Name="HudGlassOverlay"
+                        Background="{ThemeResource PresenterHudHoverBrush}"
+                        CornerRadius="{StaticResource PresenterHudCornerRadius}"
+                        IsHitTestVisible="False"
+                        Opacity="0" />
+                    <Grid Padding="12,8" ColumnSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="44" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+                        <Grid RowSpacing="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="42" />
+                                <RowDefinition Height="2" />
+                            </Grid.RowDefinitions>
+                            <Grid
+                                x:Name="PresentationHudDragRegion"
+                                AutomationProperties.AutomationId="PresentationHudDragRegion"
+                                AutomationProperties.Name="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}"
+                                Background="Transparent"
+                                IsTabStop="True"
+                                TabIndex="0"
+                                Loaded="PresentationHudDragRegion_Loaded">
+                                <Viewbox HorizontalAlignment="Left" VerticalAlignment="Center" Width="104" Height="40" Stretch="Uniform">
+                                    <TextBlock
+                                        AutomationProperties.AutomationId="HudTimerDisplay"
+                                        FontFamily="Segoe UI Variable"
+                                        FontSize="{StaticResource PresenterHudTimerFontSize}"
+                                        FontWeight="SemiBold"
+                                        Foreground="{x:Bind TimerForeground, Mode=OneWay}"
+                                        Text="{x:Bind ViewModel.TimerDisplay, Mode=OneWay}" />
+                                </Viewbox>
+                            </Grid>
+                            <Grid
+                                AutomationProperties.AccessibilityView="Raw"
+                                Grid.Row="1"
+                                Width="104"
+                                Height="2"
+                                HorizontalAlignment="Left"
+                                Background="{ThemeResource PresenterHudProgressTrackBrush}"
+                                CornerRadius="1"
+                                IsHitTestVisible="False">
+                                <Border
+                                    Width="{x:Bind CompactProgressWidth, Mode=OneWay}"
+                                    Height="2"
+                                    HorizontalAlignment="Left"
+                                    Background="{x:Bind TimerForeground, Mode=OneWay}"
+                                    CornerRadius="1" />
+                            </Grid>
+                        </Grid>
+                        <Grid
+                            x:Name="HudControls"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            ColumnSpacing="4"
+                            IsHitTestVisible="False"
+                            Opacity="0">
+                            <Grid.RenderTransform>
+                                <TranslateTransform X="6" />
+                            </Grid.RenderTransform>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44" />
+                                <ColumnDefinition Width="40" />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                x:Name="HudPauseButton"
+                                x:Uid="HudPauseButton"
+                                x:Load="{x:Bind ViewModel.CanPause, Mode=OneWay}"
+                                AutomationProperties.AutomationId="HudPauseButton"
+                                Command="{x:Bind ViewModel.PauseCommand, Mode=OneTime}"
+                                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
+                                TabIndex="1">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE769;" />
+                            </Button>
+                            <Button
+                                x:Name="HudResumeButton"
+                                x:Uid="HudResumeButton"
+                                x:Load="{x:Bind ViewModel.CanResume, Mode=OneWay}"
+                                AutomationProperties.AutomationId="HudResumeButton"
+                                Command="{x:Bind ViewModel.ResumeCommand, Mode=OneTime}"
+                                Style="{StaticResource PresenterHudPrimaryButtonStyle}"
+                                TabIndex="1">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE768;" />
+                            </Button>
+                            <Button
+                                x:Name="HudMoreButton"
+                                x:Uid="HudMoreButton"
+                                AutomationProperties.AutomationId="HudMoreButton"
+                                Grid.Column="1"
+                                Style="{StaticResource PresenterHudActionButtonStyle}"
+                                TabIndex="2">
+                                <FontIcon AutomationProperties.AccessibilityView="Raw" Glyph="&#xE712;" />
+                                <Button.Flyout>
+                                    <MenuFlyout Opened="FloatingMenu_Opened" Closed="FloatingMenu_Closed">
+                                        <MenuFlyoutItem
+                                            x:Uid="HudResetMenuItem"
+                                            AutomationProperties.AutomationId="HudResetMenuItem"
+                                            Command="{x:Bind ViewModel.ResetCommand, Mode=OneTime}"
+                                            Icon="Refresh" />
+                                        <MenuFlyoutItem
+                                            x:Uid="OpenControlCenterMenuItem"
+                                            AutomationProperties.AutomationId="HudOpenControlCenterMenuItem"
+                                            Click="OpenControlCenterMenuItem_Click" />
+                                        <MenuFlyoutItem
+                                            AutomationProperties.AutomationId="HudRemoteMenuItem"
+                                            Click="RemoteMenuItem_Click"
+                                            Icon="CellPhone"
+                                            Text="{x:Bind ViewModel.RemoteMenuText, Mode=OneWay}" />
+                                        <MenuFlyoutItem
+                                            AutomationProperties.AutomationId="HudPowerPointMenuItem"
+                                            Click="PowerPointMenuItem_Click"
+                                            Icon="Slideshow"
+                                            Text="{x:Bind ViewModel.PowerPointMenuText, Mode=OneWay}" />
+                                        <MenuFlyoutItem
+                                            x:Uid="SelectAndPresentPowerPointMenuItem"
+                                            AutomationProperties.AutomationId="HudSelectAndPresentPowerPointMenuItem"
+                                            Click="OpenPowerPointFileMenuItem_Click"
+                                            Icon="OpenFile"
+                                            IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}" />
+                                        <MenuFlyoutSeparator />
+                                        <ToggleMenuFlyoutItem
+                                            x:Uid="AlwaysOnTopMenuItem"
+                                            AutomationProperties.AutomationId="HudAlwaysOnTopMenuItem"
+                                            IsChecked="{x:Bind IsAlwaysOnTop, Mode=TwoWay}" />
+                                        <ToggleMenuFlyoutItem
+                                            x:Uid="HideFromCaptureMenuItem"
+                                            AutomationProperties.AutomationId="HudHideFromCaptureMenuItem"
+                                            IsChecked="{x:Bind IsHiddenFromCapture, Mode=TwoWay}" />
+                                        <MenuFlyoutItem
+                                            x:Uid="TimerSettingsMenuItem"
+                                            AutomationProperties.AutomationId="HudTimerSettingsMenuItem"
+                                            Click="TimerSettingsMenuItem_Click"
+                                            Icon="Clock" />
+                                        <MenuFlyoutSubItem
+                                            x:Uid="LanguageMenuItem"
+                                            AutomationProperties.AutomationId="HudLanguageMenuItem"
+                                            Icon="Globe">
+                                            <ToggleMenuFlyoutItem
+                                                x:Uid="SimplifiedChineseLanguageMenuItem"
+                                                AutomationProperties.AutomationId="HudSimplifiedChineseLanguageMenuItem"
+                                                IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
+                                                Tag="zh-CN"
+                                                Click="LanguageMenuItem_Click" />
+                                            <ToggleMenuFlyoutItem
+                                                x:Uid="EnglishLanguageMenuItem"
+                                                AutomationProperties.AutomationId="HudEnglishLanguageMenuItem"
+                                                IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
+                                                Tag="en-US"
+                                                Click="LanguageMenuItem_Click" />
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem
+                                            x:Uid="ExitMenuItem"
+                                            AutomationProperties.AutomationId="HudExitMenuItem"
+                                            Click="ExitMenuItem_Click" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
         </Grid>
 
         <Grid

@@ -7,6 +7,7 @@ internal enum TimerVisualState
 {
     Normal,
     Warning,
+    Critical,
     Overtime,
 }
 
@@ -28,6 +29,9 @@ internal enum DurationPreset
 
 internal sealed record TimerPresentation
 {
+    private const double WarningRemainingRatio = 0.2d;
+    private const double CriticalRemainingRatio = 0.05d;
+
     public TimerPresentation(
         string displayText,
         string targetText,
@@ -64,20 +68,22 @@ internal sealed record TimerPresentation
     {
         ArgumentNullException.ThrowIfNull(snapshot);
 
+        double remainingRatio = snapshot.Target <= TimeSpan.Zero
+            ? 0
+            : Math.Clamp(snapshot.Remaining.TotalSeconds / snapshot.Target.TotalSeconds, 0, 1);
         TimerVisualState visualState = snapshot.IsOvertime
             ? TimerVisualState.Overtime
-            : snapshot.Remaining <= TimeSpan.FromMinutes(1)
-                ? TimerVisualState.Warning
-                : TimerVisualState.Normal;
+            : remainingRatio <= CriticalRemainingRatio
+                ? TimerVisualState.Critical
+                : remainingRatio <= WarningRemainingRatio
+                    ? TimerVisualState.Warning
+                    : TimerVisualState.Normal;
         TimerPrimaryAction primaryAction = snapshot.RunState switch
         {
             TimerRunState.Running => TimerPrimaryAction.Pause,
             TimerRunState.Paused => TimerPrimaryAction.Resume,
             _ => TimerPrimaryAction.Start,
         };
-        double remainingRatio = snapshot.Target <= TimeSpan.Zero
-            ? 0
-            : Math.Clamp(snapshot.Remaining.TotalSeconds / snapshot.Target.TotalSeconds, 0, 1);
 
         return new TimerPresentation(
             Format(snapshot.DisplayValue, snapshot.IsOvertime),
@@ -109,7 +115,7 @@ internal sealed record TimerPresentation
         {
             return string.Format(
                 CultureInfo.CurrentCulture,
-                "+{0:00}:{1:00}:{2:00}",
+                hours > 0 ? "-{0:00}:{1:00}:{2:00}" : "-{1:00}:{2:00}",
                 hours,
                 minutes,
                 seconds);

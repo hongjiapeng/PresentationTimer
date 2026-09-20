@@ -5,6 +5,7 @@ using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using PresentationTimer.App.Localization;
 using Windows.Graphics;
 
@@ -15,10 +16,10 @@ namespace PresentationTimer.App;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
-    private const int CompactHeight = 240;
-    private const int CompactWidth = 440;
-    private const int PresentationHudHeight = 72;
-    private const int PresentationHudWidth = 248;
+    private const int CompactHeight = 64;
+    private const int CompactWidth = 220;
+    private const int PresentationHudHeight = 64;
+    private const int PresentationHudWidth = 220;
     private const int PresentationHudEdgeMargin = 16;
     private const int ExpandedHeight = 680;
     private const int ExpandedWidth = 920;
@@ -29,7 +30,7 @@ public sealed partial class MainWindow : Window
     private const int DwmWindowBorderColorDefault = unchecked((int)0xFFFFFFFF);
     private const int DwmWindowBorderColorNone = unchecked((int)0xFFFFFFFE);
     private const int DwmWindowCornerPreferenceDefault = 0;
-    private const int DwmWindowCornerPreferenceRoundSmall = 3;
+    private const int DwmWindowCornerPreferenceRound = 2;
     private const int WindowCornerRadius = 12;
     private const int ResizeAnimationDurationMs = 180;
     private const int ResizeAnimationFrameIntervalMs = 15;
@@ -118,6 +119,8 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         this.TitleBarPinButton.Visibility = Visibility.Collapsed;
+        this.SystemBackdrop = new DesktopAcrylicBackdrop();
+        this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
         presenter.IsResizable = false;
@@ -134,7 +137,7 @@ public sealed partial class MainWindow : Window
         this._compactBounds = target;
         this._windowMode = DesktopWindowMode.Compact;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
-        this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
 
         // Resize immediately when switching out of the presenter surface. This avoids
@@ -163,6 +166,8 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         this.TitleBarPinButton.Visibility = Visibility.Collapsed;
+        this.SystemBackdrop = new DesktopAcrylicBackdrop();
+        this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
         presenter.IsResizable = false;
@@ -195,7 +200,7 @@ public sealed partial class MainWindow : Window
         this._presentationHudBounds = target;
         this._windowMode = DesktopWindowMode.PresentationHud;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
-        this.RequestCornerPreference(DwmWindowCornerPreferenceRoundSmall);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
@@ -210,6 +215,8 @@ public sealed partial class MainWindow : Window
         }
 
         this._resizeAnimationTimer.Stop();
+        this.SystemBackdrop = new MicaBackdrop();
+        this.WindowLayoutRoot.Background = (Brush)Application.Current.Resources["PresenterWindowSurfaceBrush"];
 
         if (this._windowMode == DesktopWindowMode.Compact)
         {
