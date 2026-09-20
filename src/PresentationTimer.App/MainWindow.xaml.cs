@@ -30,8 +30,8 @@ public sealed partial class MainWindow : Window
     private const int DwmWindowBorderColorDefault = unchecked((int)0xFFFFFFFF);
     private const int DwmWindowBorderColorNone = unchecked((int)0xFFFFFFFE);
     private const int DwmWindowCornerPreferenceDefault = 0;
-    private const int DwmWindowCornerPreferenceRound = 2;
-    private const int WindowCornerRadius = 12;
+    private const int DwmWindowCornerPreferenceDoNotRound = 1;
+    private const int WindowCornerRadius = 16;
     private const int ResizeAnimationDurationMs = 180;
     private const int ResizeAnimationFrameIntervalMs = 15;
     private const int GetWindowLongStyleIndex = -16;
@@ -84,6 +84,7 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing += this.OnClosing;
         this.Activated += this.OnActivated;
         this._mainPage.DragRegionLoaded += this.OnDragRegionLoaded;
+        this._mainPage.ActualThemeChanged += this.OnPresenterThemeChanged;
         this.RootFrame.Content = mainPage;
         this._windowController.Attach(this);
         this._resizeAnimationTimer = this.DispatcherQueue.CreateTimer();
@@ -119,7 +120,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         this.TitleBarPinButton.Visibility = Visibility.Collapsed;
-        this.SystemBackdrop = new FloatingTimerBackdrop();
+        this.SetFloatingBackdrop();
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
@@ -137,7 +138,7 @@ public sealed partial class MainWindow : Window
         this._compactBounds = target;
         this._windowMode = DesktopWindowMode.Compact;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
-        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceDoNotRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
 
         // Resize immediately when switching out of the presenter surface. This avoids
@@ -145,6 +146,7 @@ public sealed partial class MainWindow : Window
         // still applying DWM regions frame by frame.
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
+        this.ApplyRoundedWindowRegion(target.Width, target.Height, this.ToPhysicalPixels(WindowCornerRadius));
         this.UpdateCaptureAffinity();
     }
 
@@ -166,7 +168,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         this.TitleBarPinButton.Visibility = Visibility.Collapsed;
-        this.SystemBackdrop = new FloatingTimerBackdrop();
+        this.SetFloatingBackdrop();
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
@@ -200,10 +202,11 @@ public sealed partial class MainWindow : Window
         this._presentationHudBounds = target;
         this._windowMode = DesktopWindowMode.PresentationHud;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
-        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceDoNotRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
+        this.ApplyRoundedWindowRegion(target.Width, target.Height, this.ToPhysicalPixels(WindowCornerRadius));
         this.UpdateCaptureAffinity();
     }
 
@@ -274,6 +277,7 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing -= this.OnClosing;
         this.Activated -= this.OnActivated;
         this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
+        this._mainPage.ActualThemeChanged -= this.OnPresenterThemeChanged;
         this._windowController.Detach(this);
         this.Close();
     }
@@ -476,6 +480,17 @@ public sealed partial class MainWindow : Window
     private void OnActivated(object sender, WindowActivatedEventArgs args) =>
         this.RequestBorderColor(this._borderColorPreference);
 
+    private void OnPresenterThemeChanged(FrameworkElement sender, object args)
+    {
+        if (this.SystemBackdrop is FloatingTimerBackdrop backdrop)
+        {
+            backdrop.Theme = sender.ActualTheme;
+        }
+    }
+
+    private void SetFloatingBackdrop() =>
+        this.SystemBackdrop = new FloatingTimerBackdrop(this._mainPage.ActualTheme);
+
     private void WindowLayoutRoot_SizeChanged(object sender, SizeChangedEventArgs args)
     {
         if (this._windowMode == DesktopWindowMode.Expanded)
@@ -507,7 +522,10 @@ public sealed partial class MainWindow : Window
     private void ApplyRoundedWindowRegion(int widthPx, int heightPx, int radiusPx)
     {
         nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
-        nint region = CreateRoundRectRgn(0, 0, widthPx, heightPx, radiusPx * 2, radiusPx * 2);
+
+        // The native frame can paint a one-pixel dark seam above the XAML surface.
+        // Keep that row outside the existing rounded window region.
+        nint region = CreateRoundRectRgn(0, 1, widthPx, heightPx, radiusPx * 2, radiusPx * 2);
         _ = SetWindowRgn(windowHandle, region, true);
     }
 
@@ -606,6 +624,7 @@ public sealed partial class MainWindow : Window
         {
             this.Activated -= this.OnActivated;
             this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
+            this._mainPage.ActualThemeChanged -= this.OnPresenterThemeChanged;
             this._windowController.Detach(this);
             this._shutdownComplete = true;
             this.Close();

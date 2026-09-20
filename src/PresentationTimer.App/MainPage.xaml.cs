@@ -20,10 +20,10 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 {
     private const double ExpandedArcDashLength = 106d;
     private const double FloatingProgressWidth = 104d;
-    private static readonly TimeSpan FloatingRevealDuration = TimeSpan.FromMilliseconds(180);
-    private static readonly TimeSpan FloatingHideDelay = TimeSpan.FromMilliseconds(1250);
     private readonly WindowController _windowController;
     private readonly DispatcherQueueTimer _floatingHideTimer;
+    private readonly TimeSpan _floatingRevealDuration;
+    private readonly TimeSpan _floatingHideDuration;
     private readonly string _languageTag = LanguageManager.CurrentLanguageTag;
     private bool _isAlwaysOnTop;
     private bool _isHiddenFromCapture = true;
@@ -47,13 +47,15 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         ArgumentNullException.ThrowIfNull(windowController);
         this._windowController = windowController;
         this.InitializeComponent();
+        this._floatingRevealDuration = TimeSpan.FromMilliseconds((double)Application.Current.Resources["PresenterHudRevealDurationMs"]);
+        this._floatingHideDuration = TimeSpan.FromMilliseconds((double)Application.Current.Resources["PresenterHudHideDurationMs"]);
         this.ViewModel = new MainViewModel(
             sessionService,
             this.DispatcherQueue,
             strings);
         this.ViewModel.PropertyChanged += this.OnViewModelPropertyChanged;
         this._floatingHideTimer = this.DispatcherQueue.CreateTimer();
-        this._floatingHideTimer.Interval = FloatingHideDelay;
+        this._floatingHideTimer.Interval = TimeSpan.FromMilliseconds((double)Application.Current.Resources["PresenterHudHideDelayMs"]);
         this._floatingHideTimer.Tick += this.OnFloatingHideTick;
         this.ActualThemeChanged += this.OnActualThemeChanged;
         this.Unloaded += this.OnUnloaded;
@@ -198,13 +200,14 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         DependencyObject target,
         string property,
         double from,
-        double to)
+        double to,
+        TimeSpan duration)
     {
         var animation = new DoubleAnimation
         {
             From = from,
             To = to,
-            Duration = new Duration(FloatingRevealDuration),
+            Duration = new Duration(duration),
             EnableDependentAnimation = true,
         };
         Storyboard.SetTarget(animation, target);
@@ -387,10 +390,11 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
         double targetOpacity = show ? 1d : 0d;
         double targetX = show ? 0d : 6d;
+        TimeSpan duration = show ? this._floatingRevealDuration : this._floatingHideDuration;
         var animation = new Storyboard();
-        AddFloatingAnimation(animation, controls, "Opacity", currentOpacity, targetOpacity);
-        AddFloatingAnimation(animation, translation, "X", currentX, targetX);
-        AddFloatingAnimation(animation, overlay, "Opacity", currentOverlayOpacity, targetOpacity);
+        AddFloatingAnimation(animation, controls, "Opacity", currentOpacity, targetOpacity, duration);
+        AddFloatingAnimation(animation, translation, "X", currentX, targetX, duration);
+        AddFloatingAnimation(animation, overlay, "Opacity", currentOverlayOpacity, targetOpacity, duration);
         animation.Completed += (_, _) =>
         {
             controls.Opacity = targetOpacity;
