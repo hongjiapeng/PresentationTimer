@@ -15,18 +15,25 @@
         <span class="identity-mark" aria-hidden="true"></span>
         <span id="app-name">Presentation Timer</span>
       </div>
-      <label class="language-control">
-        <span id="language-label" class="sr-only">Language</span>
-        <select id="language" aria-labelledby="language-label">
-          <option value="en">English</option>
-          <option value="zh-CN">简体中文</option>
-          <option value="zh-TW">繁體中文</option>
-          <option value="ja">日本語</option>
-          <option value="es">Español</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-        </select>
-      </label>
+      <div id="language-control" class="language-control">
+        <button id="language-toggle" class="language-toggle" type="button" aria-expanded="false" aria-controls="language-popover">
+          <span id="language-label" class="sr-only">Language</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9M12 3c-2.5 2.5-3.8 5.5-3.8 9s1.3 6.5 3.8 9"></path>
+          </svg>
+        </button>
+        <div id="language-popover" class="language-popover" hidden>
+          <p id="language-heading">Language</p>
+          <button class="language-option" type="button" data-locale="en" lang="en"><span>English</span></button>
+          <button class="language-option" type="button" data-locale="zh-CN" lang="zh-CN"><span>简体中文</span></button>
+          <button class="language-option" type="button" data-locale="zh-TW" lang="zh-TW"><span>繁體中文</span></button>
+          <button class="language-option" type="button" data-locale="ja" lang="ja"><span>日本語</span></button>
+          <button class="language-option" type="button" data-locale="es" lang="es"><span>Español</span></button>
+          <button class="language-option" type="button" data-locale="fr" lang="fr"><span>Français</span></button>
+          <button class="language-option" type="button" data-locale="de" lang="de"><span>Deutsch</span></button>
+        </div>
+      </div>
     </header>
     <div class="session-line">
       <p id="connection" class="connection" role="status" data-state="connecting">Connecting…</p>

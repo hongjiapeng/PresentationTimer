@@ -75,7 +75,10 @@
   const notes = document.getElementById("notes");
   const previous = document.getElementById("previous");
   const next = document.getElementById("next");
-  const language = document.getElementById("language");
+  const languageControl = document.getElementById("language-control");
+  const languageToggle = document.getElementById("language-toggle");
+  const languagePopover = document.getElementById("language-popover");
+  const languageOptions = document.querySelectorAll(".language-option");
   let latestRevision = -1;
   let latestState = null;
   let invocationPending = false;
@@ -135,11 +138,19 @@
 
   const setLocale = (locale) => {
     strings = translations[locale];
-    language.value = locale;
+    for (const option of languageOptions) {
+      if (option.dataset.locale === locale) {
+        option.setAttribute("aria-current", "true");
+      } else {
+        option.removeAttribute("aria-current");
+      }
+    }
     document.documentElement.lang = locale;
     document.title = strings.title;
     document.getElementById("app-name").textContent = strings.app;
     document.getElementById("language-label").textContent = strings.language;
+    document.getElementById("language-heading").textContent = strings.language;
+    languageToggle.title = strings.language;
     document.getElementById("notes-heading").textContent = strings.notes;
     document.querySelector(".navigation").setAttribute("aria-label", strings.navigation);
     previous.querySelector(".button-label").textContent = strings.previous;
@@ -155,7 +166,30 @@
     renderState();
   };
 
-  language.addEventListener("change", () => setLocale(language.value));
+  const setLanguageMenuOpen = (open) => {
+    languagePopover.hidden = !open;
+    languageToggle.setAttribute("aria-expanded", String(open));
+  };
+
+  languageToggle.addEventListener("click", () => {
+    setLanguageMenuOpen(languagePopover.hidden);
+  });
+  for (const option of languageOptions) {
+    option.addEventListener("click", () => {
+      setLocale(option.dataset.locale);
+      setLanguageMenuOpen(false);
+      languageToggle.focus();
+    });
+  }
+  document.addEventListener("pointerdown", (event) => {
+    if (!languageControl.contains(event.target)) setLanguageMenuOpen(false);
+  });
+  languageControl.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setLanguageMenuOpen(false);
+      languageToggle.focus();
+    }
+  });
   setLocale(browserLocale());
 
   const connection = new signalR.HubConnectionBuilder()
