@@ -18,6 +18,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     private const double CompactArcDashLength = 86d;
     private const double ExpandedArcDashLength = 106d;
     private readonly WindowController _windowController;
+    private readonly string _languageTag = LanguageManager.CurrentLanguageTag;
     private bool _isAlwaysOnTop;
     private bool _isPresentationPickerOpen;
     private bool _isPreparedForShutdown;
@@ -91,6 +92,20 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     /// <summary>Gets a value indicating whether the expanded control center root is active.</summary>
     public bool IsExpandedMode => this._shellMode == DesktopShellMode.Expanded;
 
+    /// <summary>Gets a value indicating whether Simplified Chinese is selected.</summary>
+    public bool IsSimplifiedChineseLanguage =>
+        string.Equals(
+            this._languageTag,
+            LanguageManager.SimplifiedChinese,
+            StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Gets a value indicating whether English is selected.</summary>
+    public bool IsEnglishLanguage =>
+        string.Equals(
+            this._languageTag,
+            LanguageManager.English,
+            StringComparison.OrdinalIgnoreCase);
+
     /// <summary>Gets the semantic brush for the current timer presentation state.</summary>
     public Brush TimerForeground
     {
@@ -143,6 +158,10 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
         this.ViewModel.Dispose();
     }
 
+    internal void RestoreCompactMode() => this.SetShellMode(DesktopShellMode.Compact);
+
+    internal void RestorePresentationHudMode() => this.SetShellMode(DesktopShellMode.PresentationHud);
+
     private void CollapseButton_Click(object sender, RoutedEventArgs args)
     {
         if (this.ViewModel.CanStart)
@@ -181,6 +200,14 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
 
     private void ExitMenuItem_Click(object sender, RoutedEventArgs args) =>
         this._windowController.RequestClose();
+
+    private void LanguageMenuItem_Click(object sender, RoutedEventArgs args)
+    {
+        if (sender is MenuFlyoutItem menuItem && menuItem.Tag is string languageTag)
+        {
+            ((App)Application.Current).ChangeLanguage(languageTag);
+        }
+    }
 
     private void EnterPresentationHudMenuItem_Click(object sender, RoutedEventArgs args)
     {

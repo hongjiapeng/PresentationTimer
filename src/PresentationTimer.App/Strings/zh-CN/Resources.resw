@@ -131,6 +131,10 @@
   <data name="RemoteMenuStatusFormat" xml:space="preserve"><value>手机遥控 · {0}</value></data>
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>让窗口始终置顶</value></data>
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>始终置顶</value></data>
+  <data name="LanguageMenuItem.Text" xml:space="preserve"><value>语言</value></data>
+  <data name="LanguageMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>选择应用语言</value></data>
+  <data name="SimplifiedChineseLanguageMenuItem.Text" xml:space="preserve"><value>简体中文</value></data>
+  <data name="EnglishLanguageMenuItem.Text" xml:space="preserve"><value>English</value></data>
   <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>打开控制中心</value></data>
   <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>打开控制中心</value></data>
   <data name="CompactExpandButton.AccessKey" xml:space="preserve"><value>E</value></data>

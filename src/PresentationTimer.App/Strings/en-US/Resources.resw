@@ -131,6 +131,10 @@
   <data name="RemoteMenuStatusFormat" xml:space="preserve"><value>Phone remote · {0}</value></data>
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Keep window always on top</value></data>
   <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Always on top</value></data>
+  <data name="LanguageMenuItem.Text" xml:space="preserve"><value>Language</value></data>
+  <data name="LanguageMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Choose application language</value></data>
+  <data name="SimplifiedChineseLanguageMenuItem.Text" xml:space="preserve"><value>简体中文</value></data>
+  <data name="EnglishLanguageMenuItem.Text" xml:space="preserve"><value>English</value></data>
   <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Open control center</value></data>
   <data name="CompactExpandButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Open control center</value></data>
   <data name="CompactExpandButton.AccessKey" xml:space="preserve"><value>E</value></data>

@@ -236,6 +236,47 @@ public sealed partial class MainWindow : Window
 
     internal void StopUiNotifications() => this._mainPage.PrepareForShutdown();
 
+    internal void CloseForLanguageChange()
+    {
+        this._resizeAnimationTimer.Stop();
+        this._shutdownComplete = true;
+        this.AppWindow.Closing -= this.OnClosing;
+        this.Activated -= this.OnActivated;
+        this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
+        this._windowController.Detach(this);
+        this.Close();
+    }
+
+    internal RectInt32 CopyWindowStateTo(MainWindow replacementWindow)
+    {
+        ArgumentNullException.ThrowIfNull(replacementWindow);
+
+        RectInt32 appWindowBounds = this.GetCurrentBounds();
+        RectInt32 nativeWindowBounds = this.GetNativeWindowBounds();
+        replacementWindow.PresenterPage.IsAlwaysOnTop = this.PresenterPage.IsAlwaysOnTop;
+        replacementWindow.AppWindow.MoveAndResize(appWindowBounds);
+
+        switch (this._windowMode)
+        {
+            case DesktopWindowMode.Compact:
+                replacementWindow.PresenterPage.RestoreCompactMode();
+                replacementWindow.EnterCompactMode();
+                break;
+            case DesktopWindowMode.PresentationHud:
+                replacementWindow.PresenterPage.RestorePresentationHudMode();
+                replacementWindow.EnterPresentationHudMode();
+                break;
+            default:
+                replacementWindow._expandedBounds = appWindowBounds;
+                break;
+        }
+
+        replacementWindow.SetNativeWindowBounds(nativeWindowBounds);
+        return nativeWindowBounds;
+    }
+
+    internal void RestoreNativeWindowBounds(RectInt32 bounds) => this.SetNativeWindowBounds(bounds);
+
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
     private static extern uint GetDpiForWindow(nint windowHandle);
@@ -281,6 +322,10 @@ public sealed partial class MainWindow : Window
         int height,
         int flags);
 
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(nint windowHandle, out NativeWindowBounds bounds);
+
     [LoggerMessage(4000, LogLevel.Error, "Window shutdown encountered an error")]
     private static partial void LogWindowShutdownFailed(ILogger logger, Exception exception);
 
@@ -317,6 +362,34 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Position.Y,
         this.AppWindow.Size.Width,
         this.AppWindow.Size.Height);
+
+    private RectInt32 GetNativeWindowBounds()
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        if (!GetWindowRect(windowHandle, out NativeWindowBounds bounds))
+        {
+            return this.GetCurrentBounds();
+        }
+
+        return new RectInt32(
+            bounds.Left,
+            bounds.Top,
+            bounds.Right - bounds.Left,
+            bounds.Bottom - bounds.Top);
+    }
+
+    private void SetNativeWindowBounds(RectInt32 bounds)
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        _ = SetWindowPos(
+            windowHandle,
+            0,
+            bounds.X,
+            bounds.Y,
+            bounds.Width,
+            bounds.Height,
+            SetWindowPositionNoZOrder | SetWindowPositionNoActivate);
+    }
 
     private void RequestCornerPreference(int preference)
     {
@@ -476,5 +549,14 @@ public sealed partial class MainWindow : Window
             this._shutdownComplete = true;
             this.Close();
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeWindowBounds
+    {
+        internal int Left;
+        internal int Top;
+        internal int Right;
+        internal int Bottom;
     }
 }

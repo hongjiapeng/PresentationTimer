@@ -180,6 +180,23 @@
                                 AutomationProperties.AutomationId="TimerSettingsMenuItem"
                                 Click="TimerSettingsMenuItem_Click"
                                 Icon="Clock" />
+                            <MenuFlyoutSubItem
+                                x:Uid="LanguageMenuItem"
+                                AutomationProperties.AutomationId="LanguageMenuItem"
+                                Icon="Globe">
+                                <ToggleMenuFlyoutItem
+                                    x:Uid="SimplifiedChineseLanguageMenuItem"
+                                    AutomationProperties.AutomationId="SimplifiedChineseLanguageMenuItem"
+                                    IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
+                                    Tag="zh-CN"
+                                    Click="LanguageMenuItem_Click" />
+                                <ToggleMenuFlyoutItem
+                                    x:Uid="EnglishLanguageMenuItem"
+                                    AutomationProperties.AutomationId="EnglishLanguageMenuItem"
+                                    IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
+                                    Tag="en-US"
+                                    Click="LanguageMenuItem_Click" />
+                            </MenuFlyoutSubItem>
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
                                 x:Uid="ExitMenuItem"
@@ -314,6 +331,23 @@
                             AutomationProperties.AutomationId="HudTimerSettingsMenuItem"
                             Click="TimerSettingsMenuItem_Click"
                             Icon="Clock" />
+                        <MenuFlyoutSubItem
+                            x:Uid="LanguageMenuItem"
+                            AutomationProperties.AutomationId="HudLanguageMenuItem"
+                            Icon="Globe">
+                            <ToggleMenuFlyoutItem
+                                x:Uid="SimplifiedChineseLanguageMenuItem"
+                                AutomationProperties.AutomationId="HudSimplifiedChineseLanguageMenuItem"
+                                IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
+                                Tag="zh-CN"
+                                Click="LanguageMenuItem_Click" />
+                            <ToggleMenuFlyoutItem
+                                x:Uid="EnglishLanguageMenuItem"
+                                AutomationProperties.AutomationId="HudEnglishLanguageMenuItem"
+                                IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
+                                Tag="en-US"
+                                Click="LanguageMenuItem_Click" />
+                        </MenuFlyoutSubItem>
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
                             x:Uid="ExitMenuItem"
@@ -496,6 +530,23 @@
                                             IsEnabled="{x:Bind ViewModel.CanOpenPresentation, Mode=OneWay}" />
                                         <MenuFlyoutItem x:Uid="RemoteOpenMenuItem" Click="RemoteMenuItem_Click" Icon="CellPhone" />
                                         <MenuFlyoutItem x:Uid="TimerSettingsMenuItem" Click="TimerSettingsMenuItem_Click" Icon="Clock" />
+                                        <MenuFlyoutSubItem
+                                            x:Uid="LanguageMenuItem"
+                                            AutomationProperties.AutomationId="ExpandedLanguageMenuItem"
+                                            Icon="Globe">
+                                            <ToggleMenuFlyoutItem
+                                                x:Uid="SimplifiedChineseLanguageMenuItem"
+                                                AutomationProperties.AutomationId="ExpandedSimplifiedChineseLanguageMenuItem"
+                                                IsChecked="{x:Bind IsSimplifiedChineseLanguage, Mode=OneTime}"
+                                                Tag="zh-CN"
+                                                Click="LanguageMenuItem_Click" />
+                                            <ToggleMenuFlyoutItem
+                                                x:Uid="EnglishLanguageMenuItem"
+                                                AutomationProperties.AutomationId="ExpandedEnglishLanguageMenuItem"
+                                                IsChecked="{x:Bind IsEnglishLanguage, Mode=OneTime}"
+                                                Tag="en-US"
+                                                Click="LanguageMenuItem_Click" />
+                                        </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator />
                                         <MenuFlyoutItem x:Uid="ExitMenuItem" Click="ExitMenuItem_Click" />
                                     </MenuFlyout>

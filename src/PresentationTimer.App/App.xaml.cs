@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using PresentationTimer.App.Localization;
 using PresentationTimer.App.Logging;
+using PresentationTimer.Core.Contracts;
 using Serilog.Core;
 
 namespace PresentationTimer.App;
@@ -21,6 +23,7 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        LanguageManager.ApplySavedLanguage();
         this.InitializeComponent();
         this.HighContrastAdjustment = ApplicationHighContrastAdjustment.None;
         this._processLogger = LogBootstrapper.CreateLogger();
@@ -34,6 +37,48 @@ public partial class App : Application
         {
             this._shutdownTask ??= this.ShutdownCoreAsync();
             return this._shutdownTask;
+        }
+    }
+
+    internal void ChangeLanguage(string languageTag)
+    {
+        if (this.MainWindow is not MainWindow currentWindow || this._services is null)
+        {
+            return;
+        }
+
+        string previousLanguage = LanguageManager.CurrentLanguageTag;
+        if (string.Equals(previousLanguage, languageTag, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        try
+        {
+            LanguageManager.SetLanguage(languageTag);
+            LocalizedStrings strings = this._services.GetRequiredService<LocalizedStrings>();
+            strings.Reload();
+
+            MainPage replacementPage = new (
+                this._services.GetRequiredService<IPresentationSessionService>(),
+                strings,
+                this._services.GetRequiredService<WindowController>());
+            MainWindow replacementWindow = new (
+                replacementPage,
+                strings,
+                this._services.GetRequiredService<WindowController>(),
+                this._services.GetRequiredService<Microsoft.Extensions.Logging.ILogger<MainWindow>>());
+            Windows.Graphics.RectInt32 nativeWindowBounds = currentWindow.CopyWindowStateTo(replacementWindow);
+
+            this.MainWindow = replacementWindow;
+            replacementWindow.Activate();
+            replacementWindow.RestoreNativeWindowBounds(nativeWindowBounds);
+            currentWindow.CloseForLanguageChange();
+        }
+        catch (Exception exception)
+        {
+            LanguageManager.SetLanguage(previousLanguage);
+            this._processLogger.Error(exception, "Language switch failed");
         }
     }
 
