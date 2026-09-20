@@ -119,7 +119,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         this.TitleBarPinButton.Visibility = Visibility.Collapsed;
-        this.SystemBackdrop = new DesktopAcrylicBackdrop();
+        this.SystemBackdrop = new FloatingTimerBackdrop();
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
@@ -166,7 +166,7 @@ public sealed partial class MainWindow : Window
 
         this.AppTitleBar.Visibility = Visibility.Collapsed;
         this.TitleBarPinButton.Visibility = Visibility.Collapsed;
-        this.SystemBackdrop = new DesktopAcrylicBackdrop();
+        this.SystemBackdrop = new FloatingTimerBackdrop();
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
