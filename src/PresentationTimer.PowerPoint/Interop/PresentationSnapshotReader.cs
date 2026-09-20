@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using PresentationTimer.Core.Models;
 using Ppt = Microsoft.Office.Interop.PowerPoint;
 
@@ -5,6 +6,14 @@ namespace PresentationTimer.PowerPoint.Interop;
 
 internal static class PresentationSnapshotReader
 {
+    // PowerPoint exposes a SlideShowWindow before its SlideShowView has a current
+    // slide, for example while starting a show or changing windows. This is a
+    // normal transient state, not a disconnected COM server.
+    private const int NoSlideCurrentlyInView = unchecked((int)0x80048240);
+
+    internal static bool IsNoSlideCurrentlyInView(COMException exception) =>
+        exception.HResult == NoSlideCurrentlyInView;
+
     internal static PresentationSnapshot Read(Ppt.Application application)
     {
         using var scope = new ComObjectScope();
@@ -32,7 +41,21 @@ internal static class PresentationSnapshotReader
 
         Ppt.SlideShowWindow window = scope.Track(windows[1]);
         Ppt.SlideShowView view = scope.Track(window.View);
-        Ppt.Slide slide = scope.Track(view.Slide);
+        Ppt.Slide slide;
+        try
+        {
+            slide = scope.Track(view.Slide);
+        }
+        catch (COMException exception) when (IsNoSlideCurrentlyInView(exception))
+        {
+            return new PresentationSnapshot(
+                PresentationConnectionState.NoSlideShow,
+                null,
+                null,
+                string.Empty,
+                null);
+        }
+
         Ppt.Presentation presentation = scope.Track(window.Presentation);
         Ppt.Slides slides = scope.Track(presentation.Slides);
 

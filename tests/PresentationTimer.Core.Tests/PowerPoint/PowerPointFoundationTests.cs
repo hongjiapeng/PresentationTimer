@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using PresentationTimer.Core.Models;
 using PresentationTimer.PowerPoint.Interop;
 using PresentationTimer.PowerPoint.Threading;
@@ -11,6 +12,38 @@ namespace PresentationTimer.Core.Tests.PowerPoint;
 [TestClass]
 public sealed class PowerPointFoundationTests
 {
+    /// <summary>Verifies PowerPoint's temporary no-current-slide error is recognized.</summary>
+    [TestMethod]
+    public void PresentationSnapshotReader_NoSlideCurrentlyInView_IsTransientState()
+    {
+        // Arrange
+        var exception = Marshal.GetExceptionForHR(unchecked((int)0x80048240)) as COMException
+            ?? throw new InvalidOperationException("The HRESULT did not produce a COM exception.");
+
+        // Act
+        bool result = PresentationTimer.PowerPoint.Interop.PresentationSnapshotReader
+            .IsNoSlideCurrentlyInView(exception);
+
+        // Assert
+        Assert.IsTrue(result);
+    }
+
+    /// <summary>Verifies unrelated COM errors are not classified as a temporary view state.</summary>
+    [TestMethod]
+    public void PresentationSnapshotReader_UnrelatedComError_IsNotTransientViewState()
+    {
+        // Arrange
+        var exception = Marshal.GetExceptionForHR(unchecked((int)0x80010108)) as COMException
+            ?? throw new InvalidOperationException("The HRESULT did not produce a COM exception.");
+
+        // Act
+        bool result = PresentationTimer.PowerPoint.Interop.PresentationSnapshotReader
+            .IsNoSlideCurrentlyInView(exception);
+
+        // Assert
+        Assert.IsFalse(result);
+    }
+
     /// <summary>Verifies an unknown ProgID maps to the unavailable category.</summary>
     [TestMethod]
     public void ActiveObjectResolver_WithUnknownProgId_ReturnsUnavailable()
