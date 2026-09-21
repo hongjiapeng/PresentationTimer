@@ -10,9 +10,6 @@
                 <ResourceDictionary x:Key="Light">
                     <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
                     <SolidColorBrush x:Key="PresenterWindowSurfaceBrush" Color="#FFF4F7FB" />
-                    <Color x:Key="PresenterHudBackdropTintColor">#FFF4F8FC</Color>
-                    <x:Double x:Key="PresenterHudBackdropTintOpacity">0.58</x:Double>
-                    <x:Double x:Key="PresenterHudBackdropLuminosityOpacity">0.72</x:Double>
                     <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0CFFFFFF" />
                     <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
@@ -39,9 +36,6 @@
                 <ResourceDictionary x:Key="Dark">
                     <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
                     <SolidColorBrush x:Key="PresenterWindowSurfaceBrush" Color="#FF161B24" />
-                    <Color x:Key="PresenterHudBackdropTintColor">#FF25334A</Color>
-                    <x:Double x:Key="PresenterHudBackdropTintOpacity">0.64</x:Double>
-                    <x:Double x:Key="PresenterHudBackdropLuminosityOpacity">0.58</x:Double>
                     <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0AFFFFFF" />
                     <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
