@@ -23,7 +23,7 @@
                 Background="{ThemeResource PresenterHudSurfaceBrush}"
                 BackgroundSizing="InnerBorderEdge"
                 BorderBrush="{ThemeResource PresenterHudBorderBrush}"
-                BorderThickness="0.5"
+                BorderThickness="{ThemeResource PresenterHudBorderThickness}"
                 CornerRadius="{StaticResource PresenterHudCornerRadius}">
                 <Grid>
                     <Border
@@ -232,7 +232,7 @@
                 Background="{ThemeResource PresenterHudSurfaceBrush}"
                 BackgroundSizing="InnerBorderEdge"
                 BorderBrush="{ThemeResource PresenterHudBorderBrush}"
-                BorderThickness="0.5"
+                BorderThickness="{ThemeResource PresenterHudBorderThickness}"
                 CornerRadius="{StaticResource PresenterHudCornerRadius}">
                 <Grid>
                     <Border

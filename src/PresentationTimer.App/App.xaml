@@ -16,6 +16,7 @@
                     <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0CFFFFFF" />
                     <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
+                    <Thickness x:Key="PresenterHudBorderThickness">0</Thickness>
                     <SolidColorBrush x:Key="PresenterHudProgressTrackBrush" Color="#507B99BB" />
                     <SolidColorBrush x:Key="PresenterTimerNormalBrush" Color="#FF2388D8" />
                     <SolidColorBrush x:Key="PresenterTimerWarningBrush" Color="#FFAD6B00" />
@@ -44,6 +45,7 @@
                     <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0AFFFFFF" />
                     <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
+                    <Thickness x:Key="PresenterHudBorderThickness">0</Thickness>
                     <SolidColorBrush x:Key="PresenterHudProgressTrackBrush" Color="#509AB2D2" />
                     <SolidColorBrush x:Key="PresenterTimerNormalBrush" Color="#FFD8F0FF" />
                     <SolidColorBrush x:Key="PresenterTimerWarningBrush" Color="#FFFFC85A" />
@@ -69,6 +71,7 @@
                     <StaticResource x:Key="PresenterHudSurfaceBrush" ResourceKey="SystemColorWindowColorBrush" />
                     <StaticResource x:Key="PresenterHudHoverBrush" ResourceKey="SystemColorWindowColorBrush" />
                     <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <Thickness x:Key="PresenterHudBorderThickness">2</Thickness>
                     <StaticResource x:Key="PresenterHudProgressTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
                     <StaticResource x:Key="PresenterTimerNormalBrush" ResourceKey="SystemColorWindowTextColorBrush" />
                     <StaticResource x:Key="PresenterTimerWarningBrush" ResourceKey="SystemColorWindowTextColorBrush" />
