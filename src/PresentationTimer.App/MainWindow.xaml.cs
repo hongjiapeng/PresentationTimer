@@ -30,8 +30,7 @@ public sealed partial class MainWindow : Window
     private const int DwmWindowBorderColorDefault = unchecked((int)0xFFFFFFFF);
     private const int DwmWindowBorderColorNone = unchecked((int)0xFFFFFFFE);
     private const int DwmWindowCornerPreferenceDefault = 0;
-    private const int DwmWindowCornerPreferenceDoNotRound = 1;
-    private const int WindowCornerRadius = 16;
+    private const int DwmWindowCornerPreferenceRound = 2;
     private const int ResizeAnimationDurationMs = 180;
     private const int ResizeAnimationFrameIntervalMs = 15;
     private const int GetWindowLongStyleIndex = -16;
@@ -54,7 +53,6 @@ public sealed partial class MainWindow : Window
     private RectInt32? _presentationHudBounds;
     private RectInt32 _animationFrom;
     private RectInt32 _animationTo;
-    private int _animationCornerRadiusPx;
     private int _borderColorPreference = DwmWindowBorderColorDefault;
     private DesktopWindowMode _windowMode = DesktopWindowMode.Expanded;
     private bool _shutdownComplete;
@@ -137,15 +135,14 @@ public sealed partial class MainWindow : Window
         this._compactBounds = target;
         this._windowMode = DesktopWindowMode.Compact;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
-        this.RequestCornerPreference(DwmWindowCornerPreferenceDoNotRound);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
 
-        // Resize immediately when switching out of the presenter surface. This avoids
-        // rebuilding an x:Load visual tree while a native window-region animation is
-        // still applying DWM regions frame by frame.
+        // Resize immediately when switching out of the presenter surface so the
+        // x:Load visual tree is rebuilt against its final compact bounds.
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
-        this.ApplyRoundedWindowRegion(target.Width, target.Height, this.ToPhysicalPixels(WindowCornerRadius));
+        this.ClearWindowRegion();
         this.UpdateCaptureAffinity();
     }
 
@@ -201,11 +198,11 @@ public sealed partial class MainWindow : Window
         this._presentationHudBounds = target;
         this._windowMode = DesktopWindowMode.PresentationHud;
         this.SetTitleBarIfLoaded(this._mainPage.ActiveDragRegion);
-        this.RequestCornerPreference(DwmWindowCornerPreferenceDoNotRound);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
-        this.ApplyRoundedWindowRegion(target.Width, target.Height, this.ToPhysicalPixels(WindowCornerRadius));
+        this.ClearWindowRegion();
         this.UpdateCaptureAffinity();
     }
 
@@ -336,16 +333,6 @@ public sealed partial class MainWindow : Window
         int attribute,
         ref int attributeValue,
         int attributeSize);
-
-    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
-    [DllImport("gdi32.dll")]
-    private static extern nint CreateRoundRectRgn(
-        int leftRect,
-        int topRect,
-        int rightRect,
-        int bottomRect,
-        int widthEllipse,
-        int heightEllipse);
 
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
@@ -509,23 +496,13 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void ApplyRoundedWindowRegion(int widthPx, int heightPx, int radiusPx)
-    {
-        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
-
-        // The native frame can paint a one-pixel dark seam above the XAML surface.
-        // Keep that row outside the existing rounded window region.
-        nint region = CreateRoundRectRgn(0, 1, widthPx, heightPx, radiusPx * 2, radiusPx * 2);
-        _ = SetWindowRgn(windowHandle, region, true);
-    }
-
     private void ClearWindowRegion()
     {
         nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
         _ = SetWindowRgn(windowHandle, 0, true);
     }
 
-    private void BeginResizeAnimation(RectInt32 from, RectInt32 to, int cornerRadiusPx)
+    private void BeginResizeAnimation(RectInt32 from, RectInt32 to)
     {
         this._resizeAnimationTimer.Stop();
 
@@ -533,13 +510,12 @@ public sealed partial class MainWindow : Window
         if (unchanged)
         {
             this.AppWindow.MoveAndResize(to);
-            this.ApplyRoundedWindowRegion(to.Width, to.Height, cornerRadiusPx);
+            this.ClearWindowRegion();
             return;
         }
 
         this._animationFrom = from;
         this._animationTo = to;
-        this._animationCornerRadiusPx = cornerRadiusPx;
         this._animationStopwatch.Restart();
         this._resizeAnimationTimer.Start();
     }
@@ -555,7 +531,6 @@ public sealed partial class MainWindow : Window
             Lerp(this._animationFrom.Height, this._animationTo.Height, eased));
 
         this.AppWindow.MoveAndResize(step);
-        this.ApplyRoundedWindowRegion(step.Width, step.Height, this._animationCornerRadiusPx);
 
         if (t >= 1d)
         {
