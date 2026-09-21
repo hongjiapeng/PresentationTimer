@@ -84,7 +84,6 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing += this.OnClosing;
         this.Activated += this.OnActivated;
         this._mainPage.DragRegionLoaded += this.OnDragRegionLoaded;
-        this._mainPage.ActualThemeChanged += this.OnPresenterThemeChanged;
         this.RootFrame.Content = mainPage;
         this._windowController.Attach(this);
         this._resizeAnimationTimer = this.DispatcherQueue.CreateTimer();
@@ -277,7 +276,6 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing -= this.OnClosing;
         this.Activated -= this.OnActivated;
         this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
-        this._mainPage.ActualThemeChanged -= this.OnPresenterThemeChanged;
         this._windowController.Detach(this);
         this.Close();
     }
@@ -480,16 +478,8 @@ public sealed partial class MainWindow : Window
     private void OnActivated(object sender, WindowActivatedEventArgs args) =>
         this.RequestBorderColor(this._borderColorPreference);
 
-    private void OnPresenterThemeChanged(FrameworkElement sender, object args)
-    {
-        if (this.SystemBackdrop is FloatingTimerBackdrop backdrop)
-        {
-            backdrop.Theme = sender.ActualTheme;
-        }
-    }
-
     private void SetFloatingBackdrop() =>
-        this.SystemBackdrop = new FloatingTimerBackdrop(this._mainPage.ActualTheme);
+        this.SystemBackdrop = new DesktopAcrylicBackdrop();
 
     private void WindowLayoutRoot_SizeChanged(object sender, SizeChangedEventArgs args)
     {
@@ -624,7 +614,6 @@ public sealed partial class MainWindow : Window
         {
             this.Activated -= this.OnActivated;
             this._mainPage.DragRegionLoaded -= this.OnDragRegionLoaded;
-            this._mainPage.ActualThemeChanged -= this.OnPresenterThemeChanged;
             this._windowController.Detach(this);
             this._shutdownComplete = true;
             this.Close();
