@@ -118,6 +118,10 @@ winget install --id Microsoft.Office `
 
 </details>
 
+## 已知问题
+
+当前平台限制与规避方法见[已知问题](docs/known-issues.md)。
+
 ## 开发
 
 ### 构建与测试

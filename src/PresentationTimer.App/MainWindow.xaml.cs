@@ -482,7 +482,7 @@ public sealed partial class MainWindow : Window
         this.RequestBorderColor(this._borderColorPreference);
 
     private void SetFloatingBackdrop() =>
-        this.SystemBackdrop = new DesktopAcrylicBackdrop();
+        this.SystemBackdrop = new FloatingTimerBackdrop();
 
     private void WindowLayoutRoot_SizeChanged(object sender, SizeChangedEventArgs args)
     {

@@ -120,6 +120,10 @@ Unsupported, missing, or unreadable files produce a safe error without changing 
 
 </details>
 
+## Known issues
+
+Current platform limitations and workarounds are documented in [Known issues](docs/known-issues.md).
+
 ## Development
 
 ### Build and test
