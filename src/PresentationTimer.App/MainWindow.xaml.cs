@@ -27,10 +27,13 @@ public sealed partial class MainWindow : Window
     private const int MinimumExpandedWidth = 800;
     private const int DwmWindowAttributeCornerPreference = 33;
     private const int DwmWindowAttributeBorderColor = 34;
+    private const int DwmWindowAttributeNonClientRenderingPolicy = 2;
     private const int DwmWindowBorderColorDefault = unchecked((int)0xFFFFFFFF);
     private const int DwmWindowBorderColorNone = unchecked((int)0xFFFFFFFE);
     private const int DwmWindowCornerPreferenceDefault = 0;
     private const int DwmWindowCornerPreferenceRound = 2;
+    private const int DwmNonClientRenderingPolicyDefault = 0;
+    private const int DwmNonClientRenderingPolicyDisabled = 1;
     private const int ResizeAnimationDurationMs = 180;
     private const int ResizeAnimationFrameIntervalMs = 15;
     private const int GetWindowLongStyleIndex = -16;
@@ -57,7 +60,7 @@ public sealed partial class MainWindow : Window
     private DesktopWindowMode _windowMode = DesktopWindowMode.Expanded;
     private bool _shutdownComplete;
     private bool _shutdownStarted;
-    private bool _hidePresenterFromCapture = true;
+    private bool _hidePresenterFromCapture;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -121,6 +124,7 @@ public sealed partial class MainWindow : Window
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
+        this.RequestNonClientRenderingPolicy(DwmNonClientRenderingPolicyDisabled);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -168,6 +172,7 @@ public sealed partial class MainWindow : Window
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
+        this.RequestNonClientRenderingPolicy(DwmNonClientRenderingPolicyDisabled);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -228,6 +233,7 @@ public sealed partial class MainWindow : Window
 
         presenter.SetBorderAndTitleBar(true, true);
         this.SetWindowChromeVisibility(true);
+        this.RequestNonClientRenderingPolicy(DwmNonClientRenderingPolicyDefault);
         presenter.IsResizable = true;
         presenter.IsMaximizable = true;
         presenter.IsMinimizable = true;
@@ -462,11 +468,21 @@ public sealed partial class MainWindow : Window
             sizeof(int));
     }
 
+    private void RequestNonClientRenderingPolicy(int policy)
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        _ = DwmSetWindowAttribute(
+            windowHandle,
+            DwmWindowAttributeNonClientRenderingPolicy,
+            ref policy,
+            sizeof(int));
+    }
+
     private void OnActivated(object sender, WindowActivatedEventArgs args) =>
         this.RequestBorderColor(this._borderColorPreference);
 
     private void SetFloatingBackdrop() =>
-        this.SystemBackdrop = new DesktopAcrylicBackdrop();
+        this.SystemBackdrop = new FloatingTimerBackdrop();
 
     private void WindowLayoutRoot_SizeChanged(object sender, SizeChangedEventArgs args)
     {

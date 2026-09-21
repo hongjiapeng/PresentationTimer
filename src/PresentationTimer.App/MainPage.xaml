@@ -21,8 +21,9 @@
             LostFocus="FloatingTimer_LostFocus">
             <Border
                 Background="{ThemeResource PresenterHudSurfaceBrush}"
+                BackgroundSizing="InnerBorderEdge"
                 BorderBrush="{ThemeResource PresenterHudBorderBrush}"
-                BorderThickness="1"
+                BorderThickness="0.5"
                 CornerRadius="{StaticResource PresenterHudCornerRadius}">
                 <Grid>
                     <Border
@@ -229,8 +230,9 @@
             LostFocus="FloatingTimer_LostFocus">
             <Border
                 Background="{ThemeResource PresenterHudSurfaceBrush}"
+                BackgroundSizing="InnerBorderEdge"
                 BorderBrush="{ThemeResource PresenterHudBorderBrush}"
-                BorderThickness="1"
+                BorderThickness="0.5"
                 CornerRadius="{StaticResource PresenterHudCornerRadius}">
                 <Grid>
                     <Border

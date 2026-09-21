@@ -10,9 +10,12 @@
                 <ResourceDictionary x:Key="Light">
                     <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
                     <SolidColorBrush x:Key="PresenterWindowSurfaceBrush" Color="#FFF4F7FB" />
-                    <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="#EAF4F8FC" />
+                    <Color x:Key="PresenterHudBackdropTintColor">#FFF4F8FC</Color>
+                    <x:Double x:Key="PresenterHudBackdropTintOpacity">0.58</x:Double>
+                    <x:Double x:Key="PresenterHudBackdropLuminosityOpacity">0.72</x:Double>
+                    <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0CFFFFFF" />
-                    <SolidColorBrush x:Key="PresenterHudBorderBrush" Color="#99AFC3D6" />
+                    <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
                     <SolidColorBrush x:Key="PresenterHudProgressTrackBrush" Color="#507B99BB" />
                     <SolidColorBrush x:Key="PresenterTimerNormalBrush" Color="#FF2388D8" />
                     <SolidColorBrush x:Key="PresenterTimerWarningBrush" Color="#FFAD6B00" />
@@ -35,9 +38,12 @@
                 <ResourceDictionary x:Key="Dark">
                     <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
                     <SolidColorBrush x:Key="PresenterWindowSurfaceBrush" Color="#FF161B24" />
-                    <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="#B325334A" />
+                    <Color x:Key="PresenterHudBackdropTintColor">#FF25334A</Color>
+                    <x:Double x:Key="PresenterHudBackdropTintOpacity">0.64</x:Double>
+                    <x:Double x:Key="PresenterHudBackdropLuminosityOpacity">0.58</x:Double>
+                    <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0AFFFFFF" />
-                    <SolidColorBrush x:Key="PresenterHudBorderBrush" Color="#48C0D4EC" />
+                    <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
                     <SolidColorBrush x:Key="PresenterHudProgressTrackBrush" Color="#509AB2D2" />
                     <SolidColorBrush x:Key="PresenterTimerNormalBrush" Color="#FFD8F0FF" />
                     <SolidColorBrush x:Key="PresenterTimerWarningBrush" Color="#FFFFC85A" />

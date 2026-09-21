@@ -26,7 +26,7 @@ public sealed partial class MainPage : Page, INotifyPropertyChanged
     private readonly TimeSpan _floatingHideDuration;
     private readonly string _languageTag = LanguageManager.CurrentLanguageTag;
     private bool _isAlwaysOnTop;
-    private bool _isHiddenFromCapture = true;
+    private bool _isHiddenFromCapture;
     private bool _isPresentationPickerOpen;
     private bool _isPreparedForShutdown;
     private bool _isFloatingMenuOpen;
