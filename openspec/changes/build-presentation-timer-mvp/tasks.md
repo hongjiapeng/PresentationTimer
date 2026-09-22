@@ -1,6 +1,6 @@
 ## 1. Solution foundation
 
-- [x] 1.1 Create `PresentationTimer.sln` and the App, Core, PowerPoint, Remote, Core.Tests, and Remote.Tests projects at the paths in `design.md`; target .NET 10/Windows where appropriate and verify every project restores.
+- [x] 1.1 Create `SlidePace.sln` and the App, Core, PowerPoint, Remote, Core.Tests, and Remote.Tests projects at the paths in `design.md`; target .NET 10/Windows where appropriate and verify every project restores.
 - [x] 1.2 Add only the specified dependency edges (App -> Core/PowerPoint/Remote, PowerPoint -> Core, Remote -> Core, tests -> subjects) and add an automated architecture check or project-reference assertion that prevents a Core -> infrastructure dependency.
 - [x] 1.3 Enable nullable reference types, implicit usings, deterministic builds, and warnings appropriate for a greenfield solution without suppressing COM or async warnings globally.
 - [x] 1.4 Pin WinUI/Windows App SDK, PowerPoint interop, ASP.NET Core framework, SignalR JavaScript, QR, and test dependencies in one centrally discoverable location; record licenses/provenance for bundled browser assets.
@@ -34,7 +34,7 @@
 
 ## 4. PowerPoint COM foundation
 
-- [x] 4.1 Add the PowerPoint interop dependency only to `PresentationTimer.PowerPoint`, use early-bound embedded interop types, and prove Core/App view models have no Office references.
+- [x] 4.1 Add the PowerPoint interop dependency only to `SlidePace.PowerPoint`, use early-bound embedded interop types, and prove Core/App view models have no Office references.
 - [x] 4.2 Implement the isolated native `GetActiveObject`/ProgID registration wrapper with explicit HRESULT mapping for unavailable, not installed, and not running results.
 - [x] 4.3 Implement the dedicated STA COM dispatcher with pre-start apartment selection, message-queue initialization, private work messages, `GetMessage`/`DispatchMessage`, asynchronous result completion, and orderly `WM_QUIT`.
 - [x] 4.4 Add dispatcher tests that execute on STA, serialize concurrent work, propagate exceptions/cancellation, continue pumping queued work, and stop within a bounded timeout without PowerPoint.

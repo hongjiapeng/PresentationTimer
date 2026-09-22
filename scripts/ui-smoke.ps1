@@ -13,7 +13,7 @@ Add-Type -AssemblyName System.Drawing
 Add-Type @'
 using System;
 using System.Runtime.InteropServices;
-internal static class PresentationTimerNativeMethods
+internal static class SlidePaceNativeMethods
 {
     [DllImport("user32.dll")]
     internal static extern uint GetDpiForWindow(IntPtr windowHandle);
@@ -154,7 +154,7 @@ try {
     }
     $root = [System.Windows.Automation.AutomationElement]::FromHandle($windowHandle)
     $desktop = [System.Windows.Automation.AutomationElement]::RootElement
-    $scale = [PresentationTimerNativeMethods]::GetDpiForWindow($windowHandle) / 96.0
+    $scale = [SlidePaceNativeMethods]::GetDpiForWindow($windowHandle) / 96.0
 
     Test-UI 'Compact window opens at effective 440 by 240' {
         $bounds = $root.Current.BoundingRectangle

@@ -32,7 +32,7 @@ None. The repository has no promoted main specs yet; the prior MVP behavior rema
 
 ## Impact
 
-- Primary implementation scope: `PresentationTimer.App` window, page, view model, theme resources, localized resources, and desktop UI verification.
+- Primary implementation scope: `SlidePace.App` window, page, view model, theme resources, localized resources, and desktop UI verification.
 - Test scope: pure presentation-state projection tests where practical, solution build/tests, UI smoke automation, and manual window/PowerPoint/phone checks.
 - No public Core contract, Office COM, remote protocol, authentication, QR-token, or browser-client change is expected.
 - No new runtime dependency or alternate desktop framework is introduced.

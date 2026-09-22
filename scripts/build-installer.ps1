@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$Version = "0.1.0",
+    [string]$Version = "0.2.0",
     [string]$PublishDirectory = "artifacts\win-x64",
     [string]$OutputDirectory = "dist"
 )
@@ -28,7 +28,7 @@ $publishPath = [System.IO.Path]::GetFullPath((Join-Path $repoRoot $PublishDirect
 $outputPath = [System.IO.Path]::GetFullPath((Join-Path $repoRoot $OutputDirectory))
 New-Item -ItemType Directory -Force -Path $outputPath | Out-Null
 
-dotnet publish src/PresentationTimer.App/PresentationTimer.App.csproj `
+dotnet publish src/SlidePace.App/SlidePace.App.csproj `
     --configuration Release `
     -p:Platform=x64 `
     "-p:Version=$Version" `
@@ -45,7 +45,7 @@ if ($LASTEXITCODE -ne 0) {
     "/DAppVersion=$Version" `
     "/DSourceDir=$publishPath" `
     "/DOutputDir=$outputPath" `
-    (Join-Path $repoRoot "installer\PresentationTimer.iss")
+    (Join-Path $repoRoot "installer\SlidePace.iss")
 
 if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup compilation failed with exit code $LASTEXITCODE."

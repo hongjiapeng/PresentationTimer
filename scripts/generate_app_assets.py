@@ -1,4 +1,4 @@
-"""Regenerate Windows app assets from the Presentation Timer icon geometry.
+"""Regenerate Windows app assets from the SlidePace icon geometry.
 
 Requires Pillow. The editable vector reference is Assets/AppIcon.svg.
 """
@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 
-ASSETS = Path(__file__).resolve().parents[1] / "src" / "PresentationTimer.App" / "Assets"
+ASSETS = Path(__file__).resolve().parents[1] / "src" / "SlidePace.App" / "Assets"
 INK = "#152333"
 ACCENT = "#64D1F5"
 WHITE = "#F5FBFF"

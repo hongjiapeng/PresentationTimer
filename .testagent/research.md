@@ -3,7 +3,7 @@
 ## Scope
 
 - Broad verification for the requested Microsoft DI composition, Serilog logging, bounded shutdown, and remote credential redaction.
-- SDK-style .NET 10 solution (`PresentationTimer.sln`), `dotnet test` in VSTest mode, MSTest 4.0.1.
+- SDK-style .NET 10 solution (`SlidePace.sln`), `dotnet test` in VSTest mode, MSTest 4.0.1.
 - Existing test projects use sealed classes, Arrange/Act/Assert, and project references to Core/PowerPoint or Remote.
 
 ## Static pairing baseline
@@ -25,7 +25,7 @@
 
 ## Commands
 
-- Scoped: `dotnet test tests/PresentationTimer.Remote.Tests/PresentationTimer.Remote.Tests.csproj -c Debug --no-restore`
-- Full test: `dotnet test PresentationTimer.sln -c Debug -p:Platform=x64 --no-restore`
-- Final build: `dotnet build PresentationTimer.sln -c Release -p:Platform=x64 --no-incremental`
+- Scoped: `dotnet test tests/SlidePace.Remote.Tests/SlidePace.Remote.Tests.csproj -c Debug --no-restore`
+- Full test: `dotnet test SlidePace.sln -c Debug -p:Platform=x64 --no-restore`
+- Final build: `dotnet build SlidePace.sln -c Release -p:Platform=x64 --no-incremental`
 

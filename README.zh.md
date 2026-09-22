@@ -2,7 +2,7 @@
 
 **中文** · [English](./README.md)
 
-# PresentationTimer
+# SlidePace
 
 **一个本地优先的 Windows 演讲者工作台：计时、PowerPoint 控制、演讲者备注和手机遥控，一处完成。**
 
@@ -13,7 +13,7 @@
 
 </div>
 
-PresentationTimer 把现场演讲所需的核心工具放在同一个界面中：精准的倒计时/超时计时器、PowerPoint 翻页和演讲者备注监测，以及供同一可信局域网内手机使用的浏览器遥控器。
+SlidePace 把现场演讲所需的核心工具放在同一个界面中：精准的倒计时/超时计时器、PowerPoint 翻页和演讲者备注监测，以及供同一可信局域网内手机使用的浏览器遥控器。
 
 它在本地运行，不需要账户；退出应用时也不会关闭演示文稿或 PowerPoint。
 
@@ -21,12 +21,12 @@ PresentationTimer 把现场演讲所需的核心工具放在同一个界面中�
 
 | 桌面工作台 · 设计参考 | 手机遥控 · 实际界面 |
 |:---:|:---:|
-| <img src="docs/design/presentation-timer-expanded-ui-v2.png" alt="PresentationTimer 展开桌面工作台设计稿" width="610"> | <img src="docs/screenshots/phone-remote.png" alt="PresentationTimer 手机遥控器，显示计时、幻灯片位置、演讲者备注和翻页控制" width="255"> |
+| <img src="docs/design/presentation-timer-expanded-ui-v2.png" alt="SlidePace 展开桌面工作台设计稿" width="610"> | <img src="docs/screenshots/phone-remote.png" alt="SlidePace 手机遥控器，显示计时、幻灯片位置、演讲者备注和翻页控制" width="255"> |
 | 在一个工作台中查看计时器、PowerPoint 状态、翻页控制、远程配对和时长设置。 | 在手机浏览器中查看剩余时间、当前幻灯片和备注，并进行上一页/下一页操作。 |
 
 | 紧凑计时器 | 演讲者 HUD |
 |:---:|:---:|
-| <img src="docs/screenshots/compact-timer.png" alt="PresentationTimer 紧凑计时器" width="500"> | <img src="docs/screenshots/presenter-hud.png" alt="PresentationTimer 演讲者 HUD" width="340"> |
+| <img src="docs/screenshots/compact-timer.png" alt="SlidePace 紧凑计时器" width="500"> | <img src="docs/screenshots/presenter-hud.png" alt="SlidePace 演讲者 HUD" width="340"> |
 | 保留进度和核心控制的专注计时界面。 | 演讲时保持可见的极简计时浮层。 |
 
 ## 功能概览
@@ -42,8 +42,8 @@ PresentationTimer 把现场演讲所需的核心工具放在同一个界面中�
 ## 快速开始
 
 1. 从 [GitHub Releases](https://github.com/hongjiapeng/PresentationTimer/releases) 下载 Windows 安装程序或便携 ZIP。
-2. 打开 PresentationTimer，选择或输入 `15:00` 这样的时长。
-3. 打开 `.ppt`、`.pptx`、`.pptm`、`.pps` 或 `.ppsx` 文件；也可以先在 PowerPoint 中开始放映，让 PresentationTimer 自动连接。
+2. 打开 SlidePace，选择或输入 `15:00` 这样的时长。
+3. 打开 `.ppt`、`.pptx`、`.pptm`、`.pps` 或 `.ppsx` 文件；也可以先在 PowerPoint 中开始放映，让 SlidePace 自动连接。
 4. 启动计时器。暂停、继续和重置仍然是桌面端本地命令。
 5. 选择 **Start remote**，再用同一可信网络中的手机扫描二维码。
 6. 演讲结束后选择 **End session**，使本次会话的二维码令牌和所有浏览器 Cookie 失效。
@@ -67,14 +67,14 @@ PowerPoint 集成功能要求系统已注册 `PowerPoint.Application` COM 类。
 
 这可以避免未经授权的误操作，但 HTTP 无法防御能够监听或篡改恶意/公共 Wi-Fi 流量的攻击者。请使用可信的私有网络，并在演讲结束后结束会话。
 
-结构化 Serilog 事件写入 `%LOCALAPPDATA%\PresentationTimer\Logs`。日志按天及 5 MiB 滚动，最多保留七个文件七天，并刻意排除演讲者备注、配对令牌、浏览器 Cookie 和完整的含令牌配对 URL。
+结构化 Serilog 事件写入 `%LOCALAPPDATA%\SlidePace\Logs`。日志按天及 5 MiB 滚动，最多保留七个文件七天，并刻意排除演讲者备注、配对令牌、浏览器 Cookie 和完整的含令牌配对 URL。
 
 ## 故障排除
 
 <details>
 <summary><strong>未检测到 PowerPoint 桌面版</strong></summary>
 
-请安装或修复 Microsoft PowerPoint 桌面版，先启动一次以完成登录或激活，再重启 PresentationTimer。仅选择演示文稿文件不能绕过 COM 要求。
+请安装或修复 Microsoft PowerPoint 桌面版，先启动一次以完成登录或激活，再重启 SlidePace。仅选择演示文稿文件不能绕过 COM 要求。
 
 引导式检查脚本可以打开微软官方安装页面并重新检查 COM 注册：
 
@@ -112,7 +112,7 @@ winget install --id Microsoft.Office `
 
 - 确认电脑和手机位于同一个 Wi-Fi/LAN，并且可以直接互相访问。
 - 暂时禁用 VPN，并检查接入点是否启用了客户端/AP 隔离。
-- 如果 Windows 防火墙弹出提示，请允许 PresentationTimer 使用**专用网络**。应用不会自行提升权限或修改防火墙设置。
+- 如果 Windows 防火墙弹出提示，请允许 SlidePace 使用**专用网络**。应用不会自行提升权限或修改防火墙设置。
 - 如果电脑更换了网络或 IP 地址，请选择新的可访问适配器 URL，并扫描替代二维码。
 - 企业策略可能禁止局域网入站监听；请联系管理员允许此应用访问本地子网。
 
@@ -127,15 +127,15 @@ winget install --id Microsoft.Office `
 ### 构建与测试
 
 ```powershell
-dotnet restore PresentationTimer.sln
-dotnet build PresentationTimer.sln -c Debug -p:Platform=x64
-dotnet test PresentationTimer.sln -c Debug -p:Platform=x64
+dotnet restore SlidePace.sln
+dotnet build SlidePace.sln -c Debug -p:Platform=x64
+dotnet test SlidePace.sln -c Debug -p:Platform=x64
 ```
 
 完成 Debug x64 构建后运行桌面 UI 冒烟检查：
 
 ```powershell
-.\scripts\ui-smoke.ps1 -AppPath .\src\PresentationTimer.App\bin\x64\Debug\net10.0-windows10.0.26100.0\win-x64\PresentationTimer.App.exe
+.\scripts\ui-smoke.ps1 -AppPath .\src\SlidePace.App\bin\x64\Debug\net10.0-windows10.0.26100.0\win-x64\SlidePace.App.exe
 ```
 
 ### 便携发布
@@ -143,32 +143,32 @@ dotnet test PresentationTimer.sln -c Debug -p:Platform=x64
 创建关闭裁剪、未打包且自包含的 x64 输出：
 
 ```powershell
-dotnet publish .\src\PresentationTimer.App\PresentationTimer.App.csproj -c Release -p:Platform=x64 -r win-x64 -o .\artifacts\publish\win-x64
+dotnet publish .\src\SlidePace.App\SlidePace.App.csproj -c Release -p:Platform=x64 -r win-x64 -o .\artifacts\publish\win-x64
 ```
 
-从发布目录直接启动 `PresentationTimer.App.exe`。移除便携版本只需关闭应用并删除该目录；除非单独删除，否则本地诊断日志仍保留在 `%LOCALAPPDATA%\PresentationTimer\Logs`。
+从发布目录直接启动 `SlidePace.App.exe`。移除便携版本只需关闭应用并删除该目录；除非单独删除，否则本地诊断日志仍保留在 `%LOCALAPPDATA%\SlidePace\Logs`。
 
 ### Windows 安装程序与发布
 
-Inno Setup 安装程序按用户安装到 `%LOCALAPPDATA%\Programs\PresentationTimer`，不需要管理员权限，支持英文、简体中文和繁体中文，并可选创建桌面快捷方式或在登录时启动应用。
+Inno Setup 安装程序按用户安装到 `%LOCALAPPDATA%\Programs\SlidePace`，不需要管理员权限，支持英文、简体中文和繁体中文，并可选创建桌面快捷方式或在登录时启动应用。
 
 安装 Inno Setup 6 后，可在本地构建：
 
 ```powershell
-.\scripts\build-installer.ps1 -Version 0.1.0
+.\scripts\build-installer.ps1 -Version 0.2.0
 ```
 
 提交并推送预期变更后，发布版本：
 
 ```powershell
-.\scripts\release.ps1 0.1.0
+.\scripts\release.ps1 0.2.0
 ```
 
 发布脚本会运行测试套件并推送带注释的 `v*` 标签。随后 GitHub Actions 构建安装程序和便携 ZIP，并创建或更新 GitHub Release。
 
 ## PowerPoint 测试夹具
 
-[`tests/fixtures/PresentationTimer.PowerPointFixture.pptx`](tests/fixtures/PresentationTimer.PowerPointFixture.pptx) 是一个原创、以程序生成的 6 页演示文稿，用于人工验证。它覆盖空备注、多行备注、必须保持为纯文本的类 HTML 文本、真正隐藏的幻灯片，以及末页边界行为。
+[`tests/fixtures/SlidePace.PowerPointFixture.pptx`](tests/fixtures/SlidePace.PowerPointFixture.pptx) 是一个原创、以程序生成的 6 页演示文稿，用于人工验证。它覆盖空备注、多行备注、必须保持为纯文本的类 HTML 文本、真正隐藏的幻灯片，以及末页边界行为。
 
 这个 PPT 不包含外部图片、图表、事实性声明或第三方素材。它的定位是测试夹具和人工验证 sample，而不是产品宣传演示文稿。详见[人工验证指南](docs/manual-verification.md)和 [PowerPoint 检查清单](docs/powerpoint-manual-checklist.md)。
 

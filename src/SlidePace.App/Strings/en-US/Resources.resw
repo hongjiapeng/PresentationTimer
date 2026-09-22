@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="WindowTitle" xml:space="preserve"><value>SlidePace</value></data>
+  <data name="AppTitleBar.Title" xml:space="preserve"><value>SlidePace</value></data>
+  <data name="PageTitle.Text" xml:space="preserve"><value>Presenter timer</value></data>
+  <data name="PageSubtitle.Text" xml:space="preserve"><value>Keep the countdown visible while you present.</value></data>
+  <data name="AlwaysOnTopToggle.Header" xml:space="preserve"><value>Always on top</value></data>
+  <data name="AlwaysOnTopToggle.OnContent" xml:space="preserve"><value>On</value></data>
+  <data name="AlwaysOnTopToggle.OffContent" xml:space="preserve"><value>Off</value></data>
+  <data name="AlwaysOnTopToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Keep presenter timer window always on top</value></data>
+  <data name="DurationInput.Header" xml:space="preserve"><value>Duration</value></data>
+  <data name="DurationInput.PlaceholderText" xml:space="preserve"><value>15:00</value></data>
+  <data name="DurationInput.AccessKey" xml:space="preserve"><value>D</value></data>
+  <data name="DurationInput.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Presentation duration</value></data>
+  <data name="StartButton.Content" xml:space="preserve"><value>Start</value></data>
+  <data name="StartButton.AccessKey" xml:space="preserve"><value>S</value></data>
+  <data name="StartButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Start timer</value></data>
+  <data name="PauseButton.Content" xml:space="preserve"><value>Pause</value></data>
+  <data name="PauseButton.AccessKey" xml:space="preserve"><value>P</value></data>
+  <data name="PauseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Pause timer</value></data>
+  <data name="ResumeButton.Content" xml:space="preserve"><value>Resume</value></data>
+  <data name="ResumeButton.AccessKey" xml:space="preserve"><value>U</value></data>
+  <data name="ResumeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Resume timer</value></data>
+  <data name="ResetButton.Content" xml:space="preserve"><value>Reset</value></data>
+  <data name="ResetButton.AccessKey" xml:space="preserve"><value>R</value></data>
+  <data name="ResetButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Reset timer</value></data>
+  <data name="ValidationInfoBar.Title" xml:space="preserve"><value>Check the duration</value></data>
+  <data name="PowerPointCardTitle.Text" xml:space="preserve"><value>PowerPoint</value></data>
+  <data name="SpeakerNotesText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Current slide speaker notes</value></data>
+  <data name="PreviousSlideButton.Content" xml:space="preserve"><value>Previous</value></data>
+  <data name="PreviousSlideButton.AccessKey" xml:space="preserve"><value>B</value></data>
+  <data name="PreviousSlideButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Previous PowerPoint slide</value></data>
+  <data name="NextSlideButton.Content" xml:space="preserve"><value>Next</value></data>
+  <data name="NextSlideButton.AccessKey" xml:space="preserve"><value>N</value></data>
+  <data name="NextSlideButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Next PowerPoint slide</value></data>
+  <data name="RemoteCardTitle.Text" xml:space="preserve"><value>Phone remote</value></data>
+  <data name="PairingQrImage.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Phone pairing QR code</value></data>
+  <data name="PairingUrlText.Header" xml:space="preserve"><value>Pairing address</value></data>
+  <data name="PairingCandidateSelector.Header" xml:space="preserve"><value>Network address</value></data>
+  <data name="PairingCandidateSelector.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Select a network address for phone pairing</value></data>
+  <data name="PairingUrlText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Phone pairing address</value></data>
+  <data name="StartRemoteButton.Content" xml:space="preserve"><value>Start remote</value></data>
+  <data name="StartRemoteButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Start phone remote session</value></data>
+  <data name="EndRemoteButton.Content" xml:space="preserve"><value>End session</value></data>
+  <data name="EndRemoteButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>End phone remote session</value></data>
+  <data name="TrustedNetworkInfoBar.Title" xml:space="preserve"><value>Trusted local networks only</value></data>
+  <data name="TrustedNetworkInfoBar.Message" xml:space="preserve"><value>The MVP remote uses HTTP: use a trusted Wi-Fi only. If a phone cannot connect, confirm both devices use the same network, disable VPN, check Wi-Fi client isolation, and allow this app on private networks in Windows Firewall.</value></data>
+  <data name="TimerModeRemaining" xml:space="preserve"><value>Time remaining</value></data>
+  <data name="TimerModeOvertime" xml:space="preserve"><value>Overtime</value></data>
+  <data name="TimerStateReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="TimerStateRunning" xml:space="preserve"><value>Running</value></data>
+  <data name="TimerStatePaused" xml:space="preserve"><value>Paused</value></data>
+  <data name="PowerPointStateRunning" xml:space="preserve"><value>Slide show connected</value></data>
+  <data name="PowerPointStateNoPresentation" xml:space="preserve"><value>No presentation is open</value></data>
+  <data name="PowerPointStateNoSlideShow" xml:space="preserve"><value>Start a slide show to connect</value></data>
+  <data name="PowerPointStateNotRunning" xml:space="preserve"><value>PowerPoint is not running</value></data>
+  <data name="PowerPointStateDisconnected" xml:space="preserve"><value>PowerPoint disconnected</value></data>
+  <data name="PowerPointStateUnavailable" xml:space="preserve"><value>Desktop PowerPoint (COM) was not detected. Install and start the Office desktop app, or repair Office if it is already installed.</value></data>
+  <data name="PowerPointSlidePositionFormat" xml:space="preserve"><value>Slide {0} / {1}</value></data>
+  <data name="PowerPointNoNotes" xml:space="preserve"><value>No speaker notes on this slide</value></data>
+  <data name="PowerPointCommandBusy" xml:space="preserve"><value>PowerPoint is busy. Try again.</value></data>
+  <data name="PowerPointCommandUnavailable" xml:space="preserve"><value>Start a slide show before navigating.</value></data>
+  <data name="OpenPowerPointFileButton.Content" xml:space="preserve"><value>Select and present PPT</value></data>
+  <data name="OpenPowerPointFileButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Select a PowerPoint file and start its slide show</value></data>
+  <data name="PowerPointOpeningPresentation" xml:space="preserve"><value>Opening the presentation and starting its slide show…</value></data>
+  <data name="PowerPointInvalidFile" xml:space="preserve"><value>Select an existing PPT, PPTX, PPTM, PPS, or PPSX file.</value></data>
+  <data name="PowerPointOpenFailed" xml:space="preserve"><value>PowerPoint could not open or present the selected file. Check that it is readable and not damaged.</value></data>
+  <data name="RemoteStateStopped" xml:space="preserve"><value>Remote session stopped</value></data>
+  <data name="RemoteStateStarting" xml:space="preserve"><value>Starting remote session</value></data>
+  <data name="RemoteStateReady" xml:space="preserve"><value>Ready for phone pairing</value></data>
+  <data name="RemoteStateFailed" xml:space="preserve"><value>Remote session failed</value></data>
+  <data name="RemoteStateNoLanAddress" xml:space="preserve"><value>No usable LAN address. Connect this PC to trusted Wi-Fi or Ethernet, then retry.</value></data>
+  <data name="RemoteStateStopping" xml:space="preserve"><value>Stopping remote session</value></data>
+  <data name="RemoteNoPhones" xml:space="preserve"><value>No phone connected</value></data>
+  <data name="RemoteOnePhone" xml:space="preserve"><value>1 phone connected</value></data>
+  <data name="RemotePhoneCountFormat" xml:space="preserve"><value>{0} phones connected</value></data>
+  <data name="TimerInvalidDuration" xml:space="preserve"><value>Enter a positive whole-second duration up to 99:59:59.</value></data>
+  <data name="TimerTargetStatusFormat" xml:space="preserve"><value>Target {0} · {1}</value></data>
+  <data name="PowerPointMenuStatusFormat" xml:space="preserve"><value>PowerPoint · {0}</value></data>
+  <data name="RemoteMenuStart" xml:space="preserve"><value>Start phone remote</value></data>
+  <data name="RemoteMenuStatusFormat" xml:space="preserve"><value>Phone remote · {0}</value></data>
+  <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Keep window always on top</value></data>
+  <data name="TitleBarPinButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Always on top</value></data>
+  <data name="LanguageMenuItem.Text" xml:space="preserve"><value>Language</value></data>
+  <data name="LanguageMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Choose application language</value></data>
+  <data name="SimplifiedChineseLanguageMenuItem.Text" xml:space="preserve"><value>简体中文</value></data>
+  <data name="EnglishLanguageMenuItem.Text" xml:space="preserve"><value>English</value></data>
+  <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More presenter actions</value></data>
+  <data name="CompactMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
+    <data name="CompactMoreButton.AccessKey" xml:space="preserve"><value>M</value></data>
+    <data name="CompactStartIconButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Start timer</value></data>
+    <data name="CompactStartIconButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Start</value></data>
+  <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Pause timer</value></data>
+  <data name="HudPauseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Pause</value></data>
+  <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Resume timer</value></data>
+  <data name="HudResumeButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Resume</value></data>
+  <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More presenter actions</value></data>
+  <data name="HudMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
+  <data name="HudResetMenuItem.Text" xml:space="preserve"><value>Reset timer</value></data>
+  <data name="OpenControlCenterMenuItem.Text" xml:space="preserve"><value>Open control center</value></data>
+  <data name="EnterPresentationHudMenuItem.Text" xml:space="preserve"><value>Switch to presentation timer</value></data>
+  <data name="EnterPresentationHudMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Switch to the presentation timer</value></data>
+  <data name="AlwaysOnTopMenuItem.Text" xml:space="preserve"><value>Always on top</value></data>
+  <data name="HideFromCaptureMenuItem.Text" xml:space="preserve"><value>Hide timer from screen capture</value></data>
+  <data name="TimerSettingsMenuItem.Text" xml:space="preserve"><value>Timer settings</value></data>
+  <data name="ExitMenuItem.Text" xml:space="preserve"><value>Exit</value></data>
+  <data name="ExpandedCollapseButton.Content" xml:space="preserve"><value>Collapse</value></data>
+  <data name="ExpandedCollapseButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Collapse timer</value></data>
+    <data name="ExpandedCollapseButton.AccessKey" xml:space="preserve"><value>C</value></data>
+    <data name="ExpandedCollapseActionButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Collapse timer</value></data>
+    <data name="ExpandedCollapseActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Collapse</value></data>
+    <data name="ExpandedCollapseActionLabel.Text" xml:space="preserve"><value>Collapse</value></data>
+    <data name="ExpandedStartActionButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Start timer</value></data>
+    <data name="ExpandedStartActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Start</value></data>
+    <data name="ExpandedStartActionLabel.Text" xml:space="preserve"><value>Start</value></data>
+    <data name="ExpandedPauseActionButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Pause timer</value></data>
+    <data name="ExpandedPauseActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Pause</value></data>
+    <data name="ExpandedPauseActionLabel.Text" xml:space="preserve"><value>Pause</value></data>
+    <data name="ExpandedResumeActionButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Resume timer</value></data>
+    <data name="ExpandedResumeActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Resume</value></data>
+    <data name="ExpandedResumeActionLabel.Text" xml:space="preserve"><value>Resume</value></data>
+    <data name="ExpandedResetActionButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Reset timer</value></data>
+    <data name="ExpandedResetActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>Reset</value></data>
+    <data name="ExpandedResetActionLabel.Text" xml:space="preserve"><value>Reset</value></data>
+    <data name="ExpandedMoreActionLabel.Text" xml:space="preserve"><value>More</value></data>
+  <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>More control center actions</value></data>
+  <data name="ExpandedMoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve"><value>More</value></data>
+  <data name="PowerPointOpenMenuItem.Text" xml:space="preserve"><value>PowerPoint</value></data>
+  <data name="SelectAndPresentPowerPointMenuItem.Text" xml:space="preserve"><value>Select and present PPT</value></data>
+  <data name="SelectAndPresentPowerPointMenuItem.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Select a PowerPoint file and start its slide show</value></data>
+  <data name="RemoteOpenMenuItem.Text" xml:space="preserve"><value>Phone remote</value></data>
+  <data name="SpeakerNotesPhoneHint.Text" xml:space="preserve"><value>Speaker notes are available on the phone presenter.</value></data>
+  <data name="DisplayPairingQrButton.Content" xml:space="preserve"><value>Display pairing QR</value></data>
+  <data name="DisplayPairingQrButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Display the current phone pairing QR code</value></data>
+  <data name="TrustedNetworkCompactText.Text" xml:space="preserve"><value>Pair only on a trusted local network.</value></data>
+  <data name="DurationSectionTitle.Text" xml:space="preserve"><value>Target duration</value></data>
+  <data name="DurationSection.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Target duration settings</value></data>
+  <data name="Duration10Button.Content" xml:space="preserve"><value>10 min</value></data>
+  <data name="Duration10Button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Set a 10 minute duration</value></data>
+  <data name="Duration15Button.Content" xml:space="preserve"><value>15 min</value></data>
+  <data name="Duration15Button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Set a 15 minute duration</value></data>
+  <data name="Duration20Button.Content" xml:space="preserve"><value>20 min</value></data>
+  <data name="Duration20Button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Set a 20 minute duration</value></data>
+  <data name="Duration30Button.Content" xml:space="preserve"><value>30 min</value></data>
+  <data name="Duration30Button.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Set a 30 minute duration</value></data>
+  <data name="DurationCustomButton.Content" xml:space="preserve"><value>Custom</value></data>
+  <data name="DurationCustomButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Set a custom duration</value></data>
+  <data name="CustomDurationDialog.Title" xml:space="preserve"><value>Custom duration</value></data>
+  <data name="CustomDurationDialog.PrimaryButtonText" xml:space="preserve"><value>Apply</value></data>
+  <data name="CustomDurationDialog.CloseButtonText" xml:space="preserve"><value>Cancel</value></data>
+  <data name="CustomDurationInput.Header" xml:space="preserve"><value>Duration</value></data>
+  <data name="CustomDurationInput.PlaceholderText" xml:space="preserve"><value>15:00 or 1:05:30</value></data>
+  <data name="CustomDurationInput.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve"><value>Custom presentation duration</value></data>
+</root>

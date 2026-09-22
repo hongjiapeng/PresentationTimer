@@ -1,6 +1,6 @@
 # PowerPoint manual verification checklist
 
-Use `tests/fixtures/PresentationTimer.PowerPointFixture.pptx` for repeatable PowerPoint integration checks. Record the Office bitness, Windows build, PowerPoint version, application build, phone/browser versions, and tester/date before executing the matrix.
+Use `tests/fixtures/SlidePace.PowerPointFixture.pptx` for repeatable PowerPoint integration checks. Record the Office bitness, Windows build, PowerPoint version, application build, phone/browser versions, and tester/date before executing the matrix.
 
 ## Fixture map
 
@@ -18,7 +18,7 @@ Use `tests/fixtures/PresentationTimer.PowerPointFixture.pptx` for repeatable Pow
 - Tester/date: Pending
 - Windows build: Pending
 - Office edition/version/bitness: Pending
-- PresentationTimer build or commit: Pending
+- SlidePace build or commit: Pending
 - iPhone/browser: Pending
 - Android/browser: Pending
 - Network/adapters/firewall policy: Pending
@@ -40,7 +40,7 @@ All rows start as **Pending**. Change a row to Pass, Fail, Blocked, or Not avail
 | 9 | Start, end, and restart the slide show: stale slide/notes are cleared and a new running state is acquired. | Pending | |
 | 10 | While PowerPoint is busy during animation or modal UI: bounded retry occurs, UI stays responsive, and failure is recoverable. | Pending | |
 | 11 | Exit PowerPoint during a read, restart it, reopen the fixture, and start the show: app obtains a new COM application/event set. | Pending | |
-| 12 | Exit PresentationTimer while fixture and PowerPoint remain open: app exits normally and never calls `Application.Quit`. | Pending | |
+| 12 | Exit SlidePace while fixture and PowerPoint remain open: app exits normally and never calls `Application.Quit`. | Pending | |
 | 13 | Repeat attach/detach and app shutdown cycles while monitoring process/reference behavior: no orphan PowerPoint process or steady COM-reference growth. | Pending | |
 | 14 | With PowerPoint closed, select each supported file type from **Open presentation**: the deck opens read-only, its slide show starts, desktop/phone state converges, cancel changes nothing, and an invalid file produces a safe message. | Pending | |
 

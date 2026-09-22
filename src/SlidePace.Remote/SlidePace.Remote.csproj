@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\SlidePace.Core\SlidePace.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="QRCoder" />
+  </ItemGroup>
+
+  <!-- Web assets are embedded from wwwroot so the remote host is self-contained.
+       The SignalR client is vendored under wwwroot/vendor (source: @microsoft/signalr, see package.json);
+       node_modules must never be a build input because it is not committed. -->
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\**\*" />
+  </ItemGroup>
+
+</Project>

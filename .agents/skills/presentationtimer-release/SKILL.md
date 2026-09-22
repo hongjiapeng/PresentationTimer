@@ -1,13 +1,13 @@
 ---
 name: presentationtimer-release
-description: Publish PresentationTimer GitHub Releases. Use when Codex needs to recommend a release version, preview a release, build the Windows installer locally, create and push a v*.*.* tag to trigger GitHub Actions release assets, or explain/fix the PresentationTimer release workflow.
+description: Publish SlidePace GitHub Releases. Use when Codex needs to recommend a release version, preview a release, build the Windows installer locally, create and push a v*.*.* tag to trigger GitHub Actions release assets, or explain/fix the SlidePace release workflow.
 ---
 
-# PresentationTimer Release
+# SlidePace Release
 
 ## Overview
 
-Use this skill to release PresentationTimer from the repository root by calling `scripts/release.ps1`. The script is the source of truth for local GitHub Release automation; do not reimplement tag creation, test execution, or pushing by hand unless the script is missing or broken.
+Use this skill to release SlidePace from the repository root by calling `scripts/release.ps1`. The script is the source of truth for local GitHub Release automation; do not reimplement tag creation, test execution, or pushing by hand unless the script is missing or broken.
 
 `scripts/build-installer.ps1` builds the Inno Setup installer locally from the unpackaged self-contained publish output, for preview or when CI is not an option. It never creates tags or publishes anything.
 
@@ -28,7 +28,7 @@ GitHub Release publication happens in `.github/workflows/release.yml`. Pushing a
 
 - Prefer SemVer tags in the form `vMAJOR.MINOR.PATCH`.
 - Accept user input as either `0.1.0` or `v0.1.0`; the script normalizes it to `v0.1.0`.
-- For the first public release of PresentationTimer, recommend `v0.1.0` unless existing tags or user intent suggest a different version.
+- For the first public release of SlidePace, recommend `v0.1.0` unless existing tags or user intent suggest a different version.
 - Use `v0.1.1` for bug-fix-only follow-ups, `v0.2.0` for meaningful feature additions before stability, and `v1.0.0` only when the project is ready to be presented as stable.
 - Avoid four-part tags such as `v0.1.0.0` for GitHub Releases. Four-part versions are appropriate for Windows/.NET file versions, not release tags.
 - Keep the default version metadata aligned with the new release in `Directory.Build.props`, the Inno Setup default, the local installer script default, and README build examples. The workflow's `-p:Version` override does not replace source-level version hygiene.
@@ -54,7 +54,7 @@ Use `-AllowDirty` only for dry runs while preparing local changes.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1 -Version 0.1.0
 ```
 
-This produces `dist\PresentationTimer-<version>-win-x64-Setup.exe`.
+This produces `dist\SlidePace-<version>-win-x64-Setup.exe`.
 
 4. For a real release, first make sure all intended changes are committed and pushed. Then run:
 
@@ -62,7 +62,7 @@ This produces `dist\PresentationTimer-<version>-win-x64-Setup.exe`.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\release.ps1 0.1.0
 ```
 
-5. After the tag push succeeds, GitHub Actions creates the release assets from `.github/workflows/release.yml`: tests run on `windows-latest`, the app is published, the Inno Setup installer and the portable `presentationtimer-<tag>-win-x64.zip` are built, and the GitHub Release is created or updated.
+5. After the tag push succeeds, GitHub Actions creates the release assets from `.github/workflows/release.yml`: tests run on `windows-latest`, the app is published, the Inno Setup installer and the portable `slidepace-<tag>-win-x64.zip` are built, and the GitHub Release is created or updated.
 
 ## Guardrails
 

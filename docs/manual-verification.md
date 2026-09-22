@@ -36,7 +36,7 @@ The desktop refactor must not change the monotonic Timer calculation, PowerPoint
 
 ## PowerPoint fixture
 
-Use `tests/fixtures/PresentationTimer.PowerPointFixture.pptx`, whose six numbered slides cover baseline, empty notes, multiline notes, literal markup-like text, a genuinely hidden slide, and a final slide. Keep the deck open after every app-shutdown check. Record detailed findings in [powerpoint-manual-checklist.md](powerpoint-manual-checklist.md).
+Use `tests/fixtures/SlidePace.PowerPointFixture.pptx`, whose six numbered slides cover baseline, empty notes, multiline notes, literal markup-like text, a genuinely hidden slide, and a final slide. Keep the deck open after every app-shutdown check. Record detailed findings in [powerpoint-manual-checklist.md](powerpoint-manual-checklist.md).
 
 | # | Scenario | Expected result | Result / evidence |
 |---|---|---|---|

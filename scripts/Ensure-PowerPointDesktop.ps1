@@ -56,7 +56,7 @@ function Show-Status {
     $executables = @(Get-PowerPointExecutable)
 
     Write-Host ''
-    Write-Host 'PresentationTimer PowerPoint environment check' -ForegroundColor Cyan
+    Write-Host 'SlidePace PowerPoint environment check' -ForegroundColor Cyan
     Write-Host "Microsoft PowerPoint COM ($powerPointProgId): $(if ($powerPoint.Registered) { 'REGISTERED' } else { 'MISSING' })"
     if ($powerPoint.Clsid) {
         Write-Host "  CLSID: $($powerPoint.Clsid)"
@@ -80,7 +80,7 @@ function Show-Status {
 $status = Show-Status
 if ($status.PowerPoint.Registered) {
     Write-Host ''
-    Write-Host 'PowerPoint desktop COM is ready for PresentationTimer.' -ForegroundColor Green
+    Write-Host 'PowerPoint desktop COM is ready for SlidePace.' -ForegroundColor Green
     exit 0
 }
 
@@ -100,7 +100,7 @@ if ($WaitAfterOpening) {
     $status = Show-Status
     if ($status.PowerPoint.Registered) {
         Write-Host ''
-        Write-Host 'PowerPoint desktop COM is now ready for PresentationTimer.' -ForegroundColor Green
+        Write-Host 'PowerPoint desktop COM is now ready for SlidePace.' -ForegroundColor Green
         exit 0
     }
 

@@ -20,4 +20,4 @@
 | SixLabors.ImageSharp (transitive, tests only) | 2.1.12 | NuGet.org / Six Labors | Apache-2.0 |
 | @microsoft/signalr | 10.0.11 | npmjs.com / Microsoft | MIT |
 
-Exact package resolution is recorded in NuGet restore assets and `src/PresentationTimer.Remote/package-lock.json`.
+Exact package resolution is recorded in NuGet restore assets and `src/SlidePace.Remote/package-lock.json`.

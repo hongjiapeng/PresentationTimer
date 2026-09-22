@@ -9,7 +9,7 @@
 
 ## Phase 2 — Serilog and redaction
 
-- Configure structured JSON file logging below `%LOCALAPPDATA%/PresentationTimer/Logs`.
+- Configure structured JSON file logging below `%LOCALAPPDATA%/SlidePace/Logs`.
 - Bound files by daily rolling, 5 MiB size, seven-file retention, and seven-day age.
 - Bridge Serilog into `Microsoft.Extensions.Logging` and propagate it into Remote and PowerPoint.
 - Add captured-event integration coverage proving valid/invalid pairing emits useful events without secrets or speaker notes.

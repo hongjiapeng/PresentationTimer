@@ -76,7 +76,7 @@ if (-not $tag.StartsWith("v", [System.StringComparison]::OrdinalIgnoreCase)) {
 $repoRoot = (Get-CheckedOutput "git" @("rev-parse", "--show-toplevel")).Trim()
 Set-Location $repoRoot
 
-Write-Host "Preparing PresentationTimer release $tag"
+Write-Host "Preparing SlidePace release $tag"
 
 $insideWorkTree = Get-CheckedOutput "git" @("rev-parse", "--is-inside-work-tree")
 if ($insideWorkTree.Trim() -ne "true") {
@@ -98,7 +98,7 @@ if (Test-RemoteTagExists $tag) {
 }
 
 if (-not $SkipTests) {
-    Invoke-Checked "dotnet" @("test", "PresentationTimer.sln", "--configuration", "Release", "-p:Platform=x64", "--verbosity", "normal")
+    Invoke-Checked "dotnet" @("test", "SlidePace.sln", "--configuration", "Release", "-p:Platform=x64", "--verbosity", "normal")
 }
 
 Invoke-Checked "git" @("tag", "-a", $tag, "-m", "Release $tag")

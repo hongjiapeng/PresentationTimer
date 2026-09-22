@@ -51,28 +51,28 @@ Research informed but did not supply application code. `PhoneAsPrompter` validat
 Use the proposed four-project split plus two test projects:
 
 ```text
-PresentationTimer.sln
+SlidePace.sln
 |
-+-- src/PresentationTimer.App          WinUI views, view models, composition root
++-- src/SlidePace.App          WinUI views, view models, composition root
 |       |\
-|       | +---------------------> PresentationTimer.PowerPoint
-|       +-----------------------> PresentationTimer.Remote
-|       +-----------------------> PresentationTimer.Core
+|       | +---------------------> SlidePace.PowerPoint
+|       +-----------------------> SlidePace.Remote
+|       +-----------------------> SlidePace.Core
 |
-+-- src/PresentationTimer.Core         domain state, timer, contracts, coordinator
++-- src/SlidePace.Core         domain state, timer, contracts, coordinator
 |       ^                         (no UI, Office, ASP.NET, or QR references)
 |       |
-+-- src/PresentationTimer.PowerPoint   Office adapter + dedicated STA dispatcher
++-- src/SlidePace.PowerPoint   Office adapter + dedicated STA dispatcher
 |       +------------------------> Core contracts only
 |
-+-- src/PresentationTimer.Remote       local host, auth, hub, static phone UI, QR
++-- src/SlidePace.Remote       local host, auth, hub, static phone UI, QR
 |       +------------------------> Core contracts only
 |
-+-- tests/PresentationTimer.Core.Tests
-+-- tests/PresentationTimer.Remote.Tests
++-- tests/SlidePace.Core.Tests
++-- tests/SlidePace.Remote.Tests
 ```
 
-`PresentationTimer.App` is the composition root and owns process startup/shutdown. `Core` does not reference any infrastructure project. Both infrastructure projects implement interfaces defined in `Core`. `Remote` never references `PowerPoint`; browser commands go through the same application service as desktop commands. The UI never receives a COM object and never calls Office APIs.
+`SlidePace.App` is the composition root and owns process startup/shutdown. `Core` does not reference any infrastructure project. Both infrastructure projects implement interfaces defined in `Core`. `Remote` never references `PowerPoint`; browser commands go through the same application service as desktop commands. The UI never receives a COM object and never calls Office APIs.
 
 This keeps the suggested provider seam (`IPresentationController`) without adding a registry, provider discovery, or unused abstractions. A future provider can implement the same small contract, but the MVP constructs exactly one PowerPoint adapter.
 
@@ -192,7 +192,7 @@ To read state, the adapter takes one short-lived snapshot of primitives. It uses
 
 ### 6. COM threading model and state marshaling
 
-All PowerPoint COM work runs on one dedicated background STA thread owned by `PresentationTimer.PowerPoint`; the WinUI UI STA is not used for Office automation.
+All PowerPoint COM work runs on one dedicated background STA thread owned by `SlidePace.PowerPoint`; the WinUI UI STA is not used for Office automation.
 
 The STA worker:
 
@@ -226,7 +226,7 @@ On any unexpected exception, stale slide index and notes are cleared before publ
 
 ### 8. Local remote host and SignalR model
 
-`PresentationTimer.Remote` builds an in-process ASP.NET Core host only when a user starts a remote session. It serves:
+`SlidePace.Remote` builds an in-process ASP.NET Core host only when a user starts a remote session. It serves:
 
 - a token exchange/landing endpoint;
 - local static HTML/CSS/JavaScript assets;
@@ -335,7 +335,7 @@ The first close request can be deferred/cancelled while asynchronous shutdown co
 
 ### 16. Packaging and deployment
 
-For first dogfood, publish `PresentationTimer.App` as an unpackaged, self-contained x64 WinUI 3 application (`WindowsPackageType=None`, .NET self-contained, Windows App SDK self-contained). Include ASP.NET Core, static web assets, interop metadata, and QR dependency in the published output. Do not use NativeAOT because it complicates built-in COM interop and offers little MVP value.
+For first dogfood, publish `SlidePace.App` as an unpackaged, self-contained x64 WinUI 3 application (`WindowsPackageType=None`, .NET self-contained, Windows App SDK self-contained). Include ASP.NET Core, static web assets, interop metadata, and QR dependency in the published output. Do not use NativeAOT because it complicates built-in COM interop and offers little MVP value.
 
 Wrap the tested output in a per-user traditional installer only after the portable publish passes end-to-end checks. The installer adds Start Menu/uninstall entries but does not add firewall rules, require elevation, register a service, or remove user data. Since the MVP stores no durable presentation/session data, rollback is uninstall/delete plus reinstall of the previous build. Code signing is recommended before distribution outside the immediate dogfood group; unsigned SmartScreen behavior is a known internal-testing friction.
 

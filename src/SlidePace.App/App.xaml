@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application
+    x:Class="SlidePace.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SlidePace.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
+                    <SolidColorBrush x:Key="PresenterWindowSurfaceBrush" Color="#FFF4F7FB" />
+                    <Color x:Key="PresenterHudBackdropTintColor">#FFF4F8FC</Color>
+                    <x:Double x:Key="PresenterHudBackdropTintOpacity">0.58</x:Double>
+                    <x:Double x:Key="PresenterHudBackdropLuminosityOpacity">0.72</x:Double>
+                    <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0CFFFFFF" />
+                    <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
+                    <Thickness x:Key="PresenterHudBorderThickness">0</Thickness>
+                    <SolidColorBrush x:Key="PresenterHudProgressTrackBrush" Color="#507B99BB" />
+                    <SolidColorBrush x:Key="PresenterTimerNormalBrush" Color="#FF2388D8" />
+                    <SolidColorBrush x:Key="PresenterTimerWarningBrush" Color="#FFAD6B00" />
+                    <SolidColorBrush x:Key="PresenterTimerOvertimeBrush" Color="#FFC63C45" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonBrush" Color="#FF8BDFFF" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonHoverBrush" Color="#FFA4E9FF" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonPressedBrush" Color="#FF63D0F6" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonForegroundBrush" Color="#FF103D66" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonBorderBrush" Color="#80FFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudMoreButtonBrush" Color="#4CFFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudMoreButtonBorderBrush" Color="#A6FFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudMoreButtonForegroundBrush" Color="#FF6C85A3" />
+                    <StaticResource x:Key="PresenterSuccessBrush" ResourceKey="SystemFillColorSuccessBrush" />
+                    <SolidColorBrush x:Key="PresenterDividerBrush" Color="#FFD6DEE9" />
+                    <SolidColorBrush x:Key="PresenterCapabilitySurfaceBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="PresenterProgressTrackBrush" Color="#FFD5DFEC" />
+                    <SolidColorBrush x:Key="PresenterCommandSurfaceBrush" Color="#FFE8EEF6" />
+                    <Thickness x:Key="PresenterCardBorderThickness">1</Thickness>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemFillColorCriticalBrush" />
+                    <SolidColorBrush x:Key="PresenterWindowSurfaceBrush" Color="#FF161B24" />
+                    <Color x:Key="PresenterHudBackdropTintColor">#FF25334A</Color>
+                    <x:Double x:Key="PresenterHudBackdropTintOpacity">0.64</x:Double>
+                    <x:Double x:Key="PresenterHudBackdropLuminosityOpacity">0.58</x:Double>
+                    <SolidColorBrush x:Key="PresenterHudSurfaceBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="PresenterHudHoverBrush" Color="#0AFFFFFF" />
+                    <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
+                    <Thickness x:Key="PresenterHudBorderThickness">0</Thickness>
+                    <SolidColorBrush x:Key="PresenterHudProgressTrackBrush" Color="#509AB2D2" />
+                    <SolidColorBrush x:Key="PresenterTimerNormalBrush" Color="#FFD8F0FF" />
+                    <SolidColorBrush x:Key="PresenterTimerWarningBrush" Color="#FFFFC85A" />
+                    <SolidColorBrush x:Key="PresenterTimerOvertimeBrush" Color="#FFFF777F" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonBrush" Color="#FF3E8FEA" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonHoverBrush" Color="#FF55A0F2" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonPressedBrush" Color="#FF2876D5" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonForegroundBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudPrimaryButtonBorderBrush" Color="#50FFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudMoreButtonBrush" Color="#20FFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudMoreButtonBorderBrush" Color="#30FFFFFF" />
+                    <SolidColorBrush x:Key="PresenterHudMoreButtonForegroundBrush" Color="#FFD5E8FB" />
+                    <StaticResource x:Key="PresenterSuccessBrush" ResourceKey="SystemFillColorSuccessBrush" />
+                    <SolidColorBrush x:Key="PresenterDividerBrush" Color="#FF303947" />
+                    <SolidColorBrush x:Key="PresenterCapabilitySurfaceBrush" Color="#FF1D232D" />
+                    <SolidColorBrush x:Key="PresenterProgressTrackBrush" Color="#FF3B4553" />
+                    <SolidColorBrush x:Key="PresenterCommandSurfaceBrush" Color="#2B2E34" />
+                    <Thickness x:Key="PresenterCardBorderThickness">1</Thickness>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <StaticResource x:Key="PresenterEmphasisBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterWindowSurfaceBrush" ResourceKey="SystemColorWindowColorBrush" />
+                    <StaticResource x:Key="PresenterHudSurfaceBrush" ResourceKey="SystemColorWindowColorBrush" />
+                    <StaticResource x:Key="PresenterHudHoverBrush" ResourceKey="SystemColorWindowColorBrush" />
+                    <StaticResource x:Key="PresenterHudBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <Thickness x:Key="PresenterHudBorderThickness">2</Thickness>
+                    <StaticResource x:Key="PresenterHudProgressTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterTimerNormalBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterTimerWarningBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterTimerOvertimeBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterHudPrimaryButtonBrush" ResourceKey="SystemColorHighlightColorBrush" />
+                    <StaticResource x:Key="PresenterHudPrimaryButtonHoverBrush" ResourceKey="SystemColorHighlightColorBrush" />
+                    <StaticResource x:Key="PresenterHudPrimaryButtonPressedBrush" ResourceKey="SystemColorHighlightColorBrush" />
+                    <StaticResource x:Key="PresenterHudPrimaryButtonForegroundBrush" ResourceKey="SystemColorHighlightTextColorBrush" />
+                    <StaticResource x:Key="PresenterHudPrimaryButtonBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterHudMoreButtonBrush" ResourceKey="SystemColorWindowColorBrush" />
+                    <StaticResource x:Key="PresenterHudMoreButtonBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterHudMoreButtonForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterSuccessBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterDividerBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterCapabilitySurfaceBrush" ResourceKey="SystemColorWindowColorBrush" />
+                    <StaticResource x:Key="PresenterProgressTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="PresenterCommandSurfaceBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
+                    <Thickness x:Key="PresenterCardBorderThickness">2</Thickness>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+            <CornerRadius x:Key="PresenterHudCornerRadius">16</CornerRadius>
+            <x:Double x:Key="PresenterHudTimerFontSize">36</x:Double>
+            <x:Double x:Key="PresenterHudRevealDurationMs">180</x:Double>
+            <x:Double x:Key="PresenterHudHideDurationMs">180</x:Double>
+            <x:Double x:Key="PresenterHudHideDelayMs">1250</x:Double>
+            <Style x:Key="PresenterCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="{ThemeResource PresenterCardBorderThickness}" />
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                <Setter Property="Padding" Value="24" />
+            </Style>
+            <Style x:Key="PresenterCapabilityStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource PresenterCapabilitySurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+            <Style x:Key="PresenterCommandButtonStyle" TargetType="Button">
+                <Setter Property="MinWidth" Value="44" />
+                <Setter Property="MinHeight" Value="44" />
+                <Setter Property="Padding" Value="16,8" />
+                <Setter Property="Background" Value="{ThemeResource PresenterCommandSurfaceBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            </Style>
+            <Style x:Key="PresenterPrimaryCommandButtonStyle" BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                <Setter Property="MinWidth" Value="120" />
+                <Setter Property="MinHeight" Value="44" />
+                <Setter Property="Padding" Value="20,8" />
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            </Style>
+            <Style x:Key="PresenterIconButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="44" />
+                <Setter Property="Height" Value="44" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="{ThemeResource PresenterCommandSurfaceBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            </Style>
+            <Style x:Key="PresenterHudActionButtonStyle" BasedOn="{StaticResource PresenterIconButtonStyle}" TargetType="Button">
+                <Setter Property="Width" Value="40" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="MinWidth" Value="40" />
+                <Setter Property="MinHeight" Value="40" />
+                <Setter Property="Background" Value="{ThemeResource PresenterHudMoreButtonBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource PresenterHudMoreButtonBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="{ThemeResource PresenterHudMoreButtonForegroundBrush}" />
+                <Setter Property="CornerRadius" Value="20" />
+            </Style>
+            <Style x:Key="PresenterHudPrimaryButtonStyle" BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                <Setter Property="Width" Value="44" />
+                <Setter Property="Height" Value="44" />
+                <Setter Property="MinWidth" Value="44" />
+                <Setter Property="MinHeight" Value="44" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="CornerRadius" Value="22" />
+                <Setter Property="Background" Value="{ThemeResource PresenterHudPrimaryButtonBrush}" />
+                <Setter Property="Foreground" Value="{ThemeResource PresenterHudPrimaryButtonForegroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource PresenterHudPrimaryButtonBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter
+                                x:Name="HudButtonPresenter"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Content="{TemplateBinding Content}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="HudButtonPresenter.Background" Value="{ThemeResource PresenterHudPrimaryButtonHoverBrush}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="HudButtonPresenter.Background" Value="{ThemeResource PresenterHudPrimaryButtonPressedBrush}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled" />
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </ContentPresenter>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="PresenterHeroActionButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="48" />
+                <Setter Property="Height" Value="48" />
+                <Setter Property="MinWidth" Value="48" />
+                <Setter Property="MinHeight" Value="48" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="{ThemeResource PresenterCommandSurfaceBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="24" />
+            </Style>
+            <Style x:Key="PresenterHeroPrimaryActionButtonStyle" BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                <Setter Property="Width" Value="56" />
+                <Setter Property="Height" Value="56" />
+                <Setter Property="MinWidth" Value="56" />
+                <Setter Property="MinHeight" Value="56" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="CornerRadius" Value="28" />
+            </Style>
+            <Style x:Key="PresenterTitleBarToggleStyle" TargetType="ToggleButton">
+                <Setter Property="Width" Value="40" />
+                <Setter Property="Height" Value="32" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="{ThemeResource PresenterCommandSurfaceBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            </Style>
+            <Style x:Key="PresenterPresetButtonStyle" TargetType="ToggleButton">
+                <Setter Property="MinWidth" Value="72" />
+                <Setter Property="MinHeight" Value="44" />
+                <Setter Property="Padding" Value="16,8" />
+                <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

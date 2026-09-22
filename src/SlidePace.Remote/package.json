@@ -1,0 +1,12 @@
+{
+  "name": "slidepace-remote-assets",
+  "private": true,
+  "version": "0.2.0",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/presenter.test.cjs"
+  },
+  "dependencies": {
+    "@microsoft/signalr": "10.0.11"
+  }
+}

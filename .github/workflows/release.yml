@@ -23,13 +23,13 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Restore
-        run: dotnet restore PresentationTimer.sln
+        run: dotnet restore SlidePace.sln
 
       - name: Build
-        run: dotnet build PresentationTimer.sln --configuration Release --no-restore -p:Platform=x64
+        run: dotnet build SlidePace.sln --configuration Release --no-restore -p:Platform=x64
 
       - name: Test
-        run: dotnet test PresentationTimer.sln --configuration Release --no-build -p:Platform=x64 --verbosity normal
+        run: dotnet test SlidePace.sln --configuration Release --no-build -p:Platform=x64 --verbosity normal
 
   windows-installer:
     name: Windows installer
@@ -53,7 +53,7 @@ jobs:
             $version = $version.Substring(1)
           }
 
-          dotnet publish src/PresentationTimer.App/PresentationTimer.App.csproj `
+          dotnet publish src/SlidePace.App/SlidePace.App.csproj `
             --configuration Release `
             -p:Platform=x64 `
             "-p:Version=$version" `
@@ -67,7 +67,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           $tag = "${{ github.ref_name }}"
-          Compress-Archive -Path "artifacts/win-x64/*" -DestinationPath "dist/presentationtimer-$tag-win-x64.zip" -Force
+          Compress-Archive -Path "artifacts/win-x64/*" -DestinationPath "dist/slidepace-$tag-win-x64.zip" -Force
 
       - name: Install Inno Setup
         shell: pwsh
@@ -98,7 +98,7 @@ jobs:
             "/DAppVersion=$version" `
             "/DSourceDir=$pwd\artifacts\win-x64" `
             "/DOutputDir=$pwd\dist" `
-            "$pwd\installer\PresentationTimer.iss"
+            "$pwd\installer\SlidePace.iss"
           if ($LASTEXITCODE -ne 0) {
             throw "Inno Setup compilation failed with exit code $LASTEXITCODE."
           }
@@ -106,7 +106,7 @@ jobs:
       - name: Upload Windows release assets
         uses: actions/upload-artifact@v4
         with:
-          name: presentationtimer-${{ github.ref_name }}
+          name: slidepace-${{ github.ref_name }}
           path: dist/*
           if-no-files-found: error
 
@@ -138,7 +138,7 @@ jobs:
           else
             gh release create "$tag" dist/* \
               --repo "$repo" \
-              --title "PresentationTimer $tag" \
+              --title "SlidePace $tag" \
               --generate-notes \
               --verify-tag
           fi

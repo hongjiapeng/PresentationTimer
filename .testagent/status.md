@@ -8,7 +8,7 @@
 
 ## Final run
 
-`dotnet test PresentationTimer.sln -c Debug -p:Platform=x64 --no-restore`
+`dotnet test SlidePace.sln -c Debug -p:Platform=x64 --no-restore`
 
 - Core: 50 passed
 - Remote: 23 passed

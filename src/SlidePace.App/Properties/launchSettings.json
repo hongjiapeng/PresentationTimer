@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SlidePace.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "SlidePace.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

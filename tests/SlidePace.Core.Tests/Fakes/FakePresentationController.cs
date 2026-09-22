@@ -1,0 +1,51 @@
+using SlidePace.Core.Contracts;
+using SlidePace.Core.Models;
+using SlidePace.Core.Results;
+
+namespace SlidePace.Core.Tests.Fakes;
+
+internal sealed class FakePresentationController : IPresentationController
+{
+    public event Action<PresentationSnapshot>? StateChanged;
+
+    public PresentationSnapshot State { get; private set; } = PresentationSnapshot.Initial;
+
+    public int NextInvocationCount { get; private set; }
+
+    public int OpenInvocationCount { get; private set; }
+
+    public string? LastOpenedFilePath { get; private set; }
+
+    public int PreviousInvocationCount { get; private set; }
+
+    public Task StartMonitoringAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task StopMonitoringAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task<OperationResult> OpenPresentationAsync(
+        string filePath,
+        CancellationToken cancellationToken = default)
+    {
+        this.OpenInvocationCount++;
+        this.LastOpenedFilePath = filePath;
+        return Task.FromResult(OperationResult.Success());
+    }
+
+    public Task<OperationResult> NextAsync(CancellationToken cancellationToken = default)
+    {
+        this.NextInvocationCount++;
+        return Task.FromResult(OperationResult.Success());
+    }
+
+    public Task<OperationResult> PreviousAsync(CancellationToken cancellationToken = default)
+    {
+        this.PreviousInvocationCount++;
+        return Task.FromResult(OperationResult.Success());
+    }
+
+    public void Publish(PresentationSnapshot state)
+    {
+        this.State = state;
+        this.StateChanged?.Invoke(state);
+    }
+}
