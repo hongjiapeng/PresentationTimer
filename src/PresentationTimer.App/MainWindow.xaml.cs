@@ -498,7 +498,7 @@ public sealed partial class MainWindow : Window
 
     private void ApplyFloatingWindowChrome()
     {
-        this.ExtendFrameIntoClientArea(1);
+        this.ExtendFrameIntoClientArea(-1);
         this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
     }
