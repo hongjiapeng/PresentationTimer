@@ -230,7 +230,7 @@ public sealed partial class MainWindow : Window
 
         presenter.SetBorderAndTitleBar(true, true);
         this.SetWindowChromeVisibility(true);
-        this.ExtendFrameIntoClientArea(0);
+        this.ResetExtendedFrame();
         presenter.IsResizable = true;
         presenter.IsMaximizable = true;
         presenter.IsMinimizable = true;
@@ -498,21 +498,28 @@ public sealed partial class MainWindow : Window
 
     private void ApplyFloatingWindowChrome()
     {
-        this.ExtendFrameIntoClientArea(-1);
+        this.ExtendFrameAcrossClientArea();
         this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
         this.RequestBorderColor(DwmWindowBorderColorNone);
     }
 
-    private void ExtendFrameIntoClientArea(int margin)
+    private void ExtendFrameAcrossClientArea()
     {
         nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
         var margins = new DwmMargins
         {
-            LeftWidth = margin,
-            RightWidth = margin,
-            TopHeight = margin,
-            BottomHeight = margin,
+            // DWM treats one negative inset as the sheet-of-glass sentinel. Keep
+            // the remaining insets at zero to match the documented native
+            // MARGINS {-1} initializer exactly.
+            LeftWidth = -1,
         };
+        _ = DwmExtendFrameIntoClientArea(windowHandle, ref margins);
+    }
+
+    private void ResetExtendedFrame()
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        DwmMargins margins = default;
         _ = DwmExtendFrameIntoClientArea(windowHandle, ref margins);
     }
 
