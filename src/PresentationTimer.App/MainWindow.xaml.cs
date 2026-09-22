@@ -27,13 +27,10 @@ public sealed partial class MainWindow : Window
     private const int MinimumExpandedWidth = 800;
     private const int DwmWindowAttributeCornerPreference = 33;
     private const int DwmWindowAttributeBorderColor = 34;
-    private const int DwmWindowAttributeNonClientRenderingPolicy = 2;
     private const int DwmWindowBorderColorDefault = unchecked((int)0xFFFFFFFF);
     private const int DwmWindowBorderColorNone = unchecked((int)0xFFFFFFFE);
     private const int DwmWindowCornerPreferenceDefault = 0;
     private const int DwmWindowCornerPreferenceRound = 2;
-    private const int DwmNonClientRenderingPolicyDefault = 0;
-    private const int DwmNonClientRenderingPolicyDisabled = 1;
     private const int ResizeAnimationDurationMs = 180;
     private const int ResizeAnimationFrameIntervalMs = 15;
     private const int GetWindowLongStyleIndex = -16;
@@ -124,7 +121,6 @@ public sealed partial class MainWindow : Window
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
-        this.RequestNonClientRenderingPolicy(DwmNonClientRenderingPolicyDisabled);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -147,6 +143,7 @@ public sealed partial class MainWindow : Window
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
         this.ClearWindowRegion();
+        this.RefreshFloatingWindowChrome();
         this.UpdateCaptureAffinity();
     }
 
@@ -172,7 +169,6 @@ public sealed partial class MainWindow : Window
         this.WindowLayoutRoot.Background = null;
         presenter.SetBorderAndTitleBar(false, false);
         this.SetWindowChromeVisibility(false);
-        this.RequestNonClientRenderingPolicy(DwmNonClientRenderingPolicyDisabled);
         presenter.IsResizable = false;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -208,6 +204,7 @@ public sealed partial class MainWindow : Window
         this._resizeAnimationTimer.Stop();
         this.AppWindow.MoveAndResize(target);
         this.ClearWindowRegion();
+        this.RefreshFloatingWindowChrome();
         this.UpdateCaptureAffinity();
     }
 
@@ -233,7 +230,7 @@ public sealed partial class MainWindow : Window
 
         presenter.SetBorderAndTitleBar(true, true);
         this.SetWindowChromeVisibility(true);
-        this.RequestNonClientRenderingPolicy(DwmNonClientRenderingPolicyDefault);
+        this.ExtendFrameIntoClientArea(0);
         presenter.IsResizable = true;
         presenter.IsMaximizable = true;
         presenter.IsMinimizable = true;
@@ -339,6 +336,12 @@ public sealed partial class MainWindow : Window
         int attribute,
         ref int attributeValue,
         int attributeSize);
+
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmExtendFrameIntoClientArea(
+        nint windowHandle,
+        ref DwmMargins margins);
 
     [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
     [DllImport("user32.dll")]
@@ -468,18 +471,50 @@ public sealed partial class MainWindow : Window
             sizeof(int));
     }
 
-    private void RequestNonClientRenderingPolicy(int policy)
+    private void OnActivated(object sender, WindowActivatedEventArgs args)
     {
-        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
-        _ = DwmSetWindowAttribute(
-            windowHandle,
-            DwmWindowAttributeNonClientRenderingPolicy,
-            ref policy,
-            sizeof(int));
+        if (this._windowMode == DesktopWindowMode.Expanded)
+        {
+            this.RequestBorderColor(this._borderColorPreference);
+            return;
+        }
+
+        this.ApplyFloatingWindowChrome();
     }
 
-    private void OnActivated(object sender, WindowActivatedEventArgs args) =>
-        this.RequestBorderColor(this._borderColorPreference);
+    private void RefreshFloatingWindowChrome()
+    {
+        this.ApplyFloatingWindowChrome();
+        _ = this.DispatcherQueue.TryEnqueue(
+            DispatcherQueuePriority.Low,
+            () =>
+            {
+                if (this._windowMode != DesktopWindowMode.Expanded)
+                {
+                    this.ApplyFloatingWindowChrome();
+                }
+            });
+    }
+
+    private void ApplyFloatingWindowChrome()
+    {
+        this.ExtendFrameIntoClientArea(1);
+        this.RequestCornerPreference(DwmWindowCornerPreferenceRound);
+        this.RequestBorderColor(DwmWindowBorderColorNone);
+    }
+
+    private void ExtendFrameIntoClientArea(int margin)
+    {
+        nint windowHandle = Win32Interop.GetWindowFromWindowId(this.AppWindow.Id);
+        var margins = new DwmMargins
+        {
+            LeftWidth = margin,
+            RightWidth = margin,
+            TopHeight = margin,
+            BottomHeight = margin,
+        };
+        _ = DwmExtendFrameIntoClientArea(windowHandle, ref margins);
+    }
 
     private void SetFloatingBackdrop() =>
         this.SystemBackdrop = new FloatingTimerBackdrop();
@@ -609,6 +644,18 @@ public sealed partial class MainWindow : Window
             this._shutdownComplete = true;
             this.Close();
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct DwmMargins
+    {
+        public int LeftWidth;
+
+        public int RightWidth;
+
+        public int TopHeight;
+
+        public int BottomHeight;
     }
 
     [StructLayout(LayoutKind.Sequential)]
