@@ -41,7 +41,7 @@
                         <Grid RowSpacing="2">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="42" />
-                                <RowDefinition Height="2" />
+                                <RowDefinition Height="3" />
                             </Grid.RowDefinitions>
                             <Grid
                                 x:Name="CompactDragRegion"
@@ -65,17 +65,17 @@
                                 AutomationProperties.AccessibilityView="Raw"
                                 Grid.Row="1"
                                 Width="104"
-                                Height="2"
+                                Height="3"
                                 HorizontalAlignment="Left"
                                 Background="{ThemeResource PresenterHudProgressTrackBrush}"
-                                CornerRadius="1"
+                                CornerRadius="1.5"
                                 IsHitTestVisible="False">
                                 <Border
                                     Width="{x:Bind CompactProgressWidth, Mode=OneWay}"
-                                    Height="2"
+                                    Height="3"
                                     HorizontalAlignment="Left"
                                     Background="{x:Bind TimerForeground, Mode=OneWay}"
-                                    CornerRadius="1" />
+                                    CornerRadius="1.5" />
                             </Grid>
                         </Grid>
                         <Grid
@@ -250,7 +250,7 @@
                         <Grid RowSpacing="2">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="42" />
-                                <RowDefinition Height="2" />
+                                <RowDefinition Height="3" />
                             </Grid.RowDefinitions>
                             <Grid
                                 x:Name="PresentationHudDragRegion"
@@ -274,17 +274,17 @@
                                 AutomationProperties.AccessibilityView="Raw"
                                 Grid.Row="1"
                                 Width="104"
-                                Height="2"
+                                Height="3"
                                 HorizontalAlignment="Left"
                                 Background="{ThemeResource PresenterHudProgressTrackBrush}"
-                                CornerRadius="1"
+                                CornerRadius="1.5"
                                 IsHitTestVisible="False">
                                 <Border
                                     Width="{x:Bind CompactProgressWidth, Mode=OneWay}"
-                                    Height="2"
+                                    Height="3"
                                     HorizontalAlignment="Left"
                                     Background="{x:Bind TimerForeground, Mode=OneWay}"
-                                    CornerRadius="1" />
+                                    CornerRadius="1.5" />
                             </Grid>
                         </Grid>
                         <Grid
